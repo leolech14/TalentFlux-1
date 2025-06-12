@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, Send, Sparkles } from "lucide-react";
+import { Mic, Send, Sparkles, ThumbsUp, ThumbsDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useIntentRouter } from "./IntentRouter";
@@ -9,6 +9,8 @@ import { useAuth } from "../hooks/useAuth";
 import { useLocation } from "wouter";
 import { planFromUtterance, getSuggestedCommands } from "./planFromUtterance";
 import { registerSingleton, unregisterSingleton } from "../lib/SingletonRegistry";
+import { emitAIEvent } from "./emitAIEvent";
+import { recordFeedback } from "./recordFeedback";
 
 interface AssistantOverlayProps {
   isOpen: boolean;
@@ -18,6 +20,7 @@ interface AssistantOverlayProps {
 export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
+  const [lastEventId, setLastEventId] = useState<number | null>(null);
   const userType = useUserType();
   const { toast } = useToast();
   const { intentRouter, executeIntent } = useIntentRouter();
@@ -32,6 +35,35 @@ export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
       return () => unregisterSingleton("assistant-overlay");
     }
   }, [isOpen, setAssistantOpen]);
+
+  const showFeedbackToast = (eventId: number) => {
+    if (eventId === -1) return; // Skip if event creation failed
+    
+    setTimeout(() => {
+      toast({
+        title: "Was this helpful?",
+        description: (
+          <div className="flex items-center gap-2 mt-2">
+            <button
+              onClick={() => recordFeedback(eventId, true)}
+              className="flex items-center gap-1 px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm transition-colors"
+            >
+              <ThumbsUp size={14} />
+              Yes
+            </button>
+            <button
+              onClick={() => recordFeedback(eventId, false)}
+              className="flex items-center gap-1 px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm transition-colors"
+            >
+              <ThumbsDown size={14} />
+              No
+            </button>
+          </div>
+        ),
+        duration: 5000,
+      });
+    }, 1500);
+  };
 
   const handleSubmit = async (text: string) => {
     if (!text.trim()) return;
@@ -61,11 +93,22 @@ export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
           setThinking(false);
           setInput("");
           
+          // Emit AI event for repo query
+          const eventId = await emitAIEvent('repo-query', {
+            userId: isAuthenticated ? 'authenticated' : 'anonymous',
+            route: location,
+            device: window.innerWidth < 768 ? 'mobile' : 'desktop'
+          });
+          setLastEventId(eventId);
+          
           toast({
             title: "Repository Assistant",
             description: data.response.slice(0, 200) + (data.response.length > 200 ? "..." : ""),
             duration: 8000,
           });
+          
+          // Show feedback toast
+          showFeedbackToast(eventId);
           
           // Close overlay after showing response
           setTimeout(() => onClose(), 1000);
@@ -105,12 +148,23 @@ export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
     setThinking(false);
 
     if (intent) {
+      // Emit AI event before executing intent
+      const eventId = await emitAIEvent(intent.id, {
+        userId: isAuthenticated ? 'authenticated' : 'anonymous',
+        route: location,
+        device: window.innerWidth < 768 ? 'mobile' : 'desktop'
+      });
+      setLastEventId(eventId);
+      
       toast({
         title: "✓ " + intent.description,
         duration: 2000,
       });
       executeIntent(intent);
       onClose();
+      
+      // Show feedback toast after action
+      showFeedbackToast(eventId);
       
       // Optional follow-up suggestion
       setTimeout(() => {
@@ -121,6 +175,13 @@ export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
         });
       }, 1200);
     } else {
+      // Emit AI event for failed intent recognition
+      const eventId = await emitAIEvent('intent-not-found', {
+        userId: isAuthenticated ? 'authenticated' : 'anonymous',
+        route: location,
+        device: window.innerWidth < 768 ? 'mobile' : 'desktop'
+      });
+      
       toast({
         title: "Sorry, I didn't understand that",
         description: "Try rephrasing or use one of the suggestions below.",

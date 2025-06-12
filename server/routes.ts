@@ -251,6 +251,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // AI event tracking endpoints
+  app.post("/api/ai/events", async (req, res) => {
+    try {
+      const eventData = insertAiEventSchema.parse(req.body);
+      
+      const [event] = await db.insert(aiEvents).values({
+        userId: eventData.userId,
+        intentId: eventData.intentId,
+        context: eventData.context
+      }).returning({ id: aiEvents.id });
+
+      res.json({ eventId: event.id });
+    } catch (error) {
+      console.error('Error creating AI event:', error);
+      res.status(400).json({ error: 'Invalid event data' });
+    }
+  });
+
+  app.post("/api/ai/feedback", async (req, res) => {
+    try {
+      const feedbackData = insertAiFeedbackSchema.parse(req.body);
+      
+      await db.insert(aiFeedback).values({
+        eventId: feedbackData.eventId,
+        thumbsUp: feedbackData.thumbsUp,
+        comment: feedbackData.comment || ""
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error recording AI feedback:', error);
+      res.status(400).json({ error: 'Invalid feedback data' });
+    }
+  });
+
+  app.get("/api/ai/events", async (req, res) => {
+    try {
+      const events = await db
+        .select()
+        .from(aiEvents)
+        .orderBy(desc(aiEvents.timestamp))
+        .limit(100);
+
+      res.json(events);
+    } catch (error) {
+      console.error('Error fetching AI events:', error);
+      res.status(500).json({ error: 'Failed to fetch events' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
