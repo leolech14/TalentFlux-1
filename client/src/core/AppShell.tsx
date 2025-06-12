@@ -65,6 +65,12 @@ export function AppShell({ children }: AppShellProps) {
         onClose={() => setAssistantOpen(false)}
       />
 
+      {/* CV Assistant Overlay - specialized for CV creation */}
+      <CVAssistantOverlay
+        isOpen={cvAssistantOpen}
+        onClose={() => setCvAssistantOpen(false)}
+      />
+
       {/* Sidebar */}
       <Sidebar 
         isOpen={isSidebarOpen}

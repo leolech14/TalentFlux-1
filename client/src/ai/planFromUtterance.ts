@@ -14,6 +14,10 @@ const synonymMap: Record<string, string> = {
   'create resume': 'create-cv',
   'build cv': 'create-cv',
   'make cv': 'create-cv',
+  'cv assistant': 'cv-assistant',
+  'ai cv': 'cv-assistant',
+  'cv helper': 'cv-assistant',
+  'resume assistant': 'cv-assistant',
   'show candidates': 'view-candidates',
   'find candidates': 'view-candidates',
   'candidate list': 'view-candidates',
@@ -47,6 +51,7 @@ const intentKeywords: Record<string, string[]> = {
   'view-candidates': ['candidate', 'applicant', 'talent', 'people', 'resume', 'cv'],
   'upload-cv': ['upload', 'cv', 'resume', 'profile', 'experience'],
   'create-cv': ['create', 'build', 'make', 'generate', 'cv', 'resume'],
+  'cv-assistant': ['cv', 'assistant', 'ai', 'helper', 'voice', 'interview', 'questions'],
   'view-jobs': ['jobs', 'position', 'opening', 'opportunity', 'work'],
   'go-to-dashboard': ['dashboard', 'home', 'main', 'overview'],
   'view-applications': ['application', 'applied', 'status', 'progress'],
@@ -118,7 +123,7 @@ export function getSuggestedCommands(userType: 'candidate' | 'employer'): string
     ];
   } else {
     return [
-      "Create my CV",
+      "CV Assistant",
       "Find jobs", 
       "View my applications",
       "Open menu"
