@@ -54,7 +54,7 @@ interface CVData {
   }>;
 }
 
-export function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelProps) {
+export default function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<string[]>([]);
   const [currentInput, setCurrentInput] = useState("");

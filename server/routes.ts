@@ -9,6 +9,7 @@ import { db } from "./db";
 import { desc } from "drizzle-orm";
 import { z } from "zod";
 import multer from "multer";
+import repoRoutes from "./repoRoutes";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Multer configuration for audio uploads
@@ -435,6 +436,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('PDF generation error:', error);
       res.status(500).json({ error: 'Failed to generate PDF' });
     }
+  });
+
+  // Repo-aware AI assistant routes
+  app.post("/api/repo/query", async (req, res) => {
+    try {
+      const { query } = req.body;
+      
+      if (!query || typeof query !== 'string') {
+        return res.status(400).json({ error: 'Query is required' });
+      }
+
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(500).json({ error: 'OpenAI API key not configured' });
+      }
+
+      const response = await repoAgent.processQuery(query);
+      
+      res.json({ 
+        response,
+        type: 'repo-query'
+      });
+    } catch (error) {
+      console.error('Repo query error:', error);
+      res.status(500).json({ 
+        error: 'Failed to process repository query',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  // Check if repo agent is available
+  app.get("/api/repo/status", (req, res) => {
+    res.json({
+      available: !!process.env.OPENAI_API_KEY,
+      indexed: false
+    });
   });
 
   const httpServer = createServer(app);

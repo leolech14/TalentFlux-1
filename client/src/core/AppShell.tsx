@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
 import { MagicStarButton } from "../ui/MagicStarButton";
 import { AssistantOverlay } from "../ai/AssistantOverlay";
-import { CVAssistantOverlay } from "../features/cv/CVAssistantOverlay";
+import CVAssistantOverlay from "../features/cv/CVAssistantOverlay";
 import { DevHUD } from "../ai/DevHUD";
 import { Sidebar } from "../ui/Sidebar";
 import { ThemeToggle } from "../ui/ThemeToggle";
@@ -66,7 +66,7 @@ export function AppShell({ children }: AppShellProps) {
 
       {/* CV Assistant Overlay - specialized for CV creation */}
       <CVAssistantOverlay
-        isOpen={cvAssistantOpen}
+        open={cvAssistantOpen}
         onClose={() => setCvAssistantOpen(false)}
       />
 
