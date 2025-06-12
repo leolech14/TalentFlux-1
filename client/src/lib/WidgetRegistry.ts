@@ -3,6 +3,7 @@ import { CostPerHireWidget } from '@/features/widgets/CostPerHireWidget';
 import { HiringFunnelWidget } from '@/features/widgets/HiringFunnelWidget';
 import { JobMatchWidget } from '@/features/widgets/JobMatchWidget';
 import { ApplicationTrackingWidget } from '@/features/widgets/ApplicationTrackingWidget';
+import { CVWidget } from '@/features/candidate/CVWidget';
 
 export const widgetRegistry: WidgetModule[] = [
   // Employer Widgets
@@ -25,6 +26,15 @@ export const widgetRegistry: WidgetModule[] = [
     category: 'analytics',
   },
   // Candidate Widgets
+  {
+    id: 'cv-manager',
+    label: 'CV Manager',
+    userTypes: ['candidate'],
+    component: CVWidget,
+    intent: 'create-cv',
+    size: 'medium',
+    category: 'profile',
+  },
   {
     id: 'job-matches',
     label: 'Job Matches',
