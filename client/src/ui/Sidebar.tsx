@@ -1,162 +1,146 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Home, Users, BarChart3, Settings, FileText, Briefcase, Bot, Code } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link } from "wouter";
+import { X, Home, Users, FileText, BarChart3, Settings, HelpCircle, Briefcase, Calendar, FileSignature, TrendingUp, Award, MessageSquare } from "lucide-react";
+import { Button } from "../components/ui/button";
+import { useLocation } from "wouter";
+import { useAuth } from "../hooks/useAuth";
 import { useUserType } from "../hooks/useUserType";
-import { useUIState } from "../hooks/useUIState";
-import { registerSingleton, unregisterSingleton } from "../lib/SingletonRegistry";
-
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-interface NavItem {
-  icon: any;
-  label: string;
-  path?: string;
-  action?: () => void;
-}
-
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
+  const [location, setLocation] = useLocation();
+  const { user } = useAuth();
   const userType = useUserType();
-  const { setSidebarOpen } = useUIState();
 
+  const employerNavItems = [
+    { icon: Home, label: "Dashboard", path: "/dashboard" },
+    { icon: Briefcase, label: "Job Postings", path: "/jobs" },
+    { icon: Users, label: "Candidates", path: "/candidates" },
+    { icon: Calendar, label: "Interviews", path: "/interviews" },
+    { icon: FileSignature, label: "Contracts", path: "/contracts" },
+    { icon: BarChart3, label: "Analytics", path: "/analytics" },
+    { icon: TrendingUp, label: "Reports", path: "/reports" },
+    { icon: MessageSquare, label: "Messages", path: "/messages" },
+    { icon: Settings, label: "Settings", path: "/settings" },
+    { icon: HelpCircle, label: "Help & Support", path: "/help" },
+  ];
 
-  useEffect(() => {
-    setSidebarOpen(isOpen);
-    if (isOpen) {
-      registerSingleton("sidebar");
-      return () => unregisterSingleton("sidebar");
-    }
-  }, [isOpen, setSidebarOpen]);
+  const candidateNavItems = [
+    { icon: Home, label: "Dashboard", path: "/dashboard" },
+    { icon: FileText, label: "My CV", path: "/cv" },
+    { icon: Briefcase, label: "Applications", path: "/applications" },
+    { icon: Calendar, label: "Interviews", path: "/interviews" },
+    { icon: Award, label: "Certifications", path: "/certifications" },
+    { icon: MessageSquare, label: "Messages", path: "/messages" },
+    { icon: Settings, label: "Settings", path: "/settings" },
+    { icon: HelpCircle, label: "Help & Support", path: "/help" },
+  ];
 
-  const variants = {
-    hidden: { x: '100%' },
-    visible: { x: 0 },
+  const navItems = userType === "employer" ? employerNavItems : candidateNavItems;
+
+  const handleNavigation = (path: string) => {
+    setLocation(path);
+    onClose();
   };
 
-  const employerNavItems: NavItem[] = [
-    { icon: Home, label: "Dashboard", path: "/dashboard" },
-    { icon: Users, label: "Candidates", path: "/dashboard?panel=candidate-list" },
-    { icon: Briefcase, label: "Post Job", path: "/dashboard?panel=job-form" },
-    { icon: BarChart3, label: "Analytics", path: "/dashboard?panel=analytics" },
-    { icon: Settings, label: "Company", path: "/dashboard?panel=company-settings" },
-  ];
-
-  const candidateNavItems: NavItem[] = [
-    { icon: Home, label: "Dashboard", path: "/dashboard" },
-    { icon: Briefcase, label: "Find Jobs", path: "/dashboard?panel=job-list" },
-    { icon: FileText, label: "My Applications", path: "/dashboard?panel=applications" },
-    { icon: Bot, label: "AI CV Assistant", action: () => {
-      window.dispatchEvent(new CustomEvent('open-cv-assistant'));
-      onClose(); // Close sidebar when opening CV assistant
-    }},
-    { icon: Code, label: "Repo AI Assistant", action: () => {
-      window.dispatchEvent(new CustomEvent('open-repo-assistant'));
-      onClose(); // Close sidebar when opening repo assistant
-    }},
-    { icon: FileText, label: "Upload CV", path: "/dashboard?panel=cv-upload" },
-    { icon: Settings, label: "Profile", path: "/dashboard?panel=profile-settings" },
-  ];
-
-  const navItems = userType === 'employer' ? employerNavItems : candidateNavItems;
-
   return (
-    <>
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              onClick={onClose}
-            />
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+            onClick={onClose}
+          />
 
-            {/* Sidebar */}
-            <motion.aside
-              className="fixed top-0 right-0 bottom-0 w-80 bg-background/95 backdrop-blur-xl border-l border-border shadow-2xl z-50 flex flex-col"
-              variants={variants}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              transition={{ type: 'spring', stiffness: 260, damping: 30 }}
-              onClick={(e) => e.stopPropagation()}
-              data-singleton="sidebar"
-              data-testid="sidebar"
-              style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
-            >
+          {/* Sidebar */}
+          <motion.div
+            initial={{ x: -320 }}
+            animate={{ x: 0 }}
+            exit={{ x: -320 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed left-0 top-0 h-full w-80 z-50"
+          >
+            {/* Glass panel */}
+            <div className="h-full bg-white/10 dark:bg-black/20 backdrop-blur-xl border-r border-white/20 shadow-2xl">
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-b from-purple-500/10 via-transparent to-pink-500/10 pointer-events-none" />
+
               {/* Header */}
-              <div className="p-6 border-b border-border">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-tf-accent-gradient rounded-lg flex items-center justify-center shadow-tf-halo">
-                    <span className="text-tf-dark font-semibold text-sm">TF</span>
+              <div className="p-6 border-b border-white/10">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-semibold text-white">TalentFlux</h2>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onClose}
+                    className="text-white/70 hover:text-white hover:bg-white/10"
+                  >
+                    <X className="w-5 h-5" />
+                  </Button>
+                </div>
+                
+                {/* User info */}
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold">
+                    {user?.name?.charAt(0) || "U"}
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-foreground">TalentFlux</h2>
-                    <p className="text-sm text-muted-foreground capitalize">{userType} Portal</p>
+                    <p className="text-white font-medium">{user?.name || "User"}</p>
+                    <p className="text-white/60 text-sm capitalize">{userType}</p>
                   </div>
                 </div>
               </div>
 
               {/* Navigation */}
-              <nav className="p-4 space-y-2">
+              <nav className="p-4 space-y-1">
                 {navItems.map((item, index) => {
                   const Icon = item.icon;
-                  if ('action' in item && item.action) {
-                    // Handle action buttons (like CV Assistant)
-                    return (
-                      <motion.div
-                        key={`action-${index}`}
-                        className="flex items-center space-x-3 p-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all duration-200 cursor-pointer"
-                        whileHover={{ scale: 1.02, x: 4 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => {
-                          if (item.action) {
-                            item.action();
-                          }
-                          onClose();
-                        }}
-                      >
-                        <Icon className="w-5 h-5" />
-                        <span className="text-sm font-medium">{item.label}</span>
-                      </motion.div>
-                    );
-                  }
-                  // Handle navigation links
+                  const isActive = location === item.path;
+
                   return (
-                    <Link key={item.path || `nav-${index}`} href={item.path!}>
-                      <motion.div
-                        className="flex items-center space-x-3 p-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all duration-200 cursor-pointer"
-                        whileHover={{ scale: 1.02, x: 4 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={onClose}
-                      >
-                        <Icon className="w-5 h-5" />
-                        <span className="text-sm font-medium">{item.label}</span>
-                      </motion.div>
-                    </Link>
+                    <motion.button
+                      key={item.path}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      onClick={() => handleNavigation(item.path)}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                        isActive
+                          ? "bg-white/20 text-white shadow-lg"
+                          : "text-white/70 hover:bg-white/10 hover:text-white"
+                      }`}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span className="font-medium">{item.label}</span>
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeIndicator"
+                          className="absolute left-0 w-1 h-8 bg-gradient-to-b from-purple-500 to-pink-500 rounded-r-full"
+                        />
+                      )}
+                    </motion.button>
                   );
                 })}
               </nav>
 
               {/* Footer */}
-              <div className="absolute bottom-6 left-4 right-4">
-                <div className="p-4 bg-muted/30 rounded-lg border border-border/50">
-                  <p className="text-xs text-muted-foreground text-center">
-                    AI-native HR made human
-                  </p>
+              <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-white/10">
+                <div className="flex items-center justify-between text-white/60 text-sm">
+                  <span>© 2024 TalentFlux</span>
+                  <span>v1.0.0</span>
                 </div>
               </div>
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
-    </>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 }

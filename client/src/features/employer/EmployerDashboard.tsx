@@ -12,7 +12,7 @@ interface EmployerDashboardProps {
 }
 
 export function EmployerDashboard({ user }: EmployerDashboardProps) {
-  const { isDark, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const { setSidebarOpen } = useUIState();
 
   return (
@@ -41,15 +41,6 @@ export function EmployerDashboard({ user }: EmployerDashboardProps) {
             <div className="flex items-center space-x-3 text-muted-foreground">
               <span className="text-sm font-medium">{user.name}</span>
               <div className="flex items-center space-x-2">
-                <motion.button
-                  onClick={toggleTheme}
-                  className="w-8 h-8 rounded-full bg-muted hover:bg-tf-accent/20 text-muted-foreground hover:text-tf-accent transition-all duration-300 flex items-center justify-center"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-                >
-                  {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                </motion.button>
                 <ThemePreviewToggle />
               </div>
             </div>

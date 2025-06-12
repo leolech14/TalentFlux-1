@@ -297,6 +297,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // General AI query endpoint
+  app.post("/api/ai/query", async (req, res) => {
+    try {
+      const { query } = req.body;
+      
+      if (!query || typeof query !== 'string') {
+        return res.status(400).json({ error: 'Query is required' });
+      }
+
+      // For now, return a helpful response about TalentFlux
+      // In production, this would use OpenAI or another AI service
+      const response = `I'm here to help you with TalentFlux! This is an AI-powered HR platform that helps:
+
+• Employers: Post jobs, manage candidates, schedule interviews, and track hiring metrics
+• Candidates: Create AI-powered CVs, apply for jobs, and track applications
+
+Some things I can help with:
+- Navigating the platform
+- Understanding features
+- Best practices for hiring or job searching
+- Technical support
+
+What would you like to know more about?`;
+
+      res.json({ response });
+    } catch (error) {
+      console.error('AI query error:', error);
+      res.status(500).json({ error: 'Failed to process query' });
+    }
+  });
+
   app.get("/api/ai/events", async (req, res) => {
     try {
       const events = await db

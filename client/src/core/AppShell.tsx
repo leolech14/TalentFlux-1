@@ -5,7 +5,7 @@ import CVAssistantOverlay from "../features/cv/CVAssistantOverlay";
 import { RepoQueryPanel } from "../features/dev/RepoQueryPanel";
 import { DevHUD } from "../ai/DevHUD";
 import { Sidebar } from "../ui/Sidebar";
-import { ThemeToggle } from "../ui/ThemeToggle";
+import { ThemeSwitch } from "../components/ui/ThemeSwitch";
 import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useLayout } from "../hooks/useLayout";
@@ -94,7 +94,7 @@ export function AppShell({ children }: AppShellProps) {
       {/* Theme Toggle */}
       {showThemeToggle && (
         <div className="fixed top-4 right-4 z-50">
-          <ThemeToggle />
+          <ThemeSwitch />
         </div>
       )}
 

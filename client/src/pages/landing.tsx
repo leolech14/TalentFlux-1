@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "../hooks/useTheme";
 
 export default function Landing() {
-  const { isDark, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const [, navigate] = useLocation();
 
   return (

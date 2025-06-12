@@ -4,6 +4,14 @@ import { HiringFunnelWidget } from '@/features/widgets/HiringFunnelWidget';
 import { JobMatchWidget } from '@/features/widgets/JobMatchWidget';
 import { ApplicationTrackingWidget } from '@/features/widgets/ApplicationTrackingWidget';
 import { CVWidget } from '@/features/candidate/CVWidget';
+import { InterviewScheduleWidget } from '@/features/widgets/InterviewScheduleWidget';
+import { ApplicationMetricsWidget } from '@/features/widgets/ApplicationMetricsWidget';
+import { TalentPoolWidget } from '@/features/widgets/TalentPoolWidget';
+import { TeamPerformanceWidget } from '@/features/widgets/TeamPerformanceWidget';
+import { ComplianceWidget } from '@/features/widgets/ComplianceWidget';
+import { RecruitmentROIWidget } from '@/features/widgets/RecruitmentROIWidget';
+import { DiversityMetricsWidget } from '@/features/widgets/DiversityMetricsWidget';
+import { OnboardingProgressWidget } from '@/features/widgets/OnboardingProgressWidget';
 
 export const widgetRegistry: WidgetModule[] = [
   // Employer Widgets
@@ -24,6 +32,78 @@ export const widgetRegistry: WidgetModule[] = [
     intent: 'open-hiring-funnel',
     size: 'medium',
     category: 'analytics',
+  },
+  {
+    id: 'interview-schedule',
+    label: 'Interview Schedule',
+    userTypes: ['employer'],
+    component: InterviewScheduleWidget,
+    intent: 'open-interview-schedule',
+    size: 'medium',
+    category: 'scheduling',
+  },
+  {
+    id: 'application-metrics',
+    label: 'Application Metrics',
+    userTypes: ['employer'],
+    component: ApplicationMetricsWidget,
+    intent: 'open-application-metrics',
+    size: 'medium',
+    category: 'analytics',
+  },
+  {
+    id: 'talent-pool',
+    label: 'Talent Pool',
+    userTypes: ['employer'],
+    component: TalentPoolWidget,
+    intent: 'open-talent-pool',
+    size: 'medium',
+    category: 'candidates',
+  },
+  {
+    id: 'team-performance',
+    label: 'Team Performance',
+    userTypes: ['employer'],
+    component: TeamPerformanceWidget,
+    intent: 'open-team-performance',
+    size: 'medium',
+    category: 'analytics',
+  },
+  {
+    id: 'compliance',
+    label: 'Compliance Status',
+    userTypes: ['employer'],
+    component: ComplianceWidget,
+    intent: 'open-compliance',
+    size: 'small',
+    category: 'compliance',
+  },
+  {
+    id: 'recruitment-roi',
+    label: 'Recruitment ROI',
+    userTypes: ['employer'],
+    component: RecruitmentROIWidget,
+    intent: 'open-recruitment-roi',
+    size: 'medium',
+    category: 'analytics',
+  },
+  {
+    id: 'diversity-metrics',
+    label: 'Diversity Metrics',
+    userTypes: ['employer'],
+    component: DiversityMetricsWidget,
+    intent: 'open-diversity-metrics',
+    size: 'medium',
+    category: 'analytics',
+  },
+  {
+    id: 'onboarding-progress',
+    label: 'Onboarding Progress',
+    userTypes: ['employer'],
+    component: OnboardingProgressWidget,
+    intent: 'open-onboarding-progress',
+    size: 'medium',
+    category: 'onboarding',
   },
   // Candidate Widgets
   {

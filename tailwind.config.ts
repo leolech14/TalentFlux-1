@@ -120,5 +120,11 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/typography"),
+    function({ addVariant }) {
+      addVariant('alt', '[data-theme="alt"] &');
+    }
+  ],
 } satisfies Config;

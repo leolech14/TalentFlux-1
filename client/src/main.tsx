@@ -8,21 +8,34 @@ import "./lib/VisualGuard";
 // Initialize theme on app start
 const initializeTheme = () => {
   const savedTheme = localStorage.getItem('theme-storage');
-  let isDark = true; // Default to dark mode
+  let theme = 'dark'; // Default to dark mode
   
   if (savedTheme) {
     try {
       const parsed = JSON.parse(savedTheme);
-      isDark = parsed.state?.isDark ?? true;
+      // Handle migration from old isDark boolean to new theme string
+      if (parsed.state?.theme) {
+        theme = parsed.state.theme;
+      } else if (parsed.state?.isDark !== undefined) {
+        theme = parsed.state.isDark ? 'dark' : 'light';
+      }
     } catch (e) {
       console.warn('Failed to parse theme from localStorage');
     }
   }
   
-  if (isDark) {
+  // Apply theme classes
+  document.documentElement.classList.remove('dark', 'alt');
+  document.documentElement.removeAttribute('data-theme');
+  
+  if (theme === 'dark') {
     document.documentElement.classList.add('dark');
+    document.documentElement.setAttribute('data-theme', 'dark');
+  } else if (theme === 'alt') {
+    document.documentElement.classList.add('alt');
+    document.documentElement.setAttribute('data-theme', 'alt');
   } else {
-    document.documentElement.classList.remove('dark');
+    document.documentElement.setAttribute('data-theme', 'light');
   }
 };
 
