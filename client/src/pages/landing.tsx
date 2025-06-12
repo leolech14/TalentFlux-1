@@ -14,15 +14,15 @@ export default function Landing() {
       <header className="px-6 py-4">
         <nav className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-primary to-purple-600 rounded-lg flex items-center justify-center">
-              <Zap className="text-white w-4 h-4" />
+            <div className="w-8 h-8 bg-tf-accent-gradient rounded-lg flex items-center justify-center shadow-tf-halo">
+              <Zap className="text-tf-dark w-4 h-4" />
             </div>
-            <span className="text-xl font-semibold text-foreground">TalentFlux</span>
+            <span className="text-xl font-semibold text-tf-text dark:text-tf-text-dark">TalentFlux</span>
           </div>
           <div className="flex items-center space-x-4">
             <p className="text-sm text-muted-foreground">
               Already a member?{" "}
-              <Link href="/dashboard" className="text-primary hover:underline font-medium">
+              <Link href="/dashboard" className="text-tf-accent hover:text-tf-accent/80 hover:underline font-medium transition-colors">
                 Log in here
               </Link>
             </p>

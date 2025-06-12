@@ -26,18 +26,16 @@ export function MagicStarButton({ onClick, isOpen }: MagicStarButtonProps) {
 
   if (isOpen) return null;
 
-  // Dynamic styling based on theme
-  const fabGradient = isDark 
-    ? "from-purple-500 via-pink-500 to-red-500" 
-    : "from-yellow-400 via-orange-500 to-red-500";
+  // TalentFlux dynamic styling based on theme
+  const fabStyles = isDark 
+    ? "bg-tf-accent shadow-tf-halo" 
+    : "bg-tf-accent-gradient shadow-tf-halo";
   
-  const glowColor = isDark 
-    ? "rgba(168, 85, 247, 0.4)" 
-    : "rgba(251, 146, 60, 0.4)";
+  const glowColor = "rgba(255, 210, 0, 0.25)";
 
   const orbitColor = isDark 
-    ? "border-purple-400/30" 
-    : "border-orange-400/30";
+    ? "border-tf-accent/30" 
+    : "border-tf-accent/30";
 
   return (
     <motion.div
@@ -61,7 +59,7 @@ export function MagicStarButton({ onClick, isOpen }: MagicStarButtonProps) {
     >
       <motion.button
         onClick={onClick}
-        className={`w-14 h-14 bg-gradient-to-r ${fabGradient} rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center relative overflow-hidden`}
+        className={`w-14 h-14 ${fabStyles} rounded-full hover:shadow-xl transition-all duration-300 flex items-center justify-center relative overflow-hidden`}
         whileHover={{ rotate: 15 }}
         animate={{ 
           boxShadow: [
@@ -80,7 +78,7 @@ export function MagicStarButton({ onClick, isOpen }: MagicStarButtonProps) {
           height="20"
           viewBox="0 0 24 24"
           fill="currentColor"
-          className="text-white z-10"
+          className="text-tf-dark z-10"
           animate={{ rotate: [0, 5, -5, 0] }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         >

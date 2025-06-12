@@ -101,14 +101,9 @@ export function DashboardGrid() {
 
   // Initialize layout with available widgets
   useEffect(() => {
-    const widgetIds = availableWidgets.map(w => w.id);
-    setLayout(widgetIds);
-  }, [userType]);
-
-  // Persist layout in localStorage
-  useEffect(() => {
     const storageKey = `dashboard-layout-${userType}`;
     const savedLayout = localStorage.getItem(storageKey);
+    
     if (savedLayout) {
       try {
         const parsed = JSON.parse(savedLayout);
@@ -116,12 +111,19 @@ export function DashboardGrid() {
         const validWidgets = parsed.filter((id: string) => 
           availableWidgets.some(w => w.id === id)
         );
-        setLayout(validWidgets);
+        if (validWidgets.length > 0) {
+          setLayout(validWidgets);
+          return;
+        }
       } catch (e) {
         console.warn('Failed to parse saved layout:', e);
       }
     }
-  }, [availableWidgets, userType]);
+    
+    // Fallback to default layout
+    const widgetIds = availableWidgets.map(w => w.id);
+    setLayout(widgetIds);
+  }, [userType]); // Remove availableWidgets dependency to prevent re-renders
 
   const saveLayout = (newLayout: string[]) => {
     const storageKey = `dashboard-layout-${userType}`;
