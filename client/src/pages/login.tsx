@@ -60,26 +60,26 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-background flex items-center justify-center p-6 transition-colors duration-300">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="w-full max-w-md"
       >
-        <Card className="shadow-xl">
+        <Card className="shadow-xl border border-border">
           <CardContent className="p-8">
             <div className="text-center mb-8">
               <div className="w-12 h-12 bg-gradient-to-r from-primary to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
                 <Zap className="text-white w-6 h-6" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-900">Welcome back</h2>
-              <p className="text-slate-600 mt-2">Sign in to your TalentFlux account</p>
+              <h2 className="text-2xl font-bold text-foreground">Welcome back</h2>
+              <p className="text-muted-foreground mt-2">Sign in to your TalentFlux account</p>
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <Label htmlFor="email" className="text-slate-700">Email</Label>
+                <Label htmlFor="email" className="text-foreground">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -92,7 +92,7 @@ export default function Login() {
               </div>
               
               <div>
-                <Label htmlFor="password" className="text-slate-700">Password</Label>
+                <Label htmlFor="password" className="text-foreground">Password</Label>
                 <Input
                   id="password"
                   type="password"
@@ -114,10 +114,10 @@ export default function Login() {
               
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-200"></div>
+                  <div className="w-full border-t border-border"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-slate-500">Or continue with</span>
+                  <span className="px-2 bg-card text-muted-foreground">Or continue with</span>
                 </div>
               </div>
               
@@ -133,7 +133,7 @@ export default function Login() {
             </form>
             
             <div className="mt-6 text-center">
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-muted-foreground">
                 Don't have an account?{" "}
                 <Link href="/" className="text-primary hover:text-primary/80 font-medium">
                   Get started

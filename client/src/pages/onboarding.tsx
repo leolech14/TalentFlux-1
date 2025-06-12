@@ -59,33 +59,33 @@ export default function Onboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-background flex items-center justify-center p-6 transition-colors duration-300">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="w-full max-w-2xl"
       >
-        <Card className="shadow-xl">
+        <Card className="shadow-xl border border-border">
           <CardContent className="p-8">
             {/* Progress Header */}
             <div className="mb-8">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-bold">Let's get you set up</h2>
+                <h2 className="text-2xl font-bold text-foreground">Let's get you set up</h2>
                 <div className="flex space-x-2">
                   <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-slate-200 rounded-full"></div>
-                  <div className="w-2 h-2 bg-slate-200 rounded-full"></div>
+                  <div className="w-2 h-2 bg-muted rounded-full"></div>
+                  <div className="w-2 h-2 bg-muted rounded-full"></div>
                 </div>
               </div>
-              <div className="w-full bg-slate-200 rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div className="bg-gradient-to-r from-primary to-purple-600 h-2 rounded-full transition-all duration-300 w-1/3"></div>
               </div>
             </div>
             
             {/* User Type Selection */}
             <div>
-              <h3 className="text-xl font-semibold mb-6">What brings you to TalentFlux?</h3>
+              <h3 className="text-xl font-semibold mb-6 text-foreground">What brings you to TalentFlux?</h3>
               <div className="grid gap-4 mb-8">
                 <motion.label
                   className="group cursor-pointer"
@@ -102,20 +102,20 @@ export default function Onboarding() {
                   />
                   <div className={`p-6 border-2 rounded-xl transition-all ${
                     selectedUserType === "candidate"
-                      ? "border-primary bg-primary/5"
-                      : "border-slate-200 hover:border-primary/30"
+                      ? "border-primary bg-primary/5 dark:bg-primary/10"
+                      : "border-border hover:border-primary/30"
                   }`}>
                     <div className="flex items-center space-x-4">
                       <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
                         selectedUserType === "candidate"
                           ? "bg-primary text-white"
-                          : "bg-primary/10 text-primary"
+                          : "bg-primary/10 dark:bg-primary/20 text-primary"
                       }`}>
                         <User className="w-6 h-6" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-lg">I'm looking for a job</h4>
-                        <p className="text-slate-600">Find opportunities that match your skills</p>
+                        <h4 className="font-semibold text-lg text-foreground">I'm looking for a job</h4>
+                        <p className="text-muted-foreground">Find opportunities that match your skills</p>
                       </div>
                     </div>
                   </div>
@@ -136,20 +136,20 @@ export default function Onboarding() {
                   />
                   <div className={`p-6 border-2 rounded-xl transition-all ${
                     selectedUserType === "employer"
-                      ? "border-primary bg-primary/5"
-                      : "border-slate-200 hover:border-primary/30"
+                      ? "border-primary bg-primary/5 dark:bg-primary/10"
+                      : "border-border hover:border-primary/30"
                   }`}>
                     <div className="flex items-center space-x-4">
                       <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
                         selectedUserType === "employer"
                           ? "bg-primary text-white"
-                          : "bg-primary/10 text-primary"
+                          : "bg-primary/10 dark:bg-primary/20 text-primary"
                       }`}>
                         <Building className="w-6 h-6" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-lg">I'm hiring talent</h4>
-                        <p className="text-slate-600">Find the perfect candidates for your team</p>
+                        <h4 className="font-semibold text-lg text-foreground">I'm hiring talent</h4>
+                        <p className="text-muted-foreground">Find the perfect candidates for your team</p>
                       </div>
                     </div>
                   </div>

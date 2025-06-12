@@ -97,26 +97,26 @@ export default function Landing() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            <div className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 bg-cyan-400/10 rounded-xl flex items-center justify-center mb-4">
+            <div className="bg-card rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-border">
+              <div className="w-12 h-12 bg-cyan-400/10 dark:bg-cyan-400/20 rounded-xl flex items-center justify-center mb-4">
                 <Brain className="text-cyan-500 w-6 h-6" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">AI-Powered Matching</h3>
-              <p className="text-slate-600">Smart algorithms connect the right talent with the right opportunities.</p>
+              <h3 className="font-semibold text-lg mb-2 text-card-foreground">AI-Powered Matching</h3>
+              <p className="text-muted-foreground">Smart algorithms connect the right talent with the right opportunities.</p>
             </div>
-            <div className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
+            <div className="bg-card rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-border">
+              <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center mb-4">
                 <MessageCircle className="text-primary w-6 h-6" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">Conversational Interface</h3>
-              <p className="text-slate-600">Interact naturally with your AI assistant for all HR tasks.</p>
+              <h3 className="font-semibold text-lg mb-2 text-card-foreground">Conversational Interface</h3>
+              <p className="text-muted-foreground">Interact naturally with your AI assistant for all HR tasks.</p>
             </div>
-            <div className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center mb-4">
+            <div className="bg-card rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-border">
+              <div className="w-12 h-12 bg-green-500/10 dark:bg-green-500/20 rounded-xl flex items-center justify-center mb-4">
                 <TrendingUp className="text-green-500 w-6 h-6" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">Analytics & Insights</h3>
-              <p className="text-slate-600">Data-driven insights to optimize your hiring process.</p>
+              <h3 className="font-semibold text-lg mb-2 text-card-foreground">Analytics & Insights</h3>
+              <p className="text-muted-foreground">Data-driven insights to optimize your hiring process.</p>
             </div>
           </motion.div>
         </div>
