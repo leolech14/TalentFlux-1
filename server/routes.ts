@@ -356,27 +356,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/cv/download-pdf", async (req, res) => {
-    try {
-      const { cvData } = req.body;
-      
-      if (!cvData) {
-        return res.status(400).json({ error: 'CV data required' });
-      }
-
-      const pdfBuffer = await generateCVPDF(cvData);
-      
-      res
-        .setHeader('Content-Type', 'application/pdf')
-        .setHeader('Content-Disposition', `attachment; filename="TalentFlux_CV.pdf"`)
-        .send(pdfBuffer);
-      
-    } catch (error) {
-      console.error('PDF generation error:', error);
-      res.status(500).json({ error: 'Failed to generate PDF' });
-    }
-  });
-
   app.post("/api/transcribe", upload.single('audio'), async (req, res) => {
     try {
       if (!req.file) {
@@ -429,9 +408,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       await browser.close();
       
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="${cvData.personalInfo.fullName.replace(/\s+/g, '_')}_CV.pdf"`);
-      res.send(pdfBuffer);
+      res
+        .setHeader('Content-Type', 'application/pdf')
+        .setHeader(
+          'Content-Disposition',
+          `attachment; filename="${cvData.personalInfo.fullName.replace(/\s+/g, '_')}_CV.pdf"`
+        )
+        .send(pdfBuffer);
     } catch (error) {
       console.error('PDF generation error:', error);
       res.status(500).json({ error: 'Failed to generate PDF' });
