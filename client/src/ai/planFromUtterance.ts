@@ -30,7 +30,11 @@ const synonymMap: Record<string, string> = {
   'organization': 'manage-company',
   'search talent': 'find-talent',
   'find talent': 'find-talent',
-  'talent pool': 'find-talent'
+  'talent pool': 'find-talent',
+  'open menu': 'open-sidebar',
+  'show menu': 'open-sidebar',
+  'navigation': 'open-sidebar',
+  'open sidebar': 'open-sidebar'
 };
 
 // Keywords for intent classification
@@ -42,7 +46,8 @@ const intentKeywords: Record<string, string[]> = {
   'go-to-dashboard': ['dashboard', 'home', 'main', 'overview'],
   'view-applications': ['application', 'applied', 'status', 'progress'],
   'manage-company': ['company', 'organization', 'settings', 'profile'],
-  'find-talent': ['search', 'find', 'talent', 'recruit']
+  'find-talent': ['search', 'find', 'talent', 'recruit'],
+  'open-sidebar': ['menu', 'navigation', 'sidebar', 'nav']
 };
 
 export function planFromUtterance(
@@ -104,14 +109,14 @@ export function getSuggestedCommands(userType: 'candidate' | 'employer'): string
       "Post a new job",
       "View candidates", 
       "Find talent",
-      "Manage company settings"
+      "Open menu"
     ];
   } else {
     return [
       "Upload my CV",
       "Find jobs",
       "View my applications",
-      "Go to dashboard"
+      "Open menu"
     ];
   }
 }

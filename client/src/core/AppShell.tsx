@@ -18,10 +18,12 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [location] = useLocation();
   const { isAuthenticated } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const { allowFAB, allowAssistant, allowThemeToggle } = useLayout();
+  const { assistantOpen, sidebarOpen } = useUIState();
 
   // Show MagicStar only when layout context allows and user is authenticated
   const showMagicStar = allowFAB && isAuthenticated && location !== "/" && location !== "/login" && !location.startsWith("/onboarding");
@@ -37,6 +39,13 @@ export function AppShell({ children }: AppShellProps) {
     }
   }, [showThemeToggle]);
 
+  // Listen for sidebar open events from intent router
+  useEffect(() => {
+    const handleOpenSidebar = () => setIsSidebarOpen(true);
+    window.addEventListener('openSidebar', handleOpenSidebar);
+    return () => window.removeEventListener('openSidebar', handleOpenSidebar);
+  }, []);
+
   // Run integrity checks in development
   useEffect(() => {
     if (import.meta.env.DEV) {
@@ -46,7 +55,7 @@ export function AppShell({ children }: AppShellProps) {
       }, 100);
       return () => clearTimeout(timeoutId);
     }
-  }, [showMagicStar, showThemeToggle, isAssistantOpen]);
+  }, [showMagicStar, showThemeToggle, isAssistantOpen, isSidebarOpen]);
 
   return (
     <div className="min-h-screen relative bg-background text-foreground transition-colors duration-300">
@@ -65,6 +74,12 @@ export function AppShell({ children }: AppShellProps) {
           onClose={() => setIsAssistantOpen(false)}
         />
       )}
+
+      {/* Sidebar */}
+      <Sidebar 
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
       
       {/* Theme Toggle */}
       {showThemeToggle && (
