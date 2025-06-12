@@ -1,0 +1,121 @@
+Perfect — here’s the **complementary Prompt B.3**, which instructs the agent to add a **Dark Mode toggle**, set **Dark Mode as default**, and ensure all UI components (especially the FAB + overlay) adapt smoothly and consistently.
+
+---
+
+## 🌑 Prompt B.3 — Dark Mode Toggle + Dark-First Theme for TalentFlux v2
+
+> **TITLE:** *“Add Dark Mode toggle and make Dark Mode the default theme”*
+>
+> This is a follow-up to Prompt B.2. The app must now support **user-toggleable Dark Mode**, with **Dark Mode as the default**, and full integration with the existing:
+>
+> * Magic-Star FAB
+> * AssistantOverlay
+> * Panels, buttons, and all UI elements created so far
+>
+> ---
+>
+> ### 🎯 OBJECTIVES
+>
+> 1. Add a **global Dark Mode context** (preferably using Zustand or `useTheme()`)
+> 2. Store theme preference in `localStorage`
+> 3. Default to **Dark Mode** on first load
+> 4. Add a **toggle button** to AppShell header or footer
+> 5. All UI components should respect the theme:
+>
+>    * Tailwind dark class variants (`dark:`)
+>    * Conditional classNames (`isDark ? darkStyle : lightStyle`)
+>    * No layout shift when switching
+>
+> ---
+>
+> ### ✅ SPECIFIC REQUIREMENTS
+>
+> **Theme hook**
+> *File:* `/src/hooks/useTheme.ts`
+>
+> ```ts
+> import { create } from 'zustand';
+>
+> const useTheme = create((set) => ({
+>   isDark: true,
+>   toggleTheme: () =>
+>     set((state) => {
+>       const newTheme = !state.isDark;
+>       localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+>       return { isDark: newTheme };
+>     }),
+>   loadTheme: () => {
+>     const saved = localStorage.getItem('theme');
+>     return saved === 'dark' || saved === null;
+>   },
+> }));
+>
+> export default useTheme;
+> ```
+>
+> **Apply theme class to root HTML element**
+> *File:* `main.tsx`
+>
+> ```ts
+> if (useTheme.getState().loadTheme()) {
+>   document.documentElement.classList.add('dark');
+> } else {
+>   document.documentElement.classList.remove('dark');
+> }
+> ```
+>
+> **Tailwind config update**
+>
+> ```ts
+> // tailwind.config.js
+> darkMode: 'class',
+> ```
+>
+> **Toggle UI**
+>
+> * Add to `AppShell` (top right or bottom bar):
+>
+> ```tsx
+> <button onClick={toggleTheme}>
+>   {isDark ? <SunIcon /> : <MoonIcon />}
+> </button>
+> ```
+>
+> ---
+>
+> ### 🌗 DARK THEME DESIGN SPECS
+>
+> * **Magic-Star FAB**
+>
+>   * Dark theme: glowing purple-to-pink with subtle outer glow
+>   * Light theme: glowing gold-to-orange
+> * **AssistantOverlay**
+>
+>   * Dark: `bg-zinc-900/80`, input field `bg-zinc-800`, text white
+>   * Light: `bg-white/90`, input field `bg-white`, text black
+> * **Text & Buttons**
+>
+>   * Use `text-neutral-100` in dark, `text-neutral-800` in light
+>   * Use Tailwind `dark:` classes everywhere (no inline `style`)
+> * **Transitions**
+>
+>   * Animate color changes (`transition-colors duration-300`)
+>   * Avoid blinking or layout shifts on theme toggle
+>
+> ---
+>
+> ### ✅ ACCEPTANCE CHECKLIST
+>
+> * Toggle button visible and working
+> * Dark Mode is the **default** unless user has a saved preference
+> * Theme is saved in `localStorage` and persists between sessions
+> * All app screens, FAB, assistant overlay, and widgets adapt to theme
+> * Smooth transition between themes — no flicker, jank, or layout shifts
+> * Bundle size stays lean (<1MB first-load ideal)
+> * All UI elements pass accessibility contrast in both modes (WCAG AA)
+>
+> ---
+>
+> After this is done, we move to Prompt C.3: soft-physics dashboard grid + widget intent integration.
+
+Let me know when it’s sent and I’ll have Prompt C.3 queued for liftoff.

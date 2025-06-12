@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Star } from "lucide-react";
+import { useDock } from "../hooks/useDock";
+import { useTheme } from "../hooks/useTheme";
 
 interface MagicStarButtonProps {
   onClick: () => void;
@@ -8,31 +9,38 @@ interface MagicStarButtonProps {
 }
 
 export function MagicStarButton({ onClick, isOpen }: MagicStarButtonProps) {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    // Load saved position from localStorage
-    const saved = localStorage.getItem("magic-star-position");
-    if (saved) {
-      setPosition(JSON.parse(saved));
-    }
-  }, []);
+  const { position, updatePosition, constrainY } = useDock();
+  const { isDark } = useTheme();
 
   const handleDragEnd = (event: any, info: any) => {
-    const newY = Math.max(60, Math.min(window.innerHeight - 120, info.point.y));
-    const newPosition = { x: 0, y: newY - window.innerHeight / 2 };
-    setPosition(newPosition);
-    localStorage.setItem("magic-star-position", JSON.stringify(newPosition));
+    const constrainedY = constrainY(info.point.y - window.innerHeight / 2);
+    updatePosition({ y: constrainedY });
   };
 
   if (isOpen) return null;
 
+  // Dynamic styling based on theme
+  const fabGradient = isDark 
+    ? "from-purple-500 via-pink-500 to-red-500" 
+    : "from-yellow-400 via-orange-500 to-red-500";
+  
+  const glowColor = isDark 
+    ? "rgba(168, 85, 247, 0.4)" 
+    : "rgba(251, 146, 60, 0.4)";
+
+  const orbitColor = isDark 
+    ? "border-purple-400/30" 
+    : "border-orange-400/30";
+
   return (
     <motion.div
-      className="fixed right-6 z-50"
+      className="fixed right-6 z-50 cursor-grab active:cursor-grabbing"
       style={{ bottom: `calc(50vh + ${position.y}px)` }}
       drag="y"
-      dragConstraints={{ top: -window.innerHeight / 2 + 60, bottom: window.innerHeight / 2 - 120 }}
+      dragConstraints={{ 
+        top: -window.innerHeight / 2 + 60, 
+        bottom: window.innerHeight / 2 - 120 
+      }}
       dragElastic={0.1}
       onDragEnd={handleDragEnd}
       whileHover={{ scale: 1.05 }}
@@ -41,26 +49,52 @@ export function MagicStarButton({ onClick, isOpen }: MagicStarButtonProps) {
     >
       <motion.button
         onClick={onClick}
-        className="w-14 h-14 bg-gradient-to-r from-primary to-purple-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center magic-glow"
+        className={`w-14 h-14 bg-gradient-to-r ${fabGradient} rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center relative overflow-hidden`}
         whileHover={{ rotate: 15 }}
         animate={{ 
           boxShadow: [
-            "0 0 20px rgba(99, 102, 241, 0.3)",
-            "0 0 30px rgba(99, 102, 241, 0.6)",
-            "0 0 20px rgba(99, 102, 241, 0.3)"
+            `0 0 20px ${glowColor}`,
+            `0 0 30px ${glowColor}`,
+            `0 0 20px ${glowColor}`
           ]
         }}
         transition={{ 
-          boxShadow: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+          boxShadow: { duration: 4, repeat: Infinity, ease: "easeInOut" }
         }}
       >
-        <Sparkles className="text-white w-5 h-5 magic-star-pulse" />
+        {/* 4-point Star SVG */}
+        <motion.svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="text-white z-10"
+          animate={{ rotate: [0, 5, -5, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <path d="M12 2l2.09 6.26L20 10.27l-5.91 2.01L12 22l-2.09-9.72L4 10.27l5.91-2.01L12 2z" />
+        </motion.svg>
         
         {/* Orbit ring */}
         <motion.div 
-          className="absolute inset-0 rounded-full border-2 border-cyan-400/30"
+          className={`absolute inset-0 rounded-full border-2 ${orbitColor}`}
           animate={{ rotate: 360 }}
-          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        />
+        
+        {/* Inner pulse ring */}
+        <motion.div 
+          className={`absolute inset-2 rounded-full border ${orbitColor}`}
+          animate={{ 
+            scale: [1, 1.1, 1],
+            opacity: [0.5, 0.8, 0.5]
+          }}
+          transition={{ 
+            duration: 4, 
+            repeat: Infinity, 
+            ease: "easeInOut",
+            delay: 1
+          }}
         />
       </motion.button>
     </motion.div>

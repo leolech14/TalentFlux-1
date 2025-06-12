@@ -1,0 +1,133 @@
+Excellent — now that the **seeding prompt is in**, it's time to fire off **Prompt B.2**, which will:
+
+* Fully implement the **Magic-Star FAB**
+* Add **drag-to-dock**
+* Morph into the **AssistantOverlay** with AI-triggerable options
+* Handle dimming, blur, animations, mic input, and hot-panel shortcuts
+* Respect minimal GPU usage
+
+---
+
+## 🌟 Prompt B.2 — Magic-Star FAB + Assistant Overlay (Production-Ready)
+
+> **TITLE:** *“Create the Magic-Star FAB, animated assistant overlay, and AI entrypoint UX for TalentFlux v2”*
+>
+> This prompt extends the base scaffold of TalentFlux v2 with the **AI control surface** — the Magic-Star FAB and the animated, intelligent overlay.
+> Everything in this prompt must be designed to be:
+>
+> * **Lightweight** (GPU-cheap, mobile-friendly)
+> * **Smooth** (Framer-motion driven, 60fps)
+> * **Completely AI-integrated**
+>
+> ---
+>
+> ### 🎯 OBJECTIVES
+>
+> 1. Create a **Magic-Star FAB** (4-point star icon) that:
+>
+>    * Floats on the bottom-right corner
+>    * Can be **dragged vertically** and docked (persisted via `localStorage`)
+>    * Has soft glowing radial animation while idle
+>    * Morphs cleanly into the `AssistantOverlay`
+> 2. Implement the **AssistantOverlay**:
+>
+>    * Blurred background (`backdrop-blur-md`, `bg-black/30`)
+>    * Transitions from FAB into a centered card with:
+>
+>      * Text input
+>      * Microphone button
+>      * Send button
+>      * 3 **AI-suggested hot panels** (buttons)
+> 3. Dim and blur the rest of the app when overlay is open
+> 4. Add `layoutId="magicStar"` to enable Framer morphing
+> 5. Create state-safe transitions (overlay must animate back into FAB cleanly)
+>
+> ---
+>
+> ### 📁 FILES TO CREATE OR EDIT
+>
+> * `src/ui/MagicStarButton.tsx`
+> * `src/ui/MagicStarStyles.css`
+> * `src/ai/AssistantOverlay.tsx`
+> * `src/hooks/useDock.ts`
+> * `src/ai/intentRegistry.ts` *(register hot panels here)*
+> * Update `AppShell.tsx` to include `<MagicStarButton />` globally
+>
+> ---
+>
+> ### ✨ ANIMATION + STYLE SPECS
+>
+> **MagicStar FAB**
+>
+> * Circle: 56×56px
+> * Glow: `radial-gradient(from-purple-500 via-pink-500 to-red-500)`
+> * Idle animation: subtle pulse every 4s, orbit ring rotates every 20s
+> * Drag axis: vertical only (`@use-gesture/react`)
+> * Save final `y` in `localStorage` key: `"magicStarY"`
+>
+> **FAB Icon**
+>
+> * Use inline SVG with 4-point star + circular orbit ring (rotates slowly)
+> * On hover: scale 1.05, brighter shadow
+>
+> **AssistantOverlay**
+>
+> * Framer `motion.div` with `layoutId="magicStar"`
+> * Appears with morph animation from FAB
+> * Dim and blur everything else (`backdrop-blur-md` + `bg-black/30`)
+> * Contains:
+>
+>   * Input field (max width 400px)
+>   * Mic button (mic icon)
+>   * Send button (arrow icon)
+>   * 3 buttons under input → suggest `Dashboard`, `My Candidates`, `Business Panel`
+> * If user has history, suggest most used panels instead
+>
+> ---
+>
+> ### 🧠 AI INTEGRATION
+>
+> 1. **Intent-triggered overlay**:
+>
+> ```ts
+> intentRouter['open-assistant'] = {
+>   action: () => openAssistantOverlay(),
+> };
+> ```
+>
+> 2. **Register hot panels in intent registry**:
+>
+> ```ts
+> hotPanels = [
+>   { id: 'dashboard', label: 'Dashboard' },
+>   { id: 'candidates', label: 'My Candidates' },
+>   { id: 'business', label: 'Business Panel' },
+> ];
+> ```
+>
+> 3. **Trigger intent from voice or input** (stub `planFromUtterance()` for now)
+>
+> ---
+>
+> ### ✅ ACCEPTANCE CHECKLIST
+>
+> * Magic-Star FAB is draggable vertically and remembers position
+> * Idle animation looks soft, glowing, elegant
+> * Clicking FAB morphs into overlay (Framer Motion)
+> * Overlay dims and blurs rest of app
+> * Overlay contains:
+>
+>   * Text input
+>   * Mic button
+>   * Send button
+>   * 3 hot panels (clicking them closes overlay + routes correctly)
+> * Assistant can be triggered via intent or FAB
+> * All transitions are **smooth**, **GPU-cheap**, and feel like “living UI”
+> * Layout stable at 60fps across mobile and desktop
+> * `npm run dev`, `npm run lint`, and `npm run test` pass with no warnings
+>
+> ---
+>
+> Once complete, I’ll provide Prompt C.3: dashboard widget grid with soft physics and AI integration.
+
+Let me know when it’s sent, and I’ll give you the widget grid + physics prompt next.

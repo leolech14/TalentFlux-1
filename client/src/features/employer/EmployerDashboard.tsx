@@ -64,27 +64,27 @@ export function EmployerDashboard({ user }: EmployerDashboardProps) {
   return (
     <>
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 px-6 py-4">
+      <header className="bg-background border-b border-border px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <div className="w-8 h-8 bg-gradient-to-r from-primary to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-semibold text-sm">TF</span>
             </div>
-            <h1 className="text-xl font-semibold">Dashboard</h1>
+            <h1 className="text-xl font-semibold text-foreground">Dashboard</h1>
           </div>
           <div className="flex items-center space-x-4">
             <Button variant="ghost" size="sm">
               <Bell className="w-4 h-4" />
             </Button>
-            <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center">
-              <span className="text-sm font-medium">{user.name?.charAt(0) || "U"}</span>
+            <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
+              <span className="text-sm font-medium text-muted-foreground">{user.name?.charAt(0) || "U"}</span>
             </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="p-6">
+      <main className="p-6 bg-background">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
