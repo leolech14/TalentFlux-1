@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mic, MicOff, Send, Download, Eye, Sparkles, FileText, User } from "lucide-react";
-import { Button } from "../../ui/button";
-import { Textarea } from "../../ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
+import { Button } from "../../components/ui/button";
+import { Textarea } from "../../components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { useToast } from "../../hooks/use-toast";
 import { useAuth } from "../../hooks/useAuth";
 import { emitAIEvent } from "../../ai/emitAIEvent";
