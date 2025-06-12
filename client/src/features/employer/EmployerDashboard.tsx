@@ -175,9 +175,9 @@ export function EmployerDashboard({ user }: EmployerDashboardProps) {
                         <activity.icon className="w-4 h-4" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium">{activity.title}</p>
-                        <p className="text-xs text-slate-500">{activity.description}</p>
-                        <p className="text-xs text-slate-400 mt-1">{activity.time}</p>
+                        <p className="text-sm font-medium text-foreground">{activity.title}</p>
+                        <p className="text-xs text-muted-foreground">{activity.description}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{activity.time}</p>
                       </div>
                     </div>
                   ))}
