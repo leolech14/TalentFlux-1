@@ -35,7 +35,8 @@ export default function OnboardingCandidate() {
 
   const onSubmit = (data: CandidateFormData) => {
     console.log("Candidate registration:", data);
-    // Navigate to dashboard after successful registration
+    // In a real app, this would save to the database and set user context
+    // For now, just navigate to dashboard
     navigate("/dashboard");
   };
 

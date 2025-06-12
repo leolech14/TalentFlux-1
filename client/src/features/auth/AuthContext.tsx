@@ -10,7 +10,16 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>({
+    id: 1,
+    email: "demo@example.com",
+    password: "password",
+    name: "Demo User",
+    userType: "employer",
+    linkedinId: null,
+    profileData: null,
+    createdAt: new Date()
+  } as User);
 
   const isAuthenticated = !!user;
 
