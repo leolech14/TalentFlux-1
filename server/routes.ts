@@ -311,6 +311,221 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // CV Assistant endpoints
+  app.post("/api/cv/generate", async (req, res) => {
+    try {
+      const { responses, userId } = req.body;
+      
+      if (!responses || !Array.isArray(responses) || responses.length < 6) {
+        return res.status(400).json({ error: 'Invalid responses array' });
+      }
+
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(500).json({ error: 'OpenAI API key not configured' });
+      }
+
+      const cvData = await generateCVFromResponses(responses);
+      
+      // Save CV to database if user is authenticated
+      if (userId) {
+        try {
+          const insertCv = {
+            candidateId: userId,
+            name: cvData.personalInfo.fullName,
+            email: cvData.personalInfo.email,
+            phone: cvData.personalInfo.phone,
+            location: cvData.personalInfo.location,
+            summary: cvData.personalInfo.summary,
+            experience: cvData.experience.map(exp => JSON.stringify(exp)),
+            education: cvData.education.map(edu => JSON.stringify(edu)),
+            skills: [...cvData.skills.technical, ...cvData.skills.soft, ...cvData.skills.languages],
+            certifications: cvData.certifications.map(cert => JSON.stringify(cert)),
+            languages: cvData.skills.languages
+          };
+          
+          await storage.createCv(insertCv);
+        } catch (error) {
+          console.warn('Failed to save CV to database:', error);
+        }
+      }
+      
+      res.json(cvData);
+    } catch (error) {
+      console.error('CV generation error:', error);
+      res.status(500).json({ error: 'Failed to generate CV' });
+    }
+  });
+
+  app.post("/api/transcribe", upload.single('audio'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No audio file provided' });
+      }
+
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(500).json({ error: 'OpenAI API key not configured' });
+      }
+
+      const text = await transcribeAudio(req.file.buffer);
+      res.json({ text });
+    } catch (error) {
+      console.error('Transcription error:', error);
+      res.status(500).json({ error: 'Failed to transcribe audio' });
+    }
+  });
+
+  app.post("/api/cv/download", async (req, res) => {
+    try {
+      const { cvData } = req.body;
+      
+      if (!cvData) {
+        return res.status(400).json({ error: 'CV data is required' });
+      }
+
+      // Generate HTML for PDF conversion
+      const htmlContent = generateCVHTML(cvData);
+      
+      // Convert to PDF using Puppeteer
+      const puppeteer = require('puppeteer');
+      const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
+      
+      const page = await browser.newPage();
+      await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+      
+      const pdfBuffer = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '20mm',
+          right: '20mm',
+          bottom: '20mm',
+          left: '20mm'
+        }
+      });
+      
+      await browser.close();
+      
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${cvData.personalInfo.fullName.replace(/\s+/g, '_')}_CV.pdf"`);
+      res.send(pdfBuffer);
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      res.status(500).json({ error: 'Failed to generate PDF' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
+}
+
+function generateCVHTML(cvData: any): string {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.4; color: #333; margin: 0; padding: 20px; }
+    .header { text-align: center; border-bottom: 2px solid #2563eb; padding-bottom: 15px; margin-bottom: 20px; }
+    .name { font-size: 28px; font-weight: bold; margin-bottom: 8px; }
+    .contact { font-size: 12px; color: #666; }
+    .section { margin-bottom: 20px; }
+    .section-title { font-size: 16px; font-weight: bold; color: #2563eb; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px; margin-bottom: 10px; }
+    .experience-item, .education-item { margin-bottom: 15px; }
+    .job-title { font-weight: bold; font-size: 14px; }
+    .company { font-size: 12px; color: #666; margin-bottom: 5px; }
+    .description { font-size: 12px; margin-bottom: 5px; }
+    .achievements { font-size: 12px; margin-left: 15px; }
+    .achievements li { margin-bottom: 3px; }
+    .skills-section { display: flex; flex-wrap: wrap; gap: 15px; }
+    .skill-group { flex: 1; min-width: 200px; }
+    .skill-title { font-weight: bold; font-size: 12px; margin-bottom: 5px; }
+    .skill-list { font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="name">${cvData.personalInfo.fullName}</div>
+    <div class="contact">
+      ${cvData.personalInfo.email} • ${cvData.personalInfo.phone}<br>
+      ${cvData.personalInfo.location}
+      ${cvData.personalInfo.linkedinUrl ? `<br>${cvData.personalInfo.linkedinUrl}` : ''}
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Professional Summary</div>
+    <div class="description">${cvData.personalInfo.summary}</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Professional Experience</div>
+    ${cvData.experience.map((exp: any) => `
+      <div class="experience-item">
+        <div class="job-title">${exp.title}</div>
+        <div class="company">${exp.company} • ${exp.location} • ${exp.startDate} - ${exp.endDate}</div>
+        <div class="description">${exp.description}</div>
+        ${exp.achievements.length > 0 ? `
+          <ul class="achievements">
+            ${exp.achievements.map((achievement: string) => `<li>${achievement}</li>`).join('')}
+          </ul>
+        ` : ''}
+      </div>
+    `).join('')}
+  </div>
+
+  <div class="section">
+    <div class="section-title">Education</div>
+    ${cvData.education.map((edu: any) => `
+      <div class="education-item">
+        <div class="job-title">${edu.degree}</div>
+        <div class="company">${edu.institution} • ${edu.location} • ${edu.graduationDate}</div>
+        ${edu.gpa ? `<div class="description">GPA: ${edu.gpa}</div>` : ''}
+        ${edu.honors ? `<div class="description">${edu.honors}</div>` : ''}
+      </div>
+    `).join('')}
+  </div>
+
+  <div class="section">
+    <div class="section-title">Skills</div>
+    <div class="skills-section">
+      ${cvData.skills.technical.length > 0 ? `
+        <div class="skill-group">
+          <div class="skill-title">Technical Skills:</div>
+          <div class="skill-list">${cvData.skills.technical.join(', ')}</div>
+        </div>
+      ` : ''}
+      ${cvData.skills.soft.length > 0 ? `
+        <div class="skill-group">
+          <div class="skill-title">Soft Skills:</div>
+          <div class="skill-list">${cvData.skills.soft.join(', ')}</div>
+        </div>
+      ` : ''}
+      ${cvData.skills.languages.length > 0 ? `
+        <div class="skill-group">
+          <div class="skill-title">Languages:</div>
+          <div class="skill-list">${cvData.skills.languages.join(', ')}</div>
+        </div>
+      ` : ''}
+    </div>
+  </div>
+
+  ${cvData.certifications.length > 0 ? `
+    <div class="section">
+      <div class="section-title">Certifications</div>
+      ${cvData.certifications.map((cert: any) => `
+        <div class="education-item">
+          <div class="job-title">${cert.name}</div>
+          <div class="company">${cert.issuer} • ${cert.date}</div>
+          ${cert.credentialId ? `<div class="description">Credential ID: ${cert.credentialId}</div>` : ''}
+        </div>
+      `).join('')}
+    </div>
+  ` : ''}
+</body>
+</html>
+  `;
 }

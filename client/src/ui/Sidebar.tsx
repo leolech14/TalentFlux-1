@@ -1,19 +1,28 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Home, Users, BarChart3, Settings, FileText, Briefcase } from "lucide-react";
-import { useEffect } from "react";
+import { Home, Users, BarChart3, Settings, FileText, Briefcase, Bot } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { useUserType } from "../hooks/useUserType";
 import { useUIState } from "../hooks/useUIState";
 import { registerSingleton, unregisterSingleton } from "../lib/SingletonRegistry";
+import { CVAssistantPanel } from "../features/cv/CVAssistantPanel";
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+interface NavItem {
+  icon: any;
+  label: string;
+  path?: string;
+  action?: () => void;
+}
+
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const userType = useUserType();
   const { setSidebarOpen } = useUIState();
+  const [showCVAssistant, setShowCVAssistant] = useState(false);
 
   useEffect(() => {
     setSidebarOpen(isOpen);
@@ -28,7 +37,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     visible: { x: 0 },
   };
 
-  const employerNavItems = [
+  const employerNavItems: NavItem[] = [
     { icon: Home, label: "Dashboard", path: "/dashboard" },
     { icon: Users, label: "Candidates", path: "/dashboard?panel=candidate-list" },
     { icon: Briefcase, label: "Post Job", path: "/dashboard?panel=job-form" },
@@ -36,10 +45,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     { icon: Settings, label: "Company", path: "/dashboard?panel=company-settings" },
   ];
 
-  const candidateNavItems = [
+  const candidateNavItems: NavItem[] = [
     { icon: Home, label: "Dashboard", path: "/dashboard" },
     { icon: Briefcase, label: "Find Jobs", path: "/dashboard?panel=job-list" },
     { icon: FileText, label: "My Applications", path: "/dashboard?panel=applications" },
+    { icon: Bot, label: "AI CV Assistant", action: () => setShowCVAssistant(true) },
     { icon: FileText, label: "Upload CV", path: "/dashboard?panel=cv-upload" },
     { icon: Settings, label: "Profile", path: "/dashboard?panel=profile-settings" },
   ];
@@ -88,10 +98,29 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
             {/* Navigation */}
             <nav className="p-4 space-y-2">
-              {navItems.map((item) => {
+              {navItems.map((item, index) => {
                 const Icon = item.icon;
+                if ('action' in item && item.action) {
+                  // Handle action buttons (like CV Assistant)
+                  return (
+                    <motion.div
+                      key={`action-${index}`}
+                      className="flex items-center space-x-3 p-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all duration-200 cursor-pointer"
+                      whileHover={{ scale: 1.02, x: 4 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => {
+                        item.action!();
+                        onClose();
+                      }}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span className="text-sm font-medium">{item.label}</span>
+                    </motion.div>
+                  );
+                }
+                // Handle navigation links
                 return (
-                  <Link key={item.path} href={item.path}>
+                  <Link key={item.path || `nav-${index}`} href={item.path!}>
                     <motion.div
                       className="flex items-center space-x-3 p-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all duration-200 cursor-pointer"
                       whileHover={{ scale: 1.02, x: 4 }}
