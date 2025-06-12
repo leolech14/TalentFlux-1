@@ -1,0 +1,78 @@
+Below are the two promised prompts.
+
+---
+
+## 🔧 **Prompt X-1 — Build the Repo-Aware AI Assistant**
+
+> **TITLE:** *“Add a context-aware OpenAI helper that indexes the entire TalentFlux repo and answers code requests on demand.”*
+>
+> ### STEP-BY-STEP
+>
+> 1. **Create folder `/ai`**
+> 2. **Add `indexRepo.ts`** – walks the repo, slices files into ≤ 1 KB chunks, creates embeddings via `openai.embeddings.create`, and stores them in `ai/embeddings.db` (DuckDB).
+> 3. **Add `agent.ts`** – CLI script that:
+>
+>    * Re-indexes if `git diff --name-only` shows changes.
+>    * Accepts a user prompt (`process.argv.slice(2).join(' ')`).
+>    * Retrieves top-8 relevant chunks from `embeddings.db`.
+>    * Calls `openai.chat.completions.create` with:
+>
+>      ```text
+>      SYSTEM: “You are the omnipresent TalentFlux dev agent.  
+>      Follow mobile-first, AI-first, tap-to-dismiss, single-FAB rules.”  
+>      USER: “Repo context: … \n\nTask: …”
+>      ```
+>    * Prints a copy-ready git diff or answer.
+> 4. **Utility `vectorHelpers.ts`** – cosine-sim search over DuckDB embeddings.
+> 5. **Add script to `package.json`**
+>
+>    ```json
+>    "scripts": { "ai": "ts-node ai/agent.ts" }
+>    ```
+> 6. **Expose in `.replit`**
+>
+>    ```bash
+>    run = "npm run ai -- \"help\""
+>    ```
+> 7. **Env var** – add `OPENAI_API_KEY` to Replit Secrets.
+> 8. (Optional) **Watch mode** – in `agent.ts`, wrap `indexRepo()` with `chokidar.watch('.', …)` when `--watch` flag present.
+
+**ACCEPTANCE CHECKLIST**
+
+* `npm run ai "Where is the FAB clamp?"` returns file+line.
+* `npm run ai "Refactor theme toggle to Context API"` outputs a valid diff touching only necessary files.
+* Embeddings DB updates when files change.
+* No runtime errors in Replit console.
+
+---
+
+## 🤔 **Prompt X-2 — Why & How to Use the Repo-Aware Assistant**
+
+> **TITLE:** *“Explain the ongoing role of the context-aware AI helper during TalentFlux development.”*
+>
+> ### PURPOSE
+>
+> * **Zero-guess refactors** – describe a change; agent returns a patch.
+> * **Light-speed bug triage** – paste stack-trace; agent locates root cause.
+> * **Automated docs/tests** – *“Generate Playwright test for sidebar dismiss.”*
+> * **Style-guide gatekeeper** – ask *“Find inline colors violating palette tokens.”*
+> * **Knowledge onboarding** – new devs query *“How does tap-to-dismiss work?”* and get direct pointers.
+>
+> ### DAILY WORKFLOW
+>
+> 1. **Code → Save** – embeddings auto-refresh.
+> 2. **Run** `npm run ai "<task>"` in Replit shell.
+> 3. **Review diff** – copy-paste or pipe to `patch -p1`.
+> 4. **Commit** – CI runs visual / singleton / WCAG checks you added earlier.
+>
+> ### LONG-TERM BENEFITS
+>
+> * Keeps everyone aligned with **mobile-first + AI-first** rules.
+> * Reduces “blind errors” by suggesting fixes before build breaks.
+> * Acts as living documentation – the repo *talks back*.
+>
+> **Remember:** this agent is a **helper**, not an auto-merger. Always eyeball the diff it proposes.
+
+---
+
+Send Prompt X-1 to build the helper, then Prompt X-2 as an internal README or onboarding note.
