@@ -37,6 +37,39 @@ export class MemStorage implements IStorage {
     this.currentUserId = 1;
     this.currentJobId = 1;
     this.currentApplicationId = 1;
+    
+    // Seed with test users for easy testing
+    this.seedTestData();
+  }
+
+  private seedTestData() {
+    // Create test candidate user
+    const candidateUser: User = {
+      id: 1,
+      email: "candidate@test.com",
+      password: "password",
+      name: "Alex Candidate",
+      userType: "candidate",
+      linkedinId: null,
+      profileData: null,
+      createdAt: new Date(),
+    };
+    this.users.set(1, candidateUser);
+
+    // Create test employer user
+    const employerUser: User = {
+      id: 2,
+      email: "employer@test.com",
+      password: "password",
+      name: "Sarah Employer",
+      userType: "employer",
+      linkedinId: null,
+      profileData: null,
+      createdAt: new Date(),
+    };
+    this.users.set(2, employerUser);
+
+    this.currentUserId = 3; // Next user will get ID 3
   }
 
   // User operations
