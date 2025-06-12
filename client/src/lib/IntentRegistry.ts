@@ -42,6 +42,25 @@ class IntentRegistryClass {
 
 export const IntentRegistry = new IntentRegistryClass();
 
+// Register widget intents
+import { widgetRegistry } from './WidgetRegistry';
+
+widgetRegistry.forEach(widget => {
+  if (widget.intent) {
+    IntentRegistry.register({
+      id: widget.intent,
+      label: `Open ${widget.label}`,
+      keywords: [widget.label.toLowerCase(), 'show', 'open', 'display'],
+      userTypes: widget.userTypes,
+      action: (navigate) => {
+        // For now, just log - in a real app this would open the widget
+        console.log(`Opening widget: ${widget.label}`);
+        // Could implement widget focus/highlighting here
+      }
+    });
+  }
+});
+
 // Register default intents
 IntentRegistry.register({
   id: "open-dashboard",
