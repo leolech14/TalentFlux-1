@@ -20,26 +20,6 @@ export default function Landing() {
             <span className="text-xl font-semibold text-foreground">TalentFlux</span>
           </div>
           <div className="flex items-center space-x-4">
-            <motion.button
-              onClick={toggleTheme}
-              className={`w-10 h-10 rounded-full shadow-md transition-all duration-300 flex items-center justify-center ${
-                isDark 
-                  ? "bg-zinc-800 hover:bg-zinc-700 text-yellow-400 hover:text-yellow-300" 
-                  : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-700 border border-slate-200"
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <motion.div
-                key={isDark ? "moon" : "sun"}
-                initial={{ rotate: -180, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: 180, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-              </motion.div>
-            </motion.button>
             <p className="text-sm text-muted-foreground">
               Already a member?{" "}
               <Link href="/dashboard" className="text-primary hover:underline font-medium">

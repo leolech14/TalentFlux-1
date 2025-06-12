@@ -1,0 +1,187 @@
+Perfect. Below are the **two full prompts** to clean up all critical issues before installing the visual firewall.
+
+---
+
+## 🧼 Prompt F.1 — Clean Up FAB, Dark Toggle, and Context-Aware Layout
+
+> **TITLE:** *“Fix FAB visibility, prevent duplicate toggles, and apply layout rules by route”*
+>
+> This prompt eliminates UI duplication, ensures clean rendering logic for global UI elements (Magic Star FAB, AssistantOverlay, ThemeToggle), and fixes contextual rendering issues across routes and screen sizes.
+
+---
+
+### 🎯 OBJECTIVES
+
+| Issue                             | Fix                                                      |
+| --------------------------------- | -------------------------------------------------------- |
+| ❌ FAB appears on login/onboarding | ✅ Only show on routes **after onboarding**               |
+| ❌ Duplicate dark mode toggles     | ✅ Enforce **single ThemeToggle**, based on context       |
+| ❌ FAB/overlay showing over forms  | ✅ Add **route-aware layout logic** to suppress global UI |
+| ❌ Magic Star always visible       | ✅ Make it conditional per route (`allowFAB`)             |
+
+---
+
+### 🧠 ACTION STEPS
+
+1. **Create a layout guard context**
+
+> File: `/lib/LayoutContext.tsx`
+
+```ts
+import { createContext, useContext } from "react";
+
+export const LayoutContext = createContext({
+  allowFAB: true,
+  allowAssistant: true,
+  allowThemeToggle: true,
+});
+
+export const useLayout = () => useContext(LayoutContext);
+```
+
+2. **Wrap each layout or page with this context**
+
+```tsx
+<LayoutContext.Provider value={{
+  allowFAB: false,
+  allowAssistant: false,
+  allowThemeToggle: false
+}}>
+  <LoginPage />
+</LayoutContext.Provider>
+```
+
+> Apply this to:
+
+* `/login`
+* `/onboarding/*`
+
+3. **Update `AppShell.tsx` to use layout guards**
+
+```tsx
+const { allowFAB, allowThemeToggle } = useLayout();
+
+{allowFAB && <MagicStarButton />}
+{allowThemeToggle && <ThemeToggle />}
+```
+
+4. **Ensure ThemeToggle is not duplicated**
+
+* Remove any secondary toggle from lower components
+* Render it **once**, in `AppShell`, controlled by `LayoutContext`
+
+5. **Suppress FAB in `AssistantOverlay` view if already mounted**
+
+* FAB should hide when overlay is open or route is in `/onboarding`, `/login`
+
+---
+
+### ✅ ACCEPTANCE CHECKLIST
+
+* Only one dark/light toggle exists at any time
+* Magic Star FAB **never appears** during login or onboarding
+* FAB is **conditionally visible** only after user is onboarded
+* Overlay does not clash with any forms or modals
+* Layout context allows you to toggle global UI per route
+* All code is modular and readable — no `if (path === ...)` hacks
+
+---
+
+Now send this to fix all layout-level context/visibility issues.
+
+Next:
+
+---
+
+## 🧽 Prompt F.2 — Fix Mobile Layouts, Responsive Conflicts, and Contrast Issues
+
+> **TITLE:** *“Fix mobile responsiveness, overlapping UI, and enforce text contrast”*
+>
+> This prompt repairs all layout problems on mobile and enforces text readability across all screen sizes, color modes, and themes.
+
+---
+
+### 🎯 OBJECTIVES
+
+| Problem                                   | Solution                                                  |
+| ----------------------------------------- | --------------------------------------------------------- |
+| ❌ Mobile layouts stack, break, or overlap | ✅ Ensure `container`, `grid`, and padding are responsive  |
+| ❌ FAB and overlay overlap form elements   | ✅ Add bottom padding/margin & `safe-area-inset` awareness |
+| ❌ Fonts have poor contrast on dark/light  | ✅ Apply WCAG contrast levels via Tailwind or stylelint    |
+| ❌ Scrollable areas block buttons          | ✅ Add `scroll-aware` footer margin or floating zone       |
+
+---
+
+### 🧠 ACTION STEPS
+
+1. **Use Tailwind grid best practices**
+
+```tsx
+<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
+```
+
+2. **Add safe area for mobile FAB**
+
+```tsx
+<div className="pb-[env(safe-area-inset-bottom)]">
+```
+
+3. **Ensure FAB margin bottom (especially iOS)**
+
+```tsx
+className="bottom-6 md:bottom-8"
+```
+
+4. **Apply `container` classes with responsive max widths**
+
+* Use `max-w-screen-md`, `max-w-lg`, etc.
+
+5. **Fix font contrast** — globally override if needed:
+
+```tsx
+text-neutral-100 dark:text-white
+```
+
+Or utility:
+
+```ts
+function getTextColor(bg: string): string {
+  return isDark(bg) ? 'text-white' : 'text-black';
+}
+```
+
+6. **Run accessibility lint checks**
+   Install:
+
+```bash
+npm i eslint-plugin-jsx-a11y
+```
+
+In `.eslintrc`:
+
+```json
+"plugins": ["jsx-a11y"],
+"extends": ["plugin:jsx-a11y/recommended"]
+```
+
+7. **Use a mobile preview suite**
+
+* Add Playwright or Cypress scripts to simulate iPhone, Pixel, etc.
+* Add `.test.tsx` files to snapshot render layout under mobile breakpoints
+
+---
+
+### ✅ ACCEPTANCE CHECKLIST
+
+* Magic Star FAB does **not block inputs** on mobile
+* No more stacked/overlapping buttons or widgets
+* Every component fits inside screen at 375px width (iPhone SE)
+* Font contrast is readable and consistent in all themes
+* ESLint reports **0 accessibility issues**
+* FAB/assistant panel never covers input fields or gets pushed off screen
+
+---
+
+After these two prompts are executed, you're clear to ship **Prompt E: the Visual Contract Protection Layer**.
+
+Let me know when you're ready.

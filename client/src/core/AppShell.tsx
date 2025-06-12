@@ -4,6 +4,7 @@ import { AssistantOverlay } from "../ai/AssistantOverlay";
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../hooks/useTheme";
+import { useLayout } from "../lib/LayoutContext";
 import { Sun, Moon } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -16,28 +17,30 @@ export function AppShell({ children }: AppShellProps) {
   const [location] = useLocation();
   const { isAuthenticated } = useAuth();
   const { isDark, toggleTheme } = useTheme();
+  const { allowFAB, allowAssistant, allowThemeToggle } = useLayout();
 
-  // Don't show MagicStar on landing or login pages
-  const showMagicStar = isAuthenticated && location !== "/" && location !== "/login";
+  // Show MagicStar only when layout context allows and user is authenticated
+  const showMagicStar = allowFAB && isAuthenticated && location !== "/" && location !== "/login" && !location.startsWith("/onboarding");
   
-  // Show theme toggle on all authenticated pages
-  const showThemeToggle = isAuthenticated;
+  // Show theme toggle when layout context allows
+  const showThemeToggle = allowThemeToggle;
 
   return (
     <div className="min-h-screen relative bg-background text-foreground transition-colors duration-300">
       {children}
       
-      {showMagicStar && (
-        <>
-          <MagicStarButton 
-            onClick={() => setIsAssistantOpen(true)}
-            isOpen={isAssistantOpen}
-          />
-          <AssistantOverlay 
-            isOpen={isAssistantOpen}
-            onClose={() => setIsAssistantOpen(false)}
-          />
-        </>
+      {showMagicStar && !isAssistantOpen && (
+        <MagicStarButton 
+          onClick={() => setIsAssistantOpen(true)}
+          isOpen={isAssistantOpen}
+        />
+      )}
+
+      {allowAssistant && (
+        <AssistantOverlay 
+          isOpen={isAssistantOpen}
+          onClose={() => setIsAssistantOpen(false)}
+        />
       )}
       
       {/* Theme Toggle */}
