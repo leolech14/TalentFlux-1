@@ -1,10 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Mic, Send, Home, Users, BarChart3, Sparkles } from "lucide-react";
+import { Mic, Send, Sparkles } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
-import { useAuth } from "../hooks/useAuth";
-import { useTheme } from "../hooks/useTheme";
-import { IntentRouter } from "./IntentRouter";
+import { useToast } from "@/hooks/use-toast";
+import { useIntentRouter } from "./IntentRouter";
+import { useUserType } from "../hooks/useUserType";
+import { planFromUtterance, getSuggestedCommands } from "./planFromUtterance";
 import { registerSingleton, unregisterSingleton } from "../lib/SingletonRegistry";
 
 interface AssistantOverlayProps {
@@ -13,12 +13,11 @@ interface AssistantOverlayProps {
 }
 
 export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
-  const [message, setMessage] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [, setLocation] = useLocation();
-  const { user } = useAuth();
-  const { isDark } = useTheme();
-  const intentRouter = new IntentRouter();
+  const [input, setInput] = useState("");
+  const [thinking, setThinking] = useState(false);
+  const userType = useUserType();
+  const { toast } = useToast();
+  const { intentRouter, executeIntent } = useIntentRouter();
 
   useEffect(() => {
     if (isOpen) {
@@ -27,57 +26,65 @@ export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
     }
   }, [isOpen]);
 
-  const handleSendMessage = async () => {
-    if (message.trim()) {
-      setIsProcessing(true);
-      
-      // Simulate AI processing time
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      const intent = intentRouter.planFromUtterance(message, user?.userType || "candidate");
-      intentRouter.executeIntent(intent, setLocation);
-      setMessage("");
-      setIsProcessing(false);
+  const handleSubmit = async (text: string) => {
+    if (!text.trim()) return;
+    
+    setThinking(true);
+    
+    // Simulate brief processing time for better UX
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    const intent = planFromUtterance(text, intentRouter, userType);
+    setThinking(false);
+
+    if (intent) {
+      toast({
+        title: "✓ " + intent.description,
+        duration: 2000,
+      });
+      executeIntent(intent);
       onClose();
+      
+      // Optional follow-up suggestion
+      setTimeout(() => {
+        toast({
+          title: "Need more details?",
+          description: "Say \"yes\" or tap the star for help.",
+          duration: 3000,
+        });
+      }, 1200);
+    } else {
+      toast({
+        title: "Sorry, I didn't understand that",
+        description: "Try rephrasing or use one of the suggestions below.",
+        variant: "destructive",
+        duration: 3000,
+      });
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !isProcessing) {
-      handleSendMessage();
+    if (e.key === "Enter" && !thinking) {
+      handleSubmit(input);
+      setInput("");
     }
   };
 
-  const handleQuickAction = (intent: string) => {
-    intentRouter.executeIntent(intent, setLocation);
-    onClose();
+  const handleSendClick = () => {
+    handleSubmit(input);
+    setInput("");
   };
 
   const handleVoiceInput = () => {
-    // Voice input would be implemented here with Web Speech API
-    console.log("Voice input activated");
+    // Voice input implementation would go here
+    toast({
+      title: "Voice input",
+      description: "Voice recognition would be implemented here",
+      duration: 2000,
+    });
   };
 
-  // Dynamic styling based on theme
-  const backdropClass = "fixed inset-0 backdrop-blur-md transition-colors duration-300";
-  const backdropBg = isDark ? "bg-black/50" : "bg-black/30";
-  
-  const panelClass = `rounded-2xl shadow-2xl w-full max-w-md p-6 transition-colors duration-300 ${
-    isDark ? "bg-zinc-900/95 border border-zinc-700/50" : "bg-white/95 border border-white/20"
-  }`;
-  
-  const headerTextClass = isDark ? "text-zinc-100" : "text-slate-900";
-  const inputClass = `flex-1 outline-none text-sm transition-colors duration-300 ${
-    isDark 
-      ? "bg-transparent text-zinc-100 placeholder-zinc-400" 
-      : "bg-transparent text-slate-900 placeholder-slate-500"
-  }`;
-  
-  const inputContainerClass = `flex items-center space-x-2 p-3 rounded-xl focus-within:ring-2 focus-within:ring-primary/50 transition-all duration-300 ${
-    isDark 
-      ? "bg-zinc-800 border border-zinc-700" 
-      : "bg-white border border-slate-200"
-  }`;
+  const suggestions = getSuggestedCommands(userType);
 
   return (
     <AnimatePresence>
@@ -90,76 +97,64 @@ export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
           data-singleton="assistant-overlay"
           data-testid="assistant-overlay"
         >
-          {/* Backdrop */}
+          {/* Backdrop - tap to dismiss */}
           <motion.div 
-            className={`${backdropClass} ${backdropBg}`}
+            className="fixed inset-0 bg-black/40 backdrop-blur-md"
             onClick={onClose}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           />
           
-          {/* Assistant Panel */}
-          <div className="absolute inset-0 flex items-center justify-center p-6">
+          {/* Assistant Panel - Mobile-first design */}
+          <div className="fixed top-0 left-0 w-full h-full sm:relative sm:h-auto flex items-center justify-center p-0 sm:p-6">
             <motion.div
-              className={panelClass}
+              className="relative w-full h-full sm:h-auto sm:max-w-lg sm:rounded-xl bg-card border-0 sm:border border-border p-6 flex flex-col"
               layoutId="magic-star"
               initial={{ scale: 0.3, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.3, opacity: 0, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+              style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
             >
-              {/* Header */}
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center space-x-3">
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                  >
-                    <Sparkles className={`w-5 h-5 ${isDark ? "text-purple-400" : "text-primary"}`} />
-                  </motion.div>
-                  <h3 className={`text-lg font-semibold ${headerTextClass}`}>AI Assistant</h3>
-                </div>
-                <button 
-                  onClick={onClose}
-                  className={`transition-colors duration-200 ${
-                    isDark ? "text-zinc-400 hover:text-zinc-200" : "text-slate-400 hover:text-slate-600"
-                  }`}
+              {/* Header - no close button */}
+              <div className="flex items-center space-x-3 mb-6">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                 >
-                  <X className="w-5 h-5" />
-                </button>
+                  <Sparkles className="w-5 h-5 text-tf-accent" />
+                </motion.div>
+                <h3 className="text-lg font-semibold text-foreground">AI Assistant</h3>
               </div>
               
               {/* Chat Input */}
               <div className="mb-6">
-                <div className={inputContainerClass}>
+                <div className="flex items-center space-x-2 p-3 rounded-xl border border-border bg-background focus-within:ring-2 focus-within:ring-tf-accent/50">
                   <input
                     type="text"
-                    placeholder="Ask me anything..."
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Tell me what you want to do..."
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    className={inputClass}
+                    className="flex-1 outline-none text-sm bg-transparent text-foreground placeholder-muted-foreground"
                     autoFocus
-                    disabled={isProcessing}
+                    disabled={thinking}
                   />
                   <button 
                     onClick={handleVoiceInput}
-                    className={`transition-colors duration-200 ${
-                      isDark ? "text-zinc-400 hover:text-zinc-200" : "text-slate-400 hover:text-slate-600"
-                    }`}
-                    disabled={isProcessing}
+                    className="text-muted-foreground hover:text-tf-accent transition-colors"
+                    disabled={thinking}
                   >
                     <Mic className="w-4 h-4" />
                   </button>
                   <button 
-                    onClick={handleSendMessage}
-                    className={`transition-colors duration-200 ${
-                      isDark ? "text-purple-400 hover:text-purple-300" : "text-primary hover:text-primary/80"
-                    }`}
-                    disabled={isProcessing || !message.trim()}
+                    onClick={handleSendClick}
+                    className="text-tf-accent hover:text-tf-accent/80 transition-colors"
+                    disabled={thinking || !input.trim()}
                   >
-                    {isProcessing ? (
+                    {thinking ? (
                       <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
@@ -172,55 +167,28 @@ export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
                 </div>
               </div>
               
-              {/* Quick Actions */}
+              {/* Suggestions */}
               <div className="space-y-2">
-                <p className={`text-sm font-medium mb-3 ${
-                  isDark ? "text-zinc-300" : "text-slate-700"
-                }`}>Quick Actions</p>
+                <p className="text-sm font-medium mb-3 text-muted-foreground">
+                  Try saying:
+                </p>
                 
-                <motion.button
-                  onClick={() => handleQuickAction("open-dashboard")}
-                  className={`w-full text-left p-3 rounded-lg transition-all duration-200 flex items-center space-x-3 ${
-                    isDark 
-                      ? "hover:bg-zinc-800 text-zinc-200" 
-                      : "hover:bg-slate-50 text-slate-700"
-                  }`}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Home className={`w-5 h-5 ${isDark ? "text-purple-400" : "text-primary"}`} />
-                  <span className="text-sm">Go to Dashboard</span>
-                </motion.button>
-                
-                <motion.button
-                  onClick={() => handleQuickAction("open-candidates")}
-                  className={`w-full text-left p-3 rounded-lg transition-all duration-200 flex items-center space-x-3 ${
-                    isDark 
-                      ? "hover:bg-zinc-800 text-zinc-200" 
-                      : "hover:bg-slate-50 text-slate-700"
-                  }`}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Users className="text-cyan-500 w-5 h-5" />
-                  <span className="text-sm">
-                    {user?.userType === "employer" ? "My Candidates" : "Browse Jobs"}
-                  </span>
-                </motion.button>
-                
-                <motion.button
-                  onClick={() => handleQuickAction("business-panel")}
-                  className={`w-full text-left p-3 rounded-lg transition-all duration-200 flex items-center space-x-3 ${
-                    isDark 
-                      ? "hover:bg-zinc-800 text-zinc-200" 
-                      : "hover:bg-slate-50 text-slate-700"
-                  }`}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <BarChart3 className="text-purple-500 w-5 h-5" />
-                  <span className="text-sm">Analytics Panel</span>
-                </motion.button>
+                {suggestions.map((suggestion, index) => (
+                  <motion.button
+                    key={index}
+                    onClick={() => {
+                      setInput(suggestion);
+                      handleSubmit(suggestion);
+                    }}
+                    className="w-full text-left p-3 rounded-lg bg-muted/50 hover:bg-muted transition-all duration-200 flex items-center space-x-3"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <span className="text-sm text-muted-foreground">"</span>
+                    <span className="text-sm text-foreground">{suggestion}</span>
+                    <span className="text-sm text-muted-foreground">"</span>
+                  </motion.button>
+                ))}
               </div>
             </motion.div>
           </div>

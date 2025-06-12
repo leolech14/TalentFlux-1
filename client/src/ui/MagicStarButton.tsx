@@ -24,6 +24,7 @@ export function MagicStarButton({ onClick, isOpen }: MagicStarButtonProps) {
     updatePosition({ y: constrainedY });
   };
 
+  // Hide FAB when overlay is open, especially on mobile
   if (isOpen) return null;
 
   // TalentFlux dynamic styling based on theme

@@ -1,57 +1,79 @@
-export class IntentRouter {
-  planFromUtterance(utterance: string, userType: string): string {
-    const lowerUtterance = utterance.toLowerCase();
-    
-    // Dashboard navigation
-    if (lowerUtterance.includes("dashboard") || lowerUtterance.includes("home")) {
-      return "open-dashboard";
-    }
-    
-    // Candidates/Jobs
-    if (lowerUtterance.includes("candidate") || lowerUtterance.includes("job")) {
-      return userType === "employer" ? "open-candidates" : "browse-jobs";
-    }
-    
-    // Analytics
-    if (lowerUtterance.includes("analytics") || lowerUtterance.includes("stats") || lowerUtterance.includes("business")) {
-      return "business-panel";
-    }
-    
-    // Profile
-    if (lowerUtterance.includes("profile") || lowerUtterance.includes("settings")) {
-      return "open-profile";
-    }
-    
-    // Applications
-    if (lowerUtterance.includes("application")) {
-      return userType === "candidate" ? "my-applications" : "review-applications";
-    }
-    
-    // Default
-    return "open-dashboard";
-  }
+import { useLocation } from "wouter";
 
-  executeIntent(intent: string, navigate: (path: string) => void) {
-    switch (intent) {
-      case "open-dashboard":
-        navigate("/dashboard");
-        break;
-      case "open-candidates":
-      case "browse-jobs":
-        navigate("/dashboard"); // Will show appropriate view based on user type
-        break;
-      case "business-panel":
-        navigate("/dashboard"); // Would open analytics panel
-        break;
-      case "open-profile":
-        navigate("/profile");
-        break;
-      case "my-applications":
-      case "review-applications":
-        navigate("/applications");
-        break;
-      default:
-        navigate("/dashboard");
+export interface Intent {
+  id: string;
+  description: string;
+  action: (navigate: (path: string) => void) => void;
+  userTypes?: Array<'candidate' | 'employer'>;
+}
+
+export function useIntentRouter() {
+  const [, navigate] = useLocation();
+
+  const intentRouter: Record<string, Intent> = {
+    'open-job-form': {
+      id: 'open-job-form',
+      description: 'Opening job posting form',
+      action: () => navigate('/dashboard?panel=job-form'),
+      userTypes: ['employer']
+    },
+    'view-candidates': {
+      id: 'view-candidates',
+      description: 'Showing candidate list',
+      action: () => navigate('/dashboard?panel=candidate-list'),
+      userTypes: ['employer']
+    },
+    'upload-cv': {
+      id: 'upload-cv',
+      description: 'Opening CV upload form',
+      action: () => navigate('/dashboard?panel=cv-upload'),
+      userTypes: ['candidate']
+    },
+    'view-jobs': {
+      id: 'view-jobs',
+      description: 'Showing available jobs',
+      action: () => navigate('/dashboard?panel=job-list'),
+      userTypes: ['candidate']
+    },
+    'go-to-dashboard': {
+      id: 'go-to-dashboard',
+      description: 'Going to dashboard',
+      action: () => navigate('/dashboard'),
+      userTypes: ['candidate', 'employer']
+    },
+    'view-applications': {
+      id: 'view-applications',
+      description: 'Showing your applications',
+      action: () => navigate('/dashboard?panel=applications'),
+      userTypes: ['candidate']
+    },
+    'manage-company': {
+      id: 'manage-company',
+      description: 'Opening company settings',
+      action: () => navigate('/dashboard?panel=company-settings'),
+      userTypes: ['employer']
+    },
+    'find-talent': {
+      id: 'find-talent',
+      description: 'Searching for talent',
+      action: () => navigate('/dashboard?panel=talent-search'),
+      userTypes: ['employer']
     }
-  }
+  };
+
+  const executeIntent = (intent: Intent) => {
+    intent.action(navigate);
+  };
+
+  const getAvailableIntents = (userType: 'candidate' | 'employer') => {
+    return Object.values(intentRouter).filter(intent => 
+      !intent.userTypes || intent.userTypes.includes(userType)
+    );
+  };
+
+  return {
+    intentRouter,
+    executeIntent,
+    getAvailableIntents
+  };
 }

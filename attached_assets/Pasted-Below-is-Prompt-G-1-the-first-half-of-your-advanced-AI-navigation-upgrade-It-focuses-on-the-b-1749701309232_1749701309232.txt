@@ -1,0 +1,180 @@
+Below is **Prompt G-1** — the first half of your advanced AI-navigation upgrade.
+It focuses on the brains and interaction contract of the assistant:
+
+* natural-language intent extraction (voice + text)
+* action-first, concise replies with optional follow-up
+* tap-outside dismissal (no close icons)
+* seamless hand-off to role-based routes you created in Prompt F
+* full mobile-first behavior for the assistant panel
+
+When you’re happy with this part, say **“OK, next”** and I’ll drop **Prompt G-2** (FAB clamping, mobile-fullscreen overlay, sidebar integration, etc.).
+
+---
+
+## 🤖 **Prompt G-1 — Intent-Driven AI Navigation & Minimal Interaction UX**
+
+> **TITLE:** *“Implement natural-language intent engine, concise AI responses, and tap-to-dismiss overlay for mobile-first UX”*
+>
+> This prompt upgrades the Flux AI assistant from “chatbot” to **intent router**.
+> Users speak or type; the assistant parses intent, executes the correct action, and replies briefly.
+> The assistant panel must now close via backdrop-tap (no exit buttons), and mobile experience is prioritized.
+
+---
+
+### 🎯 **OBJECTIVES**
+
+| Area                         | Requirement                                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------------------- |
+| 🗣 **Intent Extraction**     | Convert free-form voice/text into a named intent (`open-job-form`, `view-candidates`, etc.) |
+| 🚀 **Action-First Reply**    | Assistant answers in ≤ 2 short sentences, then **executes** intent immediately              |
+| ❓ **Optional Follow-Up**     | After action, AI asks “Need more details?”; user can say “yes” for deeper explanation       |
+| 🖐 **Tap-Outside Dismissal** | Overlay and (future) sidebar close when backdrop is tapped; remove visible close buttons    |
+| 📱 **Mobile-First Panel**    | Overlay expands full-screen below 768 px; no overlapping FAB                                |
+
+---
+
+### 🧩 **STEP 1 — Intent Router Enhancement**
+
+**File:** `/ai/IntentRouter.ts`
+
+```ts
+export interface Intent {
+  id: string;
+  description: string;
+  action: () => void;
+}
+
+export const intentRouter: Record<string, Intent> = {
+  'open-job-form': {
+    id: 'open-job-form',
+    description: 'Open job posting form',
+    action: () => navigate('/dashboard/employer/job/new'),
+  },
+  'view-candidates': {
+    id: 'view-candidates',
+    description: 'Show candidate list',
+    action: () => showPanel('candidate-list'),
+  },
+  // …extend as needed
+};
+```
+
+---
+
+### 🧠 **STEP 2 — Natural-Language ⇒ Intent (`planFromUtterance.ts`)**
+
+```ts
+import { intentRouter } from './IntentRouter';
+import OpenAI from 'openai';
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_KEY });
+
+const synonymMap: Record<string, string> = {
+  'post a job': 'open-job-form',
+  'hire': 'open-job-form',
+  'upload cv': 'upload-cv',
+  'show candidates': 'view-candidates',
+  'go to dashboard': 'go-to-dashboard',
+};
+
+export async function planFromUtterance(raw: string) {
+  const text = raw.toLowerCase();
+
+  // keyword fallback
+  for (const phrase in synonymMap) {
+    if (text.includes(phrase)) return intentRouter[synonymMap[phrase]];
+  }
+
+  // LLM fallback (10-token function call)
+  const { choices } = await openai.chat.completions.create({
+    messages: [{ role: 'system', content: 'You output exactly one intent id.' },
+               { role: 'user', content: text }],
+    functions: [
+      { name: 'selectIntent', parameters: { type: 'object',
+          properties: { id: { type: 'string', enum: Object.keys(intentRouter) } } } }
+    ],
+    function_call: { name: 'selectIntent' },
+    max_tokens: 10,
+  });
+
+  const id = JSON.parse(choices[0]?.message?.function_call?.arguments || '{}').id;
+  return intentRouter[id] ?? null;
+}
+```
+
+---
+
+### 🎤 **STEP 3 — AssistantOverlay Logic**
+
+```tsx
+function AssistantOverlay({ isOpen, onClose }) {
+  const [input, setInput] = useState('');
+  const [thinking, setThinking] = useState(false);
+
+  async function handleSubmit(text: string) {
+    setThinking(true);
+    const intent = await planFromUtterance(text);
+    setThinking(false);
+
+    if (intent) {
+      toast.success(`✓ ${intent.description}`);
+      intent.action();
+      setTimeout(() =>
+        toast.info('Need more details? Say "yes" or tap the mic.'), 1200);
+      onClose(); // close panel
+    } else {
+      toast.error("Sorry, I didn't get that—try rephrasing.");
+    }
+  }
+
+  return (
+    <Backdrop onClick={onClose}>
+      <motion.div
+        className="relative w-full max-w-lg sm:rounded-xl bg-[var(--surface-high)] p-6"
+        onClick={(e) => e.stopPropagation()} // prevent backdrop close
+        layoutId="magicStar"
+      >
+        {/* input + mic + send UI here */}
+      </motion.div>
+    </Backdrop>
+  );
+}
+```
+
+`Backdrop` is a fixed div with `inset-0 bg-black/40 backdrop-blur-md`.
+
+---
+
+### 🖐 **STEP 4 — Remove Close Icons & Add Tap-Outside**
+
+* Delete any `<XIcon>` buttons in `AssistantOverlay.tsx` and future sidebar.
+* Ensure backdrop covers the whole screen, closes on `onClick`.
+
+---
+
+### 📱 **STEP 5 — Mobile-First Styling**
+
+```tsx
+<motion.div
+  className="fixed top-0 left-0 w-full h-full sm:relative sm:h-auto sm:max-w-lg"
+/>
+```
+
+* FAB hides (`display:none`) whenever overlay is open on mobile.
+* Add `safe-area-inset-bottom` padding to overlay input row for iOS.
+
+---
+
+### ✅ **ACCEPTANCE CHECKLIST**
+
+* User speaks/types “upload my CV” → AI opens candidate form directly.
+* Assistant reply: “Opening CV upload form. Need more details?”.
+* Tapping outside overlay closes it; no close icon visible.
+* Overlay is fullscreen on small screens; FAB hidden while overlay is open.
+* Role-based routing respected (`employer` vs `candidate`).
+* All flows run at 60 fps with no visual collisions.
+
+---
+
+**End of Prompt G-1.**
+Reply **“OK, next”** and I’ll deliver **Prompt G-2** (FAB clamping, sidebar dismissal, mobile safeguard tweaks, etc.).
