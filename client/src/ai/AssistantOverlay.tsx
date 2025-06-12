@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useIntentRouter } from "./IntentRouter";
 import { useUserType } from "../hooks/useUserType";
+import { useUIState } from "../hooks/useUIState";
 import { planFromUtterance, getSuggestedCommands } from "./planFromUtterance";
 import { registerSingleton, unregisterSingleton } from "../lib/SingletonRegistry";
 
@@ -18,13 +19,15 @@ export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
   const userType = useUserType();
   const { toast } = useToast();
   const { intentRouter, executeIntent } = useIntentRouter();
+  const { setAssistantOpen } = useUIState();
 
   useEffect(() => {
+    setAssistantOpen(isOpen);
     if (isOpen) {
       registerSingleton("assistant-overlay");
       return () => unregisterSingleton("assistant-overlay");
     }
-  }, [isOpen]);
+  }, [isOpen, setAssistantOpen]);
 
   const handleSubmit = async (text: string) => {
     if (!text.trim()) return;

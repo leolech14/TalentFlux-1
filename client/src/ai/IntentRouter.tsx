@@ -58,6 +58,15 @@ export function useIntentRouter() {
       description: 'Searching for talent',
       action: () => navigate('/dashboard?panel=talent-search'),
       userTypes: ['employer']
+    },
+    'open-sidebar': {
+      id: 'open-sidebar',
+      description: 'Opening navigation menu',
+      action: () => {
+        // This will be handled by AppShell
+        window.dispatchEvent(new CustomEvent('openSidebar'));
+      },
+      userTypes: ['candidate', 'employer']
     }
   };
 

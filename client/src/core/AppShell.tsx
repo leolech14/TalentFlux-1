@@ -1,10 +1,12 @@
 import { useLocation } from "wouter";
 import { MagicStarButton } from "../ui/MagicStarButton";
 import { AssistantOverlay } from "../ai/AssistantOverlay";
+import { Sidebar } from "../ui/Sidebar";
 import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../hooks/useTheme";
 import { useLayout } from "../lib/LayoutContext";
+import { useUIState } from "../hooks/useUIState";
 import { registerSingleton, unregisterSingleton } from "../lib/SingletonRegistry";
 import { checkSingletonIntegrity, checkLayoutIntegrity } from "../lib/DevAssert";
 import { Sun, Moon } from "lucide-react";

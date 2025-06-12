@@ -1,0 +1,159 @@
+Below is **Prompt G-2** — the second half of your AI-navigation upgrade.
+It finishes the mobile-first polish, hardens FAB behavior, and folds in the future sidebar with the same tap-to-dismiss paradigm.
+
+---
+
+## 📱 **Prompt G-2 — Mobile-First Overlay, FAB Clamping, and Sidebar Integration**
+
+> **TITLE:** *“Clamp Magic-Star FAB, make AssistantOverlay truly mobile-first, and add dismissible sidebar shell”*
+>
+> This prompt finalises touch ergonomics, prevents FAB runaway, and gives us a skeleton sidebar that obeys the same ‘tap-outside to close’ rule as the assistant panel.
+
+---
+
+### 🎯 **OBJECTIVES**
+
+| Area                                | Requirement                                                                            |
+| ----------------------------------- | -------------------------------------------------------------------------------------- |
+| ⭐ **FAB boundary clamp**            | Prevent Magic-Star from sliding under the header or off-screen; remember safe position |
+| 🔕 **FAB auto-hide**                | FAB disappears while AssistantOverlay **or** Sidebar is open                           |
+| 📲 **Fullscreen overlay on mobile** | Overlay fills viewport under 768 px, respects safe-area insets                         |
+| 📚 **Sidebar shell**                | Slide-in panel from right; opens via future intent or UI icon; tap-outside to close    |
+| 🔄 **Uniform dismissal**            | Both overlay & sidebar close on backdrop click; no X icons                             |
+| 🛠 **Safe-area padding**            | Account for iOS home-indicator on devices with notches                                 |
+
+---
+
+### 🧩 **STEP 1 — Clamp FAB Dragging Bounds**
+
+**File:** `/ui/MagicStarButton.tsx`
+
+```tsx
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(Math.max(value, min), max);
+
+const headerHeight = 56; // adjust if header size changes
+const footerSafe = 80;   // keep above bottom buttons + safe area
+
+const bind = useDrag(({ movement: [, my], last }) => {
+  const newY = clamp(my, headerHeight + 8, window.innerHeight - footerSafe);
+  setY(newY);
+  if (last) localStorage.setItem('magicStarY', String(newY));
+}, { initial: () => [0, y] });
+```
+
+---
+
+### 🧠 **STEP 2 — Hide FAB While Overlay/Sidebar Open**
+
+Add global Redux/Zustand slice or context:
+
+```ts
+const useUIState = create(set => ({
+  assistantOpen: false,
+  sidebarOpen: false,
+  setAssistantOpen: (v) => set({ assistantOpen: v }),
+  setSidebarOpen: (v) => set({ sidebarOpen: v }),
+}));
+```
+
+In `MagicStarButton`:
+
+```tsx
+const { assistantOpen, sidebarOpen } = useUIState();
+if (assistantOpen || sidebarOpen) return null;
+```
+
+In `AssistantOverlay` and `Sidebar` set the flags accordingly.
+
+---
+
+### 📲 **STEP 3 — Mobile-First AssistantOverlay**
+
+```tsx
+<motion.div
+  className="fixed top-0 left-0 w-full h-full sm:relative sm:h-auto sm:max-w-lg sm:rounded-xl"
+  style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+>
+  {/* content */}
+</motion.div>
+```
+
+---
+
+### 📚 **STEP 4 — Minimal Sidebar Shell**
+
+**File:** `/ui/Sidebar.tsx`
+
+```tsx
+export function Sidebar({ isOpen, onClose }) {
+  const variants = {
+    hidden: { x: '100%' },
+    visible: { x: 0 },
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            className="fixed inset-0 bg-black/40 backdrop-blur-md z-40"
+            onClick={onClose}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          />
+          <motion.aside
+            className="fixed right-0 top-0 h-full w-80 sm:w-96 bg-[var(--surface)] z-50 shadow-lg"
+            variants={variants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            transition={{ type: 'spring', stiffness: 260, damping: 30 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* placeholder nav list */}
+            <NavLink to="/dashboard">Dashboard</NavLink>
+            <NavLink to="/candidates">Candidates</NavLink>
+            <NavLink to="/business">Business Panel</NavLink>
+          </motion.aside>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+```
+
+Toggle via header icon **or** future AI intent:
+
+```ts
+intentRouter['open-sidebar'] = { action: () => setSidebarOpen(true) };
+```
+
+---
+
+### 🔄 **Uniform Dismissal Rule**
+
+* **AssistantOverlay** and **Sidebar** must:
+
+  * Stop event propagation on inner panel
+  * Close when **backdrop** tapped
+  * Toggle `assistantOpen` / `sidebarOpen` flags
+
+---
+
+### ✅ **ACCEPTANCE CHECKLIST**
+
+* Magic-Star never disappears under header/footer; can’t move off-screen
+* FAB hides whenever AssistantOverlay or Sidebar is open
+* AssistantOverlay fills screen below 768 px, respects safe-area padding
+* Sidebar slides in from right, tap-outside closes it
+* No visible X/close icons anywhere
+* All touch targets ≥ 44×44 px (mobile HIG)
+* No layout overlap on mobile; FAB clamp keeps it clear of header
+* All tests, lints, and snapshots pass
+
+---
+
+**Prompt G is now completely delivered (G-1 + G-2).**
+When you hit these acceptance marks, your mobile-first AI navigation layer is solid and future-proof.

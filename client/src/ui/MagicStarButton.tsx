@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import { useDock } from "../hooks/useDock";
 import { useTheme } from "../hooks/useTheme";
+import { useUIState } from "../hooks/useUIState";
 import { registerSingleton, unregisterSingleton } from "../lib/SingletonRegistry";
 import { useEffect } from "react";
 
@@ -11,21 +12,34 @@ interface MagicStarButtonProps {
 }
 
 export function MagicStarButton({ onClick, isOpen }: MagicStarButtonProps) {
-  const { position, updatePosition, constrainY } = useDock();
+  const { position, updatePosition } = useDock();
   const { isDark } = useTheme();
+  const { assistantOpen, sidebarOpen } = useUIState();
 
   useEffect(() => {
     registerSingleton("magic-star");
     return () => unregisterSingleton("magic-star");
   }, []);
 
+  // Clamping utility to keep FAB within safe bounds
+  const clamp = (value: number, min: number, max: number) =>
+    Math.min(Math.max(value, min), max);
+
+  const headerHeight = 80; // Account for header
+  const footerSafe = 120;  // Keep above bottom UI + safe area
+
   const handleDragEnd = (event: any, info: any) => {
-    const constrainedY = constrainY(info.point.y - window.innerHeight / 2);
-    updatePosition({ y: constrainedY });
+    const viewportY = info.point.y - window.innerHeight / 2;
+    const clampedY = clamp(
+      viewportY,
+      -window.innerHeight / 2 + headerHeight,
+      window.innerHeight / 2 - footerSafe
+    );
+    updatePosition({ y: clampedY });
   };
 
-  // Hide FAB when overlay is open, especially on mobile
-  if (isOpen) return null;
+  // Hide FAB when any overlay/sidebar is open
+  if (isOpen || assistantOpen || sidebarOpen) return null;
 
   // TalentFlux dynamic styling based on theme
   const fabStyles = isDark 
