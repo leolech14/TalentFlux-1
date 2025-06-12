@@ -191,13 +191,17 @@ export function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelProps) {
     setResponses(newResponses);
 
     // Emit AI event for CV assistant interaction
-    await emitAIEvent('cv-assistant-response', {
-      userId: user?.id?.toString() || 'anonymous',
-      route: '/cv-assistant',
-      device: window.innerWidth < 768 ? 'mobile' : 'desktop',
-      step: currentStep,
-      questionId: cvQuestions[currentStep].id
-    });
+    try {
+      await emitAIEvent('cv-assistant-response', {
+        userId: user?.id?.toString() || 'anonymous',
+        route: '/cv-assistant',
+        device: window.innerWidth < 768 ? 'mobile' : 'desktop',
+        userAgent: navigator.userAgent,
+        timestamp: new Date()
+      });
+    } catch (error) {
+      console.warn('Failed to emit AI event:', error);
+    }
 
     if (currentStep < cvQuestions.length - 1) {
       setCurrentStep(currentStep + 1);
