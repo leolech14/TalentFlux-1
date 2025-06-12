@@ -17,13 +17,12 @@ interface AppShellProps {
 }
 
 export function AppShell({ children }: AppShellProps) {
-  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [location] = useLocation();
   const { isAuthenticated } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const { allowFAB, allowAssistant, allowThemeToggle } = useLayout();
-  const { assistantOpen, sidebarOpen } = useUIState();
+  const { assistantOpen, sidebarOpen, setAssistantOpen } = useUIState();
 
   // Show MagicStar only when layout context allows and user is authenticated
   const showMagicStar = allowFAB && isAuthenticated && location !== "/" && location !== "/login" && !location.startsWith("/onboarding");
@@ -55,23 +54,23 @@ export function AppShell({ children }: AppShellProps) {
       }, 100);
       return () => clearTimeout(timeoutId);
     }
-  }, [showMagicStar, showThemeToggle, isAssistantOpen, isSidebarOpen]);
+  }, [showMagicStar, showThemeToggle, assistantOpen, isSidebarOpen]);
 
   return (
     <div className="min-h-screen relative bg-background text-foreground transition-colors duration-300">
       {children}
       
-      {showMagicStar && !isAssistantOpen && (
+      {showMagicStar && !assistantOpen && (
         <MagicStarButton 
-          onClick={() => setIsAssistantOpen(true)}
-          isOpen={isAssistantOpen}
+          onClick={() => setAssistantOpen(true)}
+          isOpen={assistantOpen}
         />
       )}
 
       {allowAssistant && (
         <AssistantOverlay 
-          isOpen={isAssistantOpen}
-          onClose={() => setIsAssistantOpen(false)}
+          isOpen={assistantOpen}
+          onClose={() => setAssistantOpen(false)}
         />
       )}
 
