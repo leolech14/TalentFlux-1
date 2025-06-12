@@ -3,6 +3,7 @@ import App from "./App";
 import "./index.css";
 import { FluxProvider } from "./core/FluxProvider";
 import { useTheme } from "./hooks/useTheme";
+import "./lib/VisualGuard";
 
 // Initialize theme on app start
 const initializeTheme = () => {
