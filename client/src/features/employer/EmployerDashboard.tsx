@@ -92,8 +92,8 @@ export function EmployerDashboard({ user }: EmployerDashboardProps) {
             transition={{ duration: 0.5 }}
             className="mb-8"
           >
-            <h2 className="text-2xl font-bold mb-2">Welcome back, {user.name}!</h2>
-            <p className="text-slate-600">Here's your hiring pipeline overview</p>
+            <h2 className="text-2xl font-bold mb-2 text-foreground">Welcome back, {user.name}!</h2>
+            <p className="text-muted-foreground">Here's your hiring pipeline overview</p>
           </motion.div>
 
           {/* Stats Cards */}
@@ -107,11 +107,11 @@ export function EmployerDashboard({ user }: EmployerDashboardProps) {
               <Card key={stat.label} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-slate-600 text-sm font-medium">{stat.label}</span>
+                    <span className="text-muted-foreground text-sm font-medium">{stat.label}</span>
                     <stat.icon className={`w-5 h-5 ${stat.color}`} />
                   </div>
-                  <div className="text-2xl font-bold text-slate-900">{stat.value}</div>
-                  <div className="text-sm text-green-600">{stat.change}</div>
+                  <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+                  <div className="text-sm text-green-600 dark:text-green-400">{stat.change}</div>
                 </CardContent>
               </Card>
             ))}
@@ -138,16 +138,16 @@ export function EmployerDashboard({ user }: EmployerDashboardProps) {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {activeJobs.map((job) => (
-                    <div key={job.id} className="border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
+                    <div key={job.id} className="border border-border rounded-lg p-4 hover:shadow-sm transition-shadow">
                       <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-semibold text-slate-900">{job.title}</h4>
-                        <Badge variant="secondary" className="text-green-600 bg-green-100">
+                        <h4 className="font-semibold text-foreground">{job.title}</h4>
+                        <Badge variant="secondary" className="text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30">
                           {job.status}
                         </Badge>
                       </div>
-                      <p className="text-slate-600 mb-2">{job.type} • {job.location}</p>
+                      <p className="text-muted-foreground mb-2">{job.type} • {job.location}</p>
                       <div className="flex items-center justify-between">
-                        <div className="flex space-x-4 text-sm text-slate-500">
+                        <div className="flex space-x-4 text-sm text-muted-foreground">
                           <span>{job.applications} applications</span>
                           <span>{job.shortlisted} shortlisted</span>
                           <span>Posted {job.daysPosted} days ago</span>

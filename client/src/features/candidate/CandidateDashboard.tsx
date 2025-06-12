@@ -82,8 +82,8 @@ export function CandidateDashboard({ user }: CandidateDashboardProps) {
             transition={{ duration: 0.5 }}
             className="mb-8"
           >
-            <h2 className="text-2xl font-bold mb-2">Welcome back, {user.name}!</h2>
-            <p className="text-slate-600">Here's what's happening with your job search</p>
+            <h2 className="text-2xl font-bold mb-2 text-foreground">Welcome back, {user.name}!</h2>
+            <p className="text-muted-foreground">Here's what's happening with your job search</p>
           </motion.div>
 
           {/* Stats Cards */}
@@ -97,11 +97,11 @@ export function CandidateDashboard({ user }: CandidateDashboardProps) {
               <Card key={stat.label} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-slate-600 text-sm font-medium">{stat.label}</span>
+                    <span className="text-muted-foreground text-sm font-medium">{stat.label}</span>
                     <stat.icon className={`w-5 h-5 ${stat.color}`} />
                   </div>
-                  <div className="text-2xl font-bold text-slate-900">{stat.value}</div>
-                  <div className="text-sm text-green-600">{stat.change}</div>
+                  <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+                  <div className="text-sm text-green-600 dark:text-green-400">{stat.change}</div>
                 </CardContent>
               </Card>
             ))}
@@ -125,15 +125,15 @@ export function CandidateDashboard({ user }: CandidateDashboardProps) {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {recommendedJobs.map((job) => (
-                    <div key={job.id} className="border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
+                    <div key={job.id} className="border border-border rounded-lg p-4 hover:shadow-sm transition-shadow">
                       <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-semibold text-slate-900">{job.title}</h4>
-                        <Badge variant="secondary" className="text-green-600 bg-green-100">
+                        <h4 className="font-semibold text-foreground">{job.title}</h4>
+                        <Badge variant="secondary" className="text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30">
                           {job.match} match
                         </Badge>
                       </div>
-                      <p className="text-slate-600 mb-2">{job.company} • {job.location}</p>
-                      <p className="text-sm text-slate-500 mb-3">{job.salary} • {job.type}</p>
+                      <p className="text-muted-foreground mb-2">{job.company} • {job.location}</p>
+                      <p className="text-sm text-muted-foreground mb-3">{job.salary} • {job.type}</p>
                       <div className="flex items-center justify-between">
                         <div className="flex space-x-2">
                           {job.skills.map((skill) => (
@@ -172,9 +172,9 @@ export function CandidateDashboard({ user }: CandidateDashboardProps) {
                         {task.completed ? (
                           <CheckCircle className="w-5 h-5 text-green-500" />
                         ) : (
-                          <Circle className="w-5 h-5 text-slate-300" />
+                          <Circle className="w-5 h-5 text-muted" />
                         )}
-                        <span className="text-sm text-slate-600">{task.task}</span>
+                        <span className="text-sm text-muted-foreground">{task.task}</span>
                       </div>
                     ))}
                   </div>
