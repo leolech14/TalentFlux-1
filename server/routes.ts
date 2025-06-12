@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { loginSchema, onboardingSchema, insertJobSchema, insertApplicationSchema, cvCreationSchema, insertAiEventSchema, insertAiFeedbackSchema, aiEvents, aiFeedback } from "@shared/schema";
 import { processCvFromNaturalLanguage } from "./cvProcessor";
 import { repoAgent } from "../ai/repoAgent";
-import { generateCVFromResponses, transcribeAudio } from "./cvGenerator";
+import { generateCVFromResponses, generateCVFromAIResponses, generateCVPDF, transcribeAudio } from "./cvGenerator";
 import { db } from "./db";
 import { desc } from "drizzle-orm";
 import { z } from "zod";
@@ -323,6 +323,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!process.env.OPENAI_API_KEY) {
         return res.status(500).json({ error: 'OpenAI API key not configured' });
       }
+
+      const cvData = await generateCVFromResponses(responses);
+      res.json(cvData);
+      
+    } catch (error) {
+      console.error('CV generation error:', error);
+      res.status(500).json({ error: 'Failed to generate CV' });
+    }
+  });
+
+  // AI CV Assistant endpoints
+  app.post("/api/cv/generate-ai", async (req, res) => {
+    try {
+      const { responses, userId } = req.body;
+      
+      if (!responses || !Array.isArray(responses) || responses.length < 2) {
+        return res.status(400).json({ error: 'Need at least 2 responses' });
+      }
+
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(500).json({ error: 'OpenAI API key not configured' });
+      }
+
+      const cvData = await generateCVFromAIResponses(responses);
+      res.json(cvData);
+      
+    } catch (error) {
+      console.error('AI CV generation error:', error);
+      res.status(500).json({ error: 'Failed to generate CV' });
+    }
+  });
+
+  app.post("/api/cv/download-pdf", async (req, res) => {
+    try {
+      const { cvData } = req.body;
+      
+      if (!cvData) {
+        return res.status(400).json({ error: 'CV data required' });
+      }
+
+      const pdfBuffer = await generateCVPDF(cvData);
+      
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${cvData.personalInfo.fullName.replace(/\s+/g, '_')}_CV.pdf"`);
+      res.send(pdfBuffer);
+      
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      res.status(500).json({ error: 'Failed to generate PDF' });
+    }
+  });
 
       const cvData = await generateCVFromResponses(responses);
       

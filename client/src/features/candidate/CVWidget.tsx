@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Sparkles, FileText, Upload, Wand2, User, Calendar } from "lucide-react";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import type { Cv } from "@shared/schema";
+import { useState } from "react";
+import { CVAIAssistantPanel } from "../cv/CVAIAssistantPanel";
 
 export function CVWidget() {
   const [, setLocation] = useLocation();
@@ -15,11 +17,11 @@ export function CVWidget() {
     queryKey: ['/api/cvs/candidate', profile.id],
     queryFn: async (): Promise<Cv | null> => {
       if (!profile.id) return null;
-      
+
       const response = await fetch(`/api/cvs/candidate/${profile.id}`);
       if (response.status === 404) return null;
       if (!response.ok) throw new Error('Failed to fetch CV');
-      
+
       return response.json();
     },
     enabled: !!profile.id
@@ -65,7 +67,7 @@ export function CVWidget() {
               )}
             </div>
           </div>
-          
+
           <div className="flex gap-2">
             <Button 
               variant="outline" 
@@ -106,7 +108,7 @@ export function CVWidget() {
         >
           <Sparkles className="w-6 h-6 text-flux-primary" />
         </motion.div>
-        
+
         <div className="space-y-2">
           <h3 className="font-semibold text-foreground">Create Your CV</h3>
           <p className="text-sm text-muted-foreground">
@@ -116,7 +118,7 @@ export function CVWidget() {
 
         <div className="flex flex-col gap-2 w-full">
           <Button
-            onClick={() => setLocation('/create-cv')}
+            onClick={() => setLocation('/dashboard?panel=cv-ai-assistant')}
             className="w-full bg-flux-primary hover:bg-flux-primary/90 group relative overflow-hidden"
           >
             <motion.div
@@ -132,7 +134,7 @@ export function CVWidget() {
             </motion.div>
             Create with AI
           </Button>
-          
+
           <Button
             variant="outline"
             size="sm"
