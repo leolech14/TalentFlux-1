@@ -1,10 +1,14 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env tsx
 
 import { execSync } from 'child_process';
 import { existsSync, readFileSync, readdirSync, statSync } from 'fs';
 import { join, extname } from 'path';
+import { fileURLToPath } from 'url';
 import OpenAI from 'openai';
 import * as chokidar from 'chokidar';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = __filename.replace('/agent.ts', '');
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -169,7 +173,7 @@ class TalentFluxAgent {
           
           processedChunks++;
           
-          if (processedChunks % 20 === 0) {
+          if (processedChunks % 50 === 0) {
             console.log(`📊 Processed ${processedChunks} chunks...`);
           }
         }
@@ -326,7 +330,10 @@ Examples:
   }
 }
 
-if (require.main === module) {
+// Check if this module is being run directly
+const isMainModule = import.meta.url === `file://${process.argv[1]}`;
+
+if (isMainModule) {
   main().catch(console.error);
 }
 
