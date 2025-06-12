@@ -116,9 +116,7 @@ export default function CreateCv() {
     );
   }
 
-  const handleCreateCV = () => {
-    window.dispatchEvent(new Event('open-cv-assistant'));
-  };
+  const handleCreateCV = () => window.dispatchEvent(new Event('open-cv-assistant'));
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
@@ -172,23 +170,35 @@ export default function CreateCv() {
                 </ul>
               </div>
 
-              <Button 
-                type="submit" 
-                disabled={createCvMutation.isPending}
-                className="w-full bg-flux-primary hover:bg-flux-primary/90"
-              >
-                {createCvMutation.isPending ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Creating Your CV...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Create My CV
-                  </>
-                )}
-              </Button>
+              <div className="flex gap-3">
+                <Button 
+                  type="button" 
+                  onClick={handleCreateCV}
+                  className="flex-1 bg-flux-primary hover:bg-flux-primary/90"
+                >
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Create CV with AI
+                </Button>
+                
+                <Button 
+                  type="submit" 
+                  disabled={createCvMutation.isPending}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  {createCvMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <FileText className="w-4 h-4 mr-2" />
+                      Create Manually
+                    </>
+                  )}
+                </Button>
+              </div>
             </form>
           </Form>
         </CardContent>
