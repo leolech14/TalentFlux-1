@@ -7,6 +7,8 @@ import { AppShell } from "./core/AppShell";
 import Landing from "./pages/landing";
 import Login from "./pages/login";
 import Onboarding from "./pages/onboarding";
+import OnboardingCandidate from "./pages/onboarding-candidate";
+import OnboardingEmployer from "./pages/onboarding-employer";
 import Dashboard from "./pages/dashboard";
 import NotFound from "@/pages/not-found";
 

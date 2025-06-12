@@ -1,0 +1,110 @@
+Perfect — you're laying down a clear, conversion-oriented, frictionless flow. Here's your next prompt to **fix the login logic, adjust onboarding routing**, and **introduce a guest-friendly path** (including social import options without auth gatekeeping).
+
+---
+
+## 🧭 Prompt D.2 — Fix Landing Flow, Split Role-Based Onboarding, and Allow Entry Without Account
+
+> **TITLE:** *“Correct user flow for candidate/employer selection and allow dashboard access without account”*
+>
+> This prompt updates the **entry path** of the TalentFlux app to match the intended onboarding logic, simplifies access for demo/testing, and separates **signup** from **login** clearly.
+>
+> ---
+>
+> ### 🎯 OBJECTIVES
+>
+> | Goal                                                 | Details                                             |
+> | ---------------------------------------------------- | --------------------------------------------------- |
+> | ✅ Add “Already a member?” CTA                        | On landing page — routes to login/dashboard         |
+> | ✅ Fix "I'm an Employer / Candidate" logic            | Should go to **role-based form**, NOT to login page |
+> | ✅ Allow temporary access to dashboard                | Login button skips auth for now (bypass or mock)    |
+> | ✅ Add OAuth-style import buttons                     | On both forms (Google, LinkedIn, Apple) — stubbed   |
+> | ✅ Differentiate employer vs candidate form structure | Render different fields per role                    |
+>
+> ---
+>
+> ### 🔁 NEW ROUTING FLOW
+>
+> * `/` (Landing page)
+>
+>   * CTA buttons:
+>
+>     * “I’m an Employer” → `/onboarding/employer`
+>     * “I’m a Candidate” → `/onboarding/candidate`
+>     * “Already a member? Log in” → `/dashboard` (bypass login for now)
+> * `/onboarding/employer`
+>
+>   * Company name
+>   * Role/title
+>   * Email
+>   * Optional: connect with LinkedIn / Google / Apple
+> * `/onboarding/candidate`
+>
+>   * Full name
+>   * Desired role
+>   * Email
+>   * CV upload
+>   * Optional: connect with LinkedIn / Google / Apple
+>
+> ---
+>
+> ### 📋 IMPLEMENTATION NOTES
+>
+> 1. **Landing Page**
+>
+> ```tsx
+> <Button onClick={() => navigate('/onboarding/employer')}>I’m an Employer</Button>
+> <Button onClick={() => navigate('/onboarding/candidate')}>I’m a Candidate</Button>
+> <p className="text-sm mt-4">
+>   Already a member? <Link to="/dashboard" className="underline">Log in here</Link>
+> </p>
+> ```
+>
+> 2. **Onboarding Router Setup**
+>
+> ```tsx
+> <Routes>
+>   <Route path="/onboarding/employer" element={<EmployerForm />} />
+>   <Route path="/onboarding/candidate" element={<CandidateForm />} />
+> </Routes>
+> ```
+>
+> 3. **Social Login Buttons** (Stubbed for now)
+>
+> ```tsx
+> <div className="flex gap-2 mt-4">
+>   <Button variant="outline">Continue with LinkedIn</Button>
+>   <Button variant="outline">Google</Button>
+>   <Button variant="outline">Apple</Button>
+> </div>
+> ```
+>
+> 4. **Bypass Login**
+>
+> * In `/login` or `/dashboard`, mock `useAuth()` to always return a test user:
+>
+> ```ts
+> const useAuth = () => ({ user: { id: 'demo', type: 'employer' } });
+> ```
+>
+> ---
+>
+> ### ✅ ACCEPTANCE CHECKLIST
+>
+> * Landing page clearly separates new users and returning users
+> * Clicking “I’m an Employer / Candidate” takes user to proper onboarding form
+> * Each form is role-specific (different fields per flow)
+> * OAuth buttons appear below both forms
+> * Login route bypasses auth for now and loads dashboard directly
+> * MagicStar + AssistantOverlay still mount in all routes post-onboarding
+> * Layout responsive on mobile + dark mode respected
+> * `npm run dev` works with no routing errors
+>
+> ---
+>
+> After this, we’re ready to:
+>
+> * Expand onboarding logic with progressive AI input
+> * Persist form data via Drizzle
+> * Register candidate/employer entries in DB with metadata for AI
+
+Let me know when it's sent — or if you'd like the forms scaffolded next with minimal field definitions.

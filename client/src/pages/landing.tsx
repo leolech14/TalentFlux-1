@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Brain, MessageCircle, TrendingUp, Zap, User, Building, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "../hooks/useTheme";
 
 export default function Landing() {
   const { isDark, toggleTheme } = useTheme();
+  const [, navigate] = useLocation();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 dark:from-background dark:via-background dark:to-primary/10 text-foreground transition-colors duration-300">
@@ -39,11 +40,12 @@ export default function Landing() {
                 {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </motion.div>
             </motion.button>
-            <Link href="/login">
-              <Button variant="ghost" className="text-primary hover:text-primary/80 font-medium">
-                Sign In
-              </Button>
-            </Link>
+            <p className="text-sm text-muted-foreground">
+              Already a member?{" "}
+              <Link href="/dashboard" className="text-primary hover:underline font-medium">
+                Log in here
+              </Link>
+            </p>
           </div>
         </nav>
       </header>
@@ -72,22 +74,23 @@ export default function Landing() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <Link href="/login">
-              <Button size="lg" className="group bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 px-8 py-4">
-                <User className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                <span>Join as a Candidate</span>
-              </Button>
-            </Link>
-            <Link href="/login">
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="group border-2 border-primary/20 hover:bg-primary/5 hover:border-primary/30 transition-all duration-200 flex items-center space-x-2 px-8 py-4"
-              >
-                <Building className="w-5 h-5 group-hover:scale-110 transition-transform text-primary" />
-                <span>Join as an Employer</span>
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              className="group bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 px-8 py-4"
+              onClick={() => navigate('/onboarding/candidate')}
+            >
+              <User className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              <span>I'm a Candidate</span>
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="group border-2 border-primary/20 hover:bg-primary/5 hover:border-primary/30 transition-all duration-200 flex items-center space-x-2 px-8 py-4"
+              onClick={() => navigate('/onboarding/employer')}
+            >
+              <Building className="w-5 h-5 group-hover:scale-110 transition-transform text-primary" />
+              <span>I'm an Employer</span>
+            </Button>
           </motion.div>
           
           {/* Features Preview */}
