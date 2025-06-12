@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Zap, Linkedin } from "lucide-react";
+import { Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { api } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
+import { SocialLogin } from "@/features/auth/SocialLogin";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -51,12 +52,8 @@ export default function Login() {
     }
   };
 
-  const handleLinkedInLogin = () => {
-    // LinkedIn OAuth would be implemented here
-    toast({
-      title: "LinkedIn Integration",
-      description: "LinkedIn login integration coming soon!",
-    });
+  const handleSocialSuccess = () => {
+    setLocation("/dashboard");
   };
 
   return (
@@ -111,26 +108,11 @@ export default function Login() {
               >
                 {isLoading ? "Signing in..." : "Sign In"}
               </Button>
-              
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-border"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-card text-muted-foreground">Or continue with</span>
-                </div>
-              </div>
-              
-              <Button 
-                type="button"
-                onClick={handleLinkedInLogin}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center space-x-2"
-                disabled={isLoading}
-              >
-                <Linkedin className="w-4 h-4" />
-                <span>Continue with LinkedIn</span>
-              </Button>
             </form>
+            
+            <div className="mt-6">
+              <SocialLogin onSuccess={handleSocialSuccess} />
+            </div>
             
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">

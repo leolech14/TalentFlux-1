@@ -123,7 +123,7 @@ export function DashboardGrid() {
     // Fallback to default layout
     const widgetIds = availableWidgets.map(w => w.id);
     setLayout(widgetIds);
-  }, [userType]); // Remove availableWidgets dependency to prevent re-renders
+  }, [userType, availableWidgets.length]); // Fixed dependency array
 
   const saveLayout = (newLayout: string[]) => {
     const storageKey = `dashboard-layout-${userType}`;

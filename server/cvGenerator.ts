@@ -515,7 +515,7 @@ export async function generateCVPDF(cvData: CVData): Promise<Buffer> {
       }
     });
 
-    return pdfBuffer;
+    return Buffer.from(pdfBuffer);
     
   } catch (error) {
     console.error('PDF generation error:', error);

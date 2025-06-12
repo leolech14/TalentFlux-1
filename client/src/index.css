@@ -1,156 +1,200 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
-:root[data-theme='light'] {
-  /* TalentFlux brand colors - Light mode */
-  --tf-primary: hsl(245, 246, 247);
-  --tf-dark: hsl(14, 15, 17);
-  --tf-text: hsl(34, 36, 40);
-  --tf-text-dark: hsl(241, 242, 244);
-  --tf-accent: hsl(255, 210, 0);
-  --tf-success: hsl(40, 195, 134);
-  --tf-warning: hsl(255, 181, 71);
-  --tf-error: hsl(255, 92, 92);
-  --tf-stroke: hsl(208, 209, 211);
+@layer base {
+  :root {
+    /* Enhanced Light Mode Colors */
+    --background: 0 0% 98%; /* Softer white */
+    --foreground: 222.2 84% 4.9%;
+
+    /* Card variations for depth */
+    --card: 0 0% 100%;
+    --card-hover: 0 0% 97%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    /* Muted colors with better contrast */
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    /* Popover with subtle shadow */
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    /* Primary with purple gradient */
+    --primary: 262.1 83.3% 57.8%;
+    --primary-foreground: 210 40% 98%;
+
+    /* Secondary with better contrast */
+    --secondary: 210 40% 94%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    /* Accent colors */
+    --accent: 210 40% 92%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    /* Status colors */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    /* Borders and inputs */
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 89%;
+    --ring: 262.1 83.3% 57.8%;
+
+    --radius: 0.5rem;
+
+    /* Additional shades for depth */
+    --surface-1: 0 0% 96%;
+    --surface-2: 0 0% 94%;
+    --surface-3: 0 0% 92%;
+  }
   
-  /* Shadcn system colors - Light mode */
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(20, 14.3%, 4.1%);
-  --muted: hsl(60, 4.8%, 95.9%);
-  --muted-foreground: hsl(25, 5.3%, 44.7%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(20, 14.3%, 4.1%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(20, 14.3%, 4.1%);
-  --border: hsl(20, 5.9%, 90%);
-  --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(239, 84%, 67%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(60, 4.8%, 95.9%);
-  --secondary-foreground: hsl(24, 9.8%, 10%);
-  --accent: hsl(60, 4.8%, 95.9%);
-  --accent-foreground: hsl(24, 9.8%, 10%);
-  --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(239, 84%, 67%);
-  --radius: 0.5rem;
-  --surface: hsl(60, 4.8%, 95.9%);
+  .dark {
+    /* Enhanced Dark Mode Colors */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    
+    /* Card variations for depth */
+    --card: 222.2 84% 7%;
+    --card-hover: 222.2 84% 9%;
+    --card-foreground: 210 40% 98%;
+    
+    /* Better muted colors */
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    
+    /* Popover with depth */
+    --popover: 222.2 84% 6%;
+    --popover-foreground: 210 40% 98%;
+    
+    /* Primary purple */
+    --primary: 263.4 70% 50.4%;
+    --primary-foreground: 210 40% 98%;
+    
+    /* Secondary with contrast */
+    --secondary: 217.2 32.6% 15%;
+    --secondary-foreground: 210 40% 98%;
+    
+    /* Accent colors */
+    --accent: 217.2 32.6% 20%;
+    --accent-foreground: 210 40% 98%;
+    
+    /* Status colors */
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 210 40% 98%;
+    
+    /* Borders and inputs */
+    --border: 217.2 32.6% 20%;
+    --input: 217.2 32.6% 18%;
+    --ring: 263.4 70% 50.4%;
+    
+    /* Additional shades for depth */
+    --surface-1: 222.2 84% 8%;
+    --surface-2: 222.2 84% 10%;
+    --surface-3: 222.2 84% 12%;
+  }
   
-  /* Custom brand gradients */
-  --tf-accent-gradient: linear-gradient(135deg, hsl(239, 84%, 67%), hsl(251, 100%, 70%));
-  --tf-halo: 0 0 30px hsla(239, 84%, 67%, 0.3);
+  .alt {
+    /* Alternative Theme - Purple Dream */
+    --background: 270 50% 8%;
+    --foreground: 270 10% 95%;
+    
+    --card: 270 40% 10%;
+    --card-hover: 270 40% 12%;
+    --card-foreground: 270 10% 95%;
+    
+    --muted: 270 30% 20%;
+    --muted-foreground: 270 10% 70%;
+    
+    --popover: 270 40% 9%;
+    --popover-foreground: 270 10% 95%;
+    
+    --primary: 280 100% 70%;
+    --primary-foreground: 270 50% 8%;
+    
+    --secondary: 270 30% 15%;
+    --secondary-foreground: 270 10% 95%;
+    
+    --accent: 280 60% 30%;
+    --accent-foreground: 270 10% 95%;
+    
+    --destructive: 350 80% 60%;
+    --destructive-foreground: 270 10% 95%;
+    
+    --border: 270 30% 25%;
+    --input: 270 30% 22%;
+    --ring: 280 100% 70%;
+    
+    /* Purple-tinted surfaces */
+    --surface-1: 270 40% 11%;
+    --surface-2: 270 40% 13%;
+    --surface-3: 270 40% 15%;
+  }
 }
 
-:root[data-theme='dark'] {
-  /* TalentFlux brand colors - Dark mode */
-  --tf-primary: hsl(20, 14.3%, 4.1%);
-  --tf-dark: hsl(241, 242, 244);
-  --tf-text: hsl(241, 242, 244);
-  --tf-text-dark: hsl(34, 36, 40);
-  --tf-accent: hsl(255, 210, 0);
-  --tf-success: hsl(40, 195, 134);
-  --tf-warning: hsl(255, 181, 71);
-  --tf-error: hsl(255, 92, 92);
-  --tf-stroke: hsl(217.2, 32.6%, 17.5%);
+@layer base {
+  * {
+    @apply border-border;
+  }
   
-  /* Shadcn system colors - Dark mode */
-  --background: hsl(20, 14.3%, 4.1%);
-  --foreground: hsl(60, 9.1%, 97.8%);
-  --muted: hsl(12, 6.5%, 15.1%);
-  --muted-foreground: hsl(24, 5.4%, 63.9%);
-  --popover: hsl(20, 14.3%, 4.1%);
-  --popover-foreground: hsl(60, 9.1%, 97.8%);
-  --card: hsl(20, 14.3%, 4.1%);
-  --card-foreground: hsl(60, 9.1%, 97.8%);
-  --border: hsl(12, 6.5%, 15.1%);
-  --input: hsl(12, 6.5%, 15.1%);
-  --primary: hsl(239, 84%, 67%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(12, 6.5%, 15.1%);
-  --secondary-foreground: hsl(60, 9.1%, 97.8%);
-  --accent: hsl(12, 6.5%, 15.1%);
-  --accent-foreground: hsl(60, 9.1%, 97.8%);
-  --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(239, 84%, 67%);
-  --radius: 0.5rem;
-  --surface: hsl(12, 6.5%, 15.1%);
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
   
-  /* Custom brand gradients */
-  --tf-accent-gradient: linear-gradient(135deg, hsl(239, 84%, 67%), hsl(251, 100%, 70%));
-  --tf-halo: 0 0 30px hsla(239, 84%, 67%, 0.3);
-}
-
-:root[data-theme='alt'] {
-  /* TalentFlux iridescent theme */
-  --tf-primary: hsl(228, 14%, 6%);
-  --tf-dark: #0C0D11;
-  --tf-text: #F1F2F4;
-  --tf-text-dark: hsl(34, 36, 40);
-  --tf-accent: hsl(255, 210, 0);
-  --tf-success: hsl(40, 195, 134);
-  --tf-warning: hsl(255, 181, 71);
-  --tf-error: hsl(255, 92, 92);
-  --tf-stroke: rgba(255, 255, 255, 0.12);
+  /* Smooth transitions for theme changes */
+  * {
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
   
-  /* Shadcn system colors - Alt theme */
-  --background: hsl(228, 14%, 6%);
-  --foreground: hsl(210, 20%, 95%);
-  --muted: hsl(228, 8%, 12%);
-  --muted-foreground: hsl(218, 11%, 65%);
-  --popover: hsl(228, 14%, 6%);
-  --popover-foreground: hsl(210, 20%, 95%);
-  --card: hsl(228, 14%, 6%);
-  --card-foreground: hsl(210, 20%, 95%);
-  --border: hsl(228, 8%, 12%);
-  --input: hsl(228, 8%, 12%);
-  --primary: hsl(210, 20%, 95%);
-  --primary-foreground: hsl(228, 14%, 6%);
-  --secondary: hsl(228, 8%, 12%);
-  --secondary-foreground: hsl(210, 20%, 95%);
-  --accent: hsl(228, 8%, 12%);
-  --accent-foreground: hsl(210, 20%, 95%);
-  --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(210, 20%, 95%);
-  --ring: hsl(210, 20%, 95%);
-  --radius: 0.5rem;
-  --surface: rgba(255, 255, 255, 0.08);
+  /* Glass morphism utilities */
+  .glass {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+  }
   
-  /* Custom iridescent gradients */
-  --tf-accent-gradient: linear-gradient(90deg, #FFD200 0%, #C38CFF 60%, #FF66C8 100%);
-  --tf-surface: rgba(255, 255, 255, 0.08);
-  --tf-glass: rgba(255, 255, 255, 0.12);
-  --tf-glow: rgba(255, 210, 0, 0.3);
-  --tf-halo: 0 0 30px rgba(255, 210, 0, 0.15);
-}
-
-/* Default theme */
-:root {
-  /* Default to dark theme */
-  --background: hsl(20, 14.3%, 4.1%);
-  --foreground: hsl(60, 9.1%, 97.8%);
-  --muted: hsl(12, 6.5%, 15.1%);
-  --muted-foreground: hsl(24, 5.4%, 63.9%);
-  --popover: hsl(20, 14.3%, 4.1%);
-  --popover-foreground: hsl(60, 9.1%, 97.8%);
-  --card: hsl(20, 14.3%, 4.1%);
-  --card-foreground: hsl(60, 9.1%, 97.8%);
-  --border: hsl(12, 6.5%, 15.1%);
-  --input: hsl(12, 6.5%, 15.1%);
-  --primary: hsl(239, 84%, 67%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(12, 6.5%, 15.1%);
-  --secondary-foreground: hsl(60, 9.1%, 97.8%);
-  --accent: hsl(12, 6.5%, 15.1%);
-  --accent-foreground: hsl(60, 9.1%, 97.8%);
-  --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(239, 84%, 67%);
-  --radius: 0.5rem;
-  --surface: hsl(12, 6.5%, 15.1%);
-  --tf-accent-gradient: linear-gradient(135deg, hsl(239, 84%, 67%), hsl(251, 100%, 70%));
-  --tf-halo: 0 0 30px hsla(239, 84%, 67%, 0.3);
+  .glass-hover {
+    @apply hover:bg-white/10 transition-all duration-300;
+  }
+  
+  /* Surface utilities for depth */
+  .surface-1 {
+    background-color: hsl(var(--surface-1));
+  }
+  
+  .surface-2 {
+    background-color: hsl(var(--surface-2));
+  }
+  
+  .surface-3 {
+    background-color: hsl(var(--surface-3));
+  }
+  
+  /* Purple glow effect */
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4),
+                0 0 40px rgba(168, 85, 247, 0.2),
+                0 0 60px rgba(168, 85, 247, 0.1);
+  }
+  
+  /* Animated gradient background */
+  .animated-gradient {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+  }
+  
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
 }
 
 * {

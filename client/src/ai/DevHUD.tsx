@@ -90,22 +90,22 @@ export function DevHUD() {
                               {new Date(event.timestamp).toLocaleTimeString()}
                             </span>
                           </div>
-                          {event.context && (
+                          {event.context ? (
                             <div className="text-gray-300 text-xs mt-1">
                               {typeof event.context === 'object' && event.context !== null ? (
-                                <>
+                                <div>
                                   {(event.context as any).route && (
                                     <span className="mr-2">📍 {String((event.context as any).route)}</span>
                                   )}
                                   {(event.context as any).device && (
                                     <span className="mr-2">📱 {String((event.context as any).device)}</span>
                                   )}
-                                </>
+                                </div>
                               ) : (
-                                String(event.context)
+                                <span>{String(event.context)}</span>
                               )}
                             </div>
-                          )}
+                          ) : null}
                         </div>
                       ))}
                     </div>
