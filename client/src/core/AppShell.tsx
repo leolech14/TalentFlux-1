@@ -2,6 +2,7 @@ import { useLocation } from "wouter";
 import { MagicStarButton } from "../ui/MagicStarButton";
 import { AssistantOverlay } from "../ai/AssistantOverlay";
 import CVAssistantOverlay from "../features/cv/CVAssistantOverlay";
+import { RepoQueryPanel } from "../features/dev/RepoQueryPanel";
 import { DevHUD } from "../ai/DevHUD";
 import { Sidebar } from "../ui/Sidebar";
 import { ThemeToggle } from "../ui/ThemeToggle";
@@ -17,6 +18,7 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const [cvAssistantOpen, setCvAssistantOpen] = useState(false);
+  const [repoAssistantOpen, setRepoAssistantOpen] = useState(false);
   const [location] = useLocation();
   const { isAuthenticated } = useAuth();
   // Handle layout conditionally based on route
@@ -30,9 +32,16 @@ export function AppShell({ children }: AppShellProps) {
     const handleOpenCVAssistant = () => {
       setCvAssistantOpen(true);
     };
+    const handleOpenRepoAssistant = () => {
+      setRepoAssistantOpen(true);
+    };
 
     window.addEventListener('open-cv-assistant', handleOpenCVAssistant);
-    return () => window.removeEventListener('open-cv-assistant', handleOpenCVAssistant);
+    window.addEventListener('open-repo-assistant', handleOpenRepoAssistant);
+    return () => {
+      window.removeEventListener('open-cv-assistant', handleOpenCVAssistant);
+      window.removeEventListener('open-repo-assistant', handleOpenRepoAssistant);
+    };
   }, []);
 
   // Show MagicStar only when layout context allows and user is authenticated
@@ -68,6 +77,12 @@ export function AppShell({ children }: AppShellProps) {
       <CVAssistantOverlay
         open={cvAssistantOpen}
         onClose={() => setCvAssistantOpen(false)}
+      />
+
+      {/* Repository AI Assistant - for development queries */}
+      <RepoQueryPanel
+        isOpen={repoAssistantOpen}
+        onClose={() => setRepoAssistantOpen(false)}
       />
 
       {/* Sidebar */}
