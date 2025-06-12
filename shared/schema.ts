@@ -1,0 +1,71 @@
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  password: text("password").notNull(),
+  name: text("name").notNull(),
+  userType: text("user_type").notNull(), // 'candidate' | 'employer'
+  linkedinId: text("linkedin_id"),
+  profileData: jsonb("profile_data"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const jobs = pgTable("jobs", {
+  id: serial("id").primaryKey(),
+  employerId: integer("employer_id").references(() => users.id).notNull(),
+  title: text("title").notNull(),
+  location: text("location").notNull(),
+  salary: text("salary"),
+  description: text("description"),
+  requirements: text("requirements").array(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const applications = pgTable("applications", {
+  id: serial("id").primaryKey(),
+  candidateId: integer("candidate_id").references(() => users.id).notNull(),
+  jobId: integer("job_id").references(() => jobs.id).notNull(),
+  status: text("status").default("pending"), // 'pending' | 'reviewed' | 'interview' | 'rejected' | 'hired'
+  coverLetter: text("cover_letter"),
+  resumeUrl: text("resume_url"),
+  appliedAt: timestamp("applied_at").defaultNow(),
+});
+
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertJobSchema = createInsertSchema(jobs).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertApplicationSchema = createInsertSchema(applications).omit({
+  id: true,
+  appliedAt: true,
+});
+
+export const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1),
+});
+
+export const onboardingSchema = z.object({
+  userType: z.enum(['candidate', 'employer']),
+  name: z.string().min(1),
+  profileData: z.record(z.any()).optional(),
+});
+
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type User = typeof users.$inferSelect;
+export type InsertJob = z.infer<typeof insertJobSchema>;
+export type Job = typeof jobs.$inferSelect;
+export type InsertApplication = z.infer<typeof insertApplicationSchema>;
+export type Application = typeof applications.$inferSelect;
+export type LoginData = z.infer<typeof loginSchema>;
+export type OnboardingData = z.infer<typeof onboardingSchema>;
