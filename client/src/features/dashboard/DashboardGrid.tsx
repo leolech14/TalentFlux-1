@@ -178,7 +178,7 @@ export function DashboardGrid() {
     >
       <SortableContext items={layout} strategy={rectSortingStrategy}>
         <motion.div 
-          className="grid grid-cols-12 gap-4 p-4"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 pb-24 md:pb-16 max-w-screen-xl mx-auto"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}

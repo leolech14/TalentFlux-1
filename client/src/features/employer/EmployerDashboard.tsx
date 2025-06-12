@@ -38,10 +38,10 @@ export function EmployerDashboard({ user }: EmployerDashboardProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="p-6 pb-4"
+            className="p-4 sm:p-6 pb-4"
           >
-            <h2 className="text-2xl font-bold mb-2 text-foreground">Welcome back, {user.name}!</h2>
-            <p className="text-muted-foreground">Here's your hiring pipeline overview</p>
+            <h2 className="text-xl sm:text-2xl font-bold mb-2 text-neutral-900 dark:text-white">Welcome back, {user.name}!</h2>
+            <p className="text-neutral-600 dark:text-neutral-300">Here's your hiring pipeline overview</p>
           </motion.div>
 
           {/* Widget Grid */}

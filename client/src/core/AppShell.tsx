@@ -47,11 +47,15 @@ export function AppShell({ children }: AppShellProps) {
       {showThemeToggle && (
         <motion.button
           onClick={toggleTheme}
-          className={`fixed bottom-6 left-6 z-40 w-12 h-12 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${
+          className={`fixed bottom-6 left-6 md:bottom-8 md:left-8 z-40 w-12 h-12 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${
             isDark 
               ? "bg-zinc-800 hover:bg-zinc-700 text-yellow-400 hover:text-yellow-300" 
               : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-700 border border-slate-200"
           }`}
+          style={{
+            marginBottom: "max(1.5rem, env(safe-area-inset-bottom))",
+            marginLeft: "max(1.5rem, env(safe-area-inset-left))"
+          }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           initial={{ opacity: 0, y: 20 }}

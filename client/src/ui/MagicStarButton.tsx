@@ -34,8 +34,11 @@ export function MagicStarButton({ onClick, isOpen }: MagicStarButtonProps) {
 
   return (
     <motion.div
-      className="fixed right-6 z-50 cursor-grab active:cursor-grabbing"
-      style={{ bottom: `calc(50vh + ${position.y}px)` }}
+      className="fixed right-6 md:right-8 z-50 cursor-grab active:cursor-grabbing"
+      style={{ 
+        bottom: `calc(50vh + ${position.y}px + env(safe-area-inset-bottom))`,
+        marginBottom: "max(1.5rem, env(safe-area-inset-bottom))"
+      }}
       drag="y"
       dragConstraints={{ 
         top: -window.innerHeight / 2 + 60, 
