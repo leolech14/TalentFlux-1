@@ -224,31 +224,29 @@ export default function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelPr
         })
       });
 
-      if (response.ok) {
-        const cvData = await response.json();
-        setGeneratedCV(cvData);
-        setShowPreview(true);
+      if (!response.ok) throw new Error('Generation failed');
+      
+      const cvData = await response.json();
+      setGeneratedCV(cvData);
+      setShowPreview(true);
 
-        toast({
-          title: "CV Generated Successfully!",
-          description: "Your professional CV is ready for review",
-          duration: 4000,
-        });
-
-        // Emit AI event for successful CV generation
-        await emitAIEvent('cv-generated', {
-          userId: user?.id?.toString() || 'anonymous',
-          route: '/cv-assistant',
-          device: window.innerWidth < 768 ? 'mobile' : 'desktop'
-        });
-      } else {
-        throw new Error('CV generation failed');
-      }
-    } catch (error) {
       toast({
-        title: "CV Generation Failed",
-        description: "Please try again or contact support",
-        variant: "destructive",
+        title: "CV Generated Successfully!",
+        description: "Your professional CV is ready for review",
+        duration: 4000,
+      });
+
+      // Emit AI event for successful CV generation
+      await emitAIEvent('cv-generated', {
+        userId: user?.id?.toString() || 'anonymous',
+        route: '/cv-assistant',
+        device: window.innerWidth < 768 ? 'mobile' : 'desktop'
+      });
+    } catch (err) {
+      toast({
+        title: 'Something went wrong',
+        description: 'Generation failed – try again.',
+        variant: 'destructive'
       });
     } finally {
       setIsProcessing(false);
