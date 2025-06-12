@@ -5,6 +5,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useIntentRouter } from "./IntentRouter";
 import { useUserType } from "../hooks/useUserType";
 import { useUIState } from "../hooks/useUIState";
+import { useAuth } from "../hooks/useAuth";
+import { useLocation } from "wouter";
 import { planFromUtterance, getSuggestedCommands } from "./planFromUtterance";
 import { registerSingleton, unregisterSingleton } from "../lib/SingletonRegistry";
 
@@ -20,6 +22,8 @@ export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
   const { toast } = useToast();
   const { intentRouter, executeIntent } = useIntentRouter();
   const { setAssistantOpen } = useUIState();
+  const { isAuthenticated } = useAuth();
+  const [location] = useLocation();
 
   useEffect(() => {
     setAssistantOpen(isOpen);
@@ -36,6 +40,28 @@ export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
     
     // Simulate brief processing time for better UX
     await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // Special handling for non-authenticated users on signup pages
+    if (!isAuthenticated && (location.includes('/onboarding') || location === '/login' || location === '/')) {
+      setThinking(false);
+      setInput("");
+      
+      if (text.toLowerCase().includes('cv') || text.toLowerCase().includes('resume')) {
+        toast({
+          title: "CV Creation Preview",
+          description: "Complete signup to unlock AI-powered CV creation with natural language processing",
+          duration: 4000,
+        });
+        return;
+      }
+      
+      toast({
+        title: "Sign up to continue",
+        description: "Complete registration to access the full AI assistant experience",
+        duration: 3000,
+      });
+      return;
+    }
     
     const intent = planFromUtterance(text, intentRouter, userType);
     setThinking(false);
@@ -87,7 +113,11 @@ export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
     });
   };
 
-  const suggestions = getSuggestedCommands(userType);
+  // Show different suggestions for non-authenticated users on signup pages
+  const isSignupFlow = !isAuthenticated && (location.includes('/onboarding') || location === '/login' || location === '/');
+  const suggestions = isSignupFlow 
+    ? ["Create my CV", "How does AI CV work?", "What can you help me with?", "Tell me about TalentFlux"]
+    : getSuggestedCommands(userType);
 
   return (
     <AnimatePresence>
