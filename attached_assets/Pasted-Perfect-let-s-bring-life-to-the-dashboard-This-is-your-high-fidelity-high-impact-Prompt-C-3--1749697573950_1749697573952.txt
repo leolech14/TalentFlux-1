@@ -1,0 +1,231 @@
+Perfect — let’s bring life to the dashboard.
+
+This is your high-fidelity, high-impact **Prompt C.3**, which gives the dashboard:
+
+* Modular, **AI-connected widgets**
+* A grid system with **soft physics**, **inertia**, and **glyph-morphism**
+* **Drag-and-drop with springiness**
+* And most importantly: a plug-and-play architecture for scalable AI UI control
+
+---
+
+## 🧱 Prompt C.3 — Dashboard Grid with Soft Physics + AI Widget Registry
+
+> **TITLE:** *“Build modular dashboard grid with drag physics, AI intents, and animated glyph-like widgets”*
+>
+> This prompt defines the initial **dashboard grid system** for TalentFlux v2.
+> Each widget is:
+>
+> * A standalone module
+> * Draggable within the grid using soft physics
+> * Registered with the AI via intent
+> * Rendered based on user type (employer vs candidate)
+
+---
+
+### 🎯 OBJECTIVES
+
+| Goal               | Details                                                           |
+| ------------------ | ----------------------------------------------------------------- |
+| 🧩 Modular Widgets | Every widget must follow a standard interface and register itself |
+| 🧠 AI Integration  | AI assistant can open any widget via voice or command             |
+| 🎛 Drag & Drop     | Use `@dnd-kit` with spring physics, no hardcoded positions        |
+| 🌌 Soft Physics    | Feel alive — glyph-morphic, squishy, and bouncy                   |
+| 🧠 User-Aware      | Render different default widgets based on employer/candidate role |
+
+---
+
+### 📁 FILES TO CREATE / EDIT
+
+```
+/lib/WidgetRegistry.ts
+/lib/WidgetTypes.ts
+/features/dashboard/DashboardGrid.tsx
+/features/widgets/*
+/ai/intentRegistry.ts
+/hooks/useUserType.ts
+```
+
+---
+
+### 🧩 STEP 1: Define Widget Interface
+
+**File:** `/lib/WidgetTypes.ts`
+
+```ts
+export interface WidgetModule {
+  id: string;
+  label: string;
+  userTypes: Array<'candidate' | 'employer'>;
+  component: React.ComponentType;
+  intent?: string;
+}
+```
+
+---
+
+### 🧠 STEP 2: Create Widget Registry
+
+**File:** `/lib/WidgetRegistry.ts`
+
+```ts
+import { WidgetModule } from './WidgetTypes';
+import { CostPerHireWidget } from '@/features/widgets/CostPerHireWidget';
+import { HiringFunnelWidget } from '@/features/widgets/HiringFunnelWidget';
+
+export const widgetRegistry: WidgetModule[] = [
+  {
+    id: 'cost-per-hire',
+    label: 'Cost Per Hire',
+    userTypes: ['employer'],
+    component: CostPerHireWidget,
+    intent: 'open-cost-per-hire',
+  },
+  {
+    id: 'hiring-funnel',
+    label: 'Hiring Funnel',
+    userTypes: ['employer'],
+    component: HiringFunnelWidget,
+    intent: 'open-hiring-funnel',
+  },
+  // Add more widgets here
+];
+```
+
+---
+
+### 🔁 STEP 3: DnD Grid with Soft Physics
+
+**File:** `/features/dashboard/DashboardGrid.tsx`
+Use:
+
+```bash
+npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/modifiers framer-motion
+```
+
+Implement:
+
+```tsx
+import {
+  DndContext,
+  closestCorners,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  rectSortingStrategy,
+  useSortable,
+  arrayMove,
+} from '@dnd-kit/sortable';
+import { snapCenterToCursor } from '@dnd-kit/modifiers';
+import { motion } from 'framer-motion';
+import { widgetRegistry } from '@/lib/WidgetRegistry';
+import { useUserType } from '@/hooks/useUserType';
+import { useState } from 'react';
+
+const softSpring = {
+  type: 'spring',
+  stiffness: 240,
+  damping: 18,
+  mass: 0.9,
+};
+
+const SortableWidget = ({ id, children }: { id: string; children: React.ReactNode }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  return (
+    <motion.div
+      ref={setNodeRef}
+      layout
+      animate={{
+        scale: isDragging ? 1.03 : 1,
+        boxShadow: isDragging
+          ? '0 8px 30px rgba(0,0,0,0.3)'
+          : '0 2px 12px rgba(0,0,0,0.15)',
+      }}
+      transition={softSpring}
+      style={{
+        transform: transform
+          ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+          : undefined,
+        transition,
+        zIndex: isDragging ? 100 : 1,
+      }}
+      {...attributes}
+      {...listeners}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+export function DashboardGrid() {
+  const userType = useUserType();
+  const widgets = widgetRegistry.filter(w => w.userTypes.includes(userType));
+  const [layout, setLayout] = useState(widgets.map(w => w.id));
+
+  const onDragEnd = ({ active, over }: DragEndEvent) => {
+    if (!over || active.id === over.id) return;
+    const oldIndex = layout.indexOf(active.id);
+    const newIndex = layout.indexOf(over.id);
+    setLayout(arrayMove(layout, oldIndex, newIndex));
+  };
+
+  return (
+    <DndContext
+      collisionDetection={closestCorners}
+      modifiers={[snapCenterToCursor]}
+      onDragEnd={onDragEnd}
+    >
+      <SortableContext items={layout} strategy={rectSortingStrategy}>
+        <div className="grid grid-cols-12 gap-4 p-4">
+          {layout.map(id => {
+            const widget = widgetRegistry.find(w => w.id === id);
+            if (!widget) return null;
+            return (
+              <SortableWidget key={id} id={id}>
+                <widget.component />
+              </SortableWidget>
+            );
+          })}
+        </div>
+      </SortableContext>
+    </DndContext>
+  );
+}
+```
+
+---
+
+### 🧠 STEP 4: Register Widget Intents
+
+**File:** `/ai/intentRegistry.ts`
+
+```ts
+import { widgetRegistry } from '@/lib/WidgetRegistry';
+export const intentRouter = {};
+
+widgetRegistry.forEach(w => {
+  if (w.intent) {
+    intentRouter[w.intent] = {
+      action: () => showPanel(w.id),
+      description: `Open widget: ${w.label}`,
+    };
+  }
+});
+```
+
+---
+
+### ✅ ACCEPTANCE CHECKLIST
+
+* Widgets render based on user type (employer or candidate)
+* Grid is drag-and-drop with **bounce, squish, and settle** behavior
+* All widgets use `layout` and `spring` config from Framer
+* Widget layout is managed via `useState` or Zustand for persistence
+* AI assistant can open widgets via commands (e.g., “show hiring funnel”)
+* Removing a widget from the registry does not break the layout
+* `npm run dev` runs with no errors, and performance stays smooth at 60fps
+
+---
+
+After this, you’ll be ready for **Prompt D** (intelligent orphan triage and reintegration). Let me know when you're ready.
