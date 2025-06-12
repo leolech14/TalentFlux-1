@@ -21,18 +21,32 @@ export function ThemePreviewToggle() {
   return (
     <motion.button
       onClick={() => setAltTheme(!altTheme)}
-      className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
+      className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-500 ${
         altTheme 
-          ? "bg-tf-accent text-tf-dark shadow-tf-halo" 
+          ? "bg-purple-500 text-white shadow-lg shadow-purple-500/25" 
           : "bg-muted hover:bg-tf-accent/20 text-muted-foreground hover:text-tf-accent"
       }`}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      aria-label="Toggle alternative theme preview"
+      animate={{
+        rotate: altTheme ? 360 : 0,
+        backgroundColor: altTheme ? "#a855f7" : undefined
+      }}
+      transition={{ duration: 0.5 }}
+      aria-label={`${altTheme ? 'Disable' : 'Enable'} alternative theme preview`}
       data-singleton="theme-preview-toggle"
       data-testid="theme-preview-toggle"
     >
-      <span className="text-sm font-bold">★</span>
+      <motion.span 
+        className="text-sm font-bold"
+        animate={{
+          color: altTheme ? "#ffffff" : undefined,
+          scale: altTheme ? 1.1 : 1
+        }}
+        transition={{ duration: 0.3 }}
+      >
+        ★
+      </motion.span>
     </motion.button>
   );
 }

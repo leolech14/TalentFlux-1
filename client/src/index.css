@@ -77,10 +77,30 @@
 
 /* Alternative theme preview */
 .alt-theme {
-  --tf-accent: hsl(196, 140, 255);
-  --tf-success: hsl(34, 197, 94);
-  --tf-warning: hsl(251, 146, 60);
-  --tf-error: hsl(239, 68, 68);
+  --tf-accent: hsl(280, 100%, 70%);
+  --tf-success: hsl(142, 76%, 36%);
+  --tf-warning: hsl(32, 95%, 44%);
+  --tf-error: hsl(348, 86%, 61%);
+}
+
+.alt-theme .bg-tf-accent-gradient {
+  background: linear-gradient(90deg, hsl(280, 100%, 70%) 0%, hsl(310, 85%, 65%) 60%, hsl(340, 82%, 60%) 100%) !important;
+}
+
+.alt-theme .shadow-tf-halo {
+  box-shadow: 0 0 12px rgba(186, 85, 211, 0.35) !important;
+}
+
+.alt-theme .text-tf-accent {
+  color: hsl(280, 100%, 70%) !important;
+}
+
+.alt-theme .hover\\:text-tf-accent:hover {
+  color: hsl(280, 100%, 70%) !important;
+}
+
+.alt-theme .bg-tf-accent {
+  background-color: hsl(280, 100%, 70%) !important;
 }
 
 @layer base {
