@@ -52,6 +52,22 @@ export const cvs = pgTable("cvs", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const aiEvents = pgTable("ai_events", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id"),
+  intentId: text("intent_id").notNull(),
+  context: jsonb("context"),
+  timestamp: timestamp("timestamp").defaultNow().notNull()
+});
+
+export const aiFeedback = pgTable("ai_feedback", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").references(() => aiEvents.id).notNull(),
+  thumbsUp: boolean("thumbs_up").notNull(),
+  comment: text("comment").default(""),
+  timestamp: timestamp("timestamp").defaultNow().notNull()
+});
+
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
   createdAt: true,
@@ -88,6 +104,16 @@ export const cvCreationSchema = z.object({
   description: z.string().min(10, "Please provide more details about your background"),
 });
 
+export const insertAiEventSchema = createInsertSchema(aiEvents).omit({
+  id: true,
+  timestamp: true,
+});
+
+export const insertAiFeedbackSchema = createInsertSchema(aiFeedback).omit({
+  id: true,
+  timestamp: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertJob = z.infer<typeof insertJobSchema>;
@@ -96,6 +122,10 @@ export type InsertApplication = z.infer<typeof insertApplicationSchema>;
 export type Application = typeof applications.$inferSelect;
 export type InsertCv = z.infer<typeof insertCvSchema>;
 export type Cv = typeof cvs.$inferSelect;
+export type InsertAiEvent = z.infer<typeof insertAiEventSchema>;
+export type AiEvent = typeof aiEvents.$inferSelect;
+export type InsertAiFeedback = z.infer<typeof insertAiFeedbackSchema>;
+export type AiFeedback = typeof aiFeedback.$inferSelect;
 export type LoginData = z.infer<typeof loginSchema>;
 export type OnboardingData = z.infer<typeof onboardingSchema>;
 export type CvCreationData = z.infer<typeof cvCreationSchema>;

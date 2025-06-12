@@ -1,9 +1,11 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { loginSchema, onboardingSchema, insertJobSchema, insertApplicationSchema, cvCreationSchema } from "@shared/schema";
+import { loginSchema, onboardingSchema, insertJobSchema, insertApplicationSchema, cvCreationSchema, insertAiEventSchema, insertAiFeedbackSchema, aiEvents, aiFeedback } from "@shared/schema";
 import { processCvFromNaturalLanguage } from "./cvProcessor";
 import { repoAgent } from "../ai/repoAgent";
+import { db } from "./db";
+import { desc } from "drizzle-orm";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {

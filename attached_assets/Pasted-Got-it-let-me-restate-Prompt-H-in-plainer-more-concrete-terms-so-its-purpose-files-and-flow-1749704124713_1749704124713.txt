@@ -1,0 +1,143 @@
+Got it — let me restate **Prompt H** in plainer, more concrete terms so its purpose, files, and flow are crystal-clear.
+
+---
+
+## 🛡️  What Prompt H Actually Does (Plain-English Version)
+
+1. **Every time the assistant does something** (“open job form”, “show candidates”, etc.)
+   → we save a tiny record in the database: *who*, *what*, *when*, *from which screen/device.*
+
+2. Immediately after that action, the user sees a **tiny toast** asking
+
+   > “Was this helpful?” 👍 / 👎
+   > Their click is stored as feedback tied to the same event.
+
+3. A **DEV-only heads-up display (HUD)** shows these events in real time so you can watch the assistant’s behavior while you test.
+
+4. A simple **REST endpoint** (`/api/ai/events`) lets you (or a future analytic dashboard) pull the last N events and see patterns.
+
+---
+
+## 🗂  Exact Files & Code You Add
+
+| File                    | Purpose                                                                                                                | Key Snippet                   |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| `drizzle/schema.ts`     | Two tables: `ai_events` and `ai_feedback`                                                                              | *(code below)*                |
+| `ai/emitAIEvent.ts`     | One helper function that writes to `ai_events`                                                                         | `await db.insert(ai_events)…` |
+| `ai/recordFeedback.ts`  | Second helper that writes 👍 / 👎 to `ai_feedback`                                                                     |                               |
+| `AssistantOverlay.tsx`  | Call `emitAIEvent()` right after `intent.action()`<br>Show the toast with 👍 / 👎 buttons that call `recordFeedback()` |                               |
+| `server/routes/ai.ts`   | `GET /api/ai/events` – returns last 100 events as JSON                                                                 |                               |
+| `DevHUD.tsx` (DEV only) | Tiny overlay bottom-left streaming latest events                                                                       |                               |
+
+### 1 — DB Schema (Drizzle/Postgres)
+
+```ts
+// drizzle/schema.ts
+export const ai_events = pgTable('ai_events', {
+  id: serial('id').primaryKey(),
+  userId: text('user_id'),
+  intentId: text('intent_id'),
+  context: jsonb('ctx'),           // device, route, etc.
+  ts: timestamp('ts').defaultNow(),
+});
+
+export const ai_feedback = pgTable('ai_feedback', {
+  id: serial('id').primaryKey(),
+  eventId: integer('event_id').references(() => ai_events.id),
+  thumbsUp: boolean('thumbs_up'),
+  comment: text('comment').default(''),
+  ts: timestamp('ts').defaultNow(),
+});
+```
+
+### 2 — Emit Event Helper
+
+```ts
+// ai/emitAIEvent.ts
+import { db } from '@/lib/db';
+import { ai_events } from '@/lib/schema';
+
+export async function emitAIEvent(intentId: string, ctx: any) {
+  const [{ id }] = await db.insert(ai_events).values({
+    userId: ctx.userId,
+    intentId,
+    context: ctx,
+  }).returning({ id: ai_events.id });
+  return id; // we’ll need it for feedback
+}
+```
+
+### 3 — Record Feedback Helper
+
+```ts
+// ai/recordFeedback.ts
+import { db } from '@/lib/db';
+import { ai_feedback } from '@/lib/schema';
+
+export async function recordFeedback(eventId: number, thumbsUp: boolean) {
+  await db.insert(ai_feedback).values({ eventId, thumbsUp });
+}
+```
+
+### 4 — Assistant Overlay Integration (fragment)
+
+```tsx
+// after executing intent.action()
+const eventId = await emitAIEvent(intent.id, { userId, route, device });
+
+toast.custom(() => (
+  <div className="flex items-center gap-2">
+    <span>Helpful?</span>
+    <button onClick={()=>recordFeedback(eventId,true)}>👍</button>
+    <button onClick={()=>recordFeedback(eventId,false)}>👎</button>
+  </div>
+));
+```
+
+### 5 — API Route
+
+```ts
+// server/routes/ai.ts
+app.get('/api/ai/events', async (_req, res) => {
+  const events = await db.select().from(ai_events).orderBy(desc(ai_events.ts)).limit(100);
+  res.json(events);
+});
+```
+
+### 6 — Dev HUD (optional but handy)
+
+```tsx
+// DevHUD.tsx
+import { useLiveQuery } from '@/lib/useLiveQuery';
+import { ai_events } from '@/lib/schema';
+
+export function DevHUD() {
+  const events = useLiveQuery(ai_events);
+  return (
+    <div className="fixed bottom-2 left-2 z-[9999] text-xs p-2 bg-black/60 text-white rounded">
+      {events.slice(-5).map(e => (
+        <div key={e.id}>{e.intentId} • {new Date(e.ts).toLocaleTimeString()}</div>
+      ))}
+    </div>
+  );
+}
+```
+
+and mount `<DevHUD />` only in dev:
+
+```tsx
+{import.meta.env.DEV && <DevHUD />}
+```
+
+---
+
+## 🔑  Why This Matters (One-liners)
+
+* **See what the AI is really doing** – no black box.
+* **Measure usefulness** – thumbs-up/down tells you if intents are right.
+* **Debug faster** – Dev HUD shows mis-fires instantly.
+* **Future personalization** – later you can fine-tune on “what helped” data.
+
+With these pieces in place, TalentFlux’s AI layer has **memory + feedback** from day zero.
+
+Feel clearer now?
