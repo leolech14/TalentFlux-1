@@ -149,9 +149,9 @@ export class VisualGuard {
   }
 }
 
-// Auto-enable in development
-if (import.meta.env.DEV) {
-  const guard = VisualGuard.getInstance();
-  // Delay enabling to allow components to mount
-  setTimeout(() => guard.enable(), 1000);
-}
+// Auto-enable in development - disabled to reduce console noise
+// if (import.meta.env.DEV) {
+//   const guard = VisualGuard.getInstance();
+//   // Delay enabling to allow components to mount
+//   setTimeout(() => guard.enable(), 1000);
+// }

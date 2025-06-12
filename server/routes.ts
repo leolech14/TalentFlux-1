@@ -375,38 +375,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-      const cvData = await generateCVFromResponses(responses);
-      
-      // Save CV to database if user is authenticated
-      if (userId) {
-        try {
-          const insertCv = {
-            candidateId: userId,
-            name: cvData.personalInfo.fullName,
-            email: cvData.personalInfo.email,
-            phone: cvData.personalInfo.phone,
-            location: cvData.personalInfo.location,
-            summary: cvData.personalInfo.summary,
-            experience: cvData.experience.map(exp => JSON.stringify(exp)),
-            education: cvData.education.map(edu => JSON.stringify(edu)),
-            skills: [...cvData.skills.technical, ...cvData.skills.soft, ...cvData.skills.languages],
-            certifications: cvData.certifications.map(cert => JSON.stringify(cert)),
-            languages: cvData.skills.languages
-          };
-          
-          await storage.createCv(insertCv);
-        } catch (error) {
-          console.warn('Failed to save CV to database:', error);
-        }
-      }
-      
-      res.json(cvData);
-    } catch (error) {
-      console.error('CV generation error:', error);
-      res.status(500).json({ error: 'Failed to generate CV' });
-    }
-  });
-
   app.post("/api/transcribe", upload.single('audio'), async (req, res) => {
     try {
       if (!req.file) {
