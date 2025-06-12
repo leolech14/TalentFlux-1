@@ -10,6 +10,10 @@ const synonymMap: Record<string, string> = {
   'upload cv': 'upload-cv',
   'upload resume': 'upload-cv',
   'add cv': 'upload-cv',
+  'create cv': 'create-cv',
+  'create resume': 'create-cv',
+  'build cv': 'create-cv',
+  'make cv': 'create-cv',
   'show candidates': 'view-candidates',
   'find candidates': 'view-candidates',
   'candidate list': 'view-candidates',
@@ -42,6 +46,7 @@ const intentKeywords: Record<string, string[]> = {
   'open-job-form': ['job', 'post', 'create', 'hire', 'position', 'role', 'opening'],
   'view-candidates': ['candidate', 'applicant', 'talent', 'people', 'resume', 'cv'],
   'upload-cv': ['upload', 'cv', 'resume', 'profile', 'experience'],
+  'create-cv': ['create', 'build', 'make', 'generate', 'cv', 'resume'],
   'view-jobs': ['jobs', 'position', 'opening', 'opportunity', 'work'],
   'go-to-dashboard': ['dashboard', 'home', 'main', 'overview'],
   'view-applications': ['application', 'applied', 'status', 'progress'],
@@ -113,8 +118,8 @@ export function getSuggestedCommands(userType: 'candidate' | 'employer'): string
     ];
   } else {
     return [
-      "Upload my CV",
-      "Find jobs",
+      "Create my CV",
+      "Find jobs", 
       "View my applications",
       "Open menu"
     ];

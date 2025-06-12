@@ -29,6 +29,12 @@ export function useIntentRouter() {
       action: () => navigate('/dashboard?panel=cv-upload'),
       userTypes: ['candidate']
     },
+    'create-cv': {
+      id: 'create-cv',
+      description: 'Creating your CV with AI',
+      action: () => navigate('/create-cv'),
+      userTypes: ['candidate']
+    },
     'view-jobs': {
       id: 'view-jobs',
       description: 'Showing available jobs',
