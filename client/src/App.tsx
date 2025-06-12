@@ -12,6 +12,7 @@ import Onboarding from "./pages/onboarding";
 import OnboardingCandidate from "./pages/onboarding-candidate";
 import OnboardingEmployer from "./pages/onboarding-employer";
 import Dashboard from "./pages/dashboard";
+import CreateCv from "./pages/create-cv";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -53,6 +54,7 @@ function Router() {
         )}
       </Route>
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/create-cv" component={CreateCv} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -1,7 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { loginSchema, onboardingSchema, insertJobSchema, insertApplicationSchema } from "@shared/schema";
+import { loginSchema, onboardingSchema, insertJobSchema, insertApplicationSchema, cvCreationSchema } from "@shared/schema";
+import { processCvFromNaturalLanguage } from "./cvProcessor";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -138,6 +139,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(application);
     } catch (error) {
       res.status(400).json({ message: "Invalid application data" });
+    }
+  });
+
+  // CV routes
+  app.get("/api/cvs/candidate/:candidateId", async (req, res) => {
+    try {
+      const candidateId = parseInt(req.params.candidateId);
+      const cv = await storage.getCvByCandidate(candidateId);
+      if (!cv) {
+        return res.status(404).json({ message: "CV not found" });
+      }
+      res.json(cv);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid candidate ID" });
+    }
+  });
+
+  app.post("/api/cvs/create", async (req, res) => {
+    try {
+      const { description } = cvCreationSchema.parse(req.body);
+      const { candidateId, userEmail, userName } = req.body;
+
+      if (!candidateId || !userEmail || !userName) {
+        return res.status(400).json({ message: "Missing required fields: candidateId, userEmail, userName" });
+      }
+
+      // Check if CV already exists for this candidate
+      const existingCv = await storage.getCvByCandidate(candidateId);
+      if (existingCv) {
+        return res.status(409).json({ message: "CV already exists for this candidate" });
+      }
+
+      const result = await processCvFromNaturalLanguage(description, candidateId, userEmail, userName);
+      
+      if (!result.success || !result.cv) {
+        return res.status(400).json({ message: result.error || "Failed to process CV" });
+      }
+
+      const cv = await storage.createCv(result.cv);
+      res.json(cv);
+    } catch (error) {
+      console.error('CV creation error:', error);
+      res.status(400).json({ message: "Invalid CV data" });
+    }
+  });
+
+  app.put("/api/cvs/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+      const cv = await storage.updateCv(id, updates);
+      if (!cv) {
+        return res.status(404).json({ message: "CV not found" });
+      }
+      res.json(cv);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid CV data" });
+    }
+  });
+
+  app.delete("/api/cvs/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await storage.deleteCv(id);
+      if (!success) {
+        return res.status(404).json({ message: "CV not found" });
+      }
+      res.json({ message: "CV deleted successfully" });
+    } catch (error) {
+      res.status(400).json({ message: "Invalid CV ID" });
     }
   });
 
