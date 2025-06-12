@@ -26,7 +26,7 @@ export default function CVAssistantOverlay({ open, onClose }: CVAssistantOverlay
           className="fixed inset-4 md:inset-8 lg:inset-16"
           onClick={(e) => e.stopPropagation()}
         >
-          <CVAssistantPanel onClose={onClose} />
+          <CVAssistantPanel isOpen={open} onClose={onClose} />
         </motion.div>
       </motion.div>
     </AnimatePresence>,

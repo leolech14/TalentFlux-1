@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Home, Users, BarChart3, Settings, FileText, Briefcase, Bot } from "lucide-react";
+import { Home, Users, BarChart3, Settings, FileText, Briefcase, Bot, Code } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { useUserType } from "../hooks/useUserType";
@@ -52,6 +52,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     { icon: Bot, label: "AI CV Assistant", action: () => {
       window.dispatchEvent(new CustomEvent('open-cv-assistant'));
       onClose(); // Close sidebar when opening CV assistant
+    }},
+    { icon: Code, label: "Repo AI Assistant", action: () => {
+      window.dispatchEvent(new CustomEvent('open-repo-assistant'));
+      onClose(); // Close sidebar when opening repo assistant
     }},
     { icon: FileText, label: "Upload CV", path: "/dashboard?panel=cv-upload" },
     { icon: Settings, label: "Profile", path: "/dashboard?panel=profile-settings" },
