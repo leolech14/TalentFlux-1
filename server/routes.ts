@@ -4,11 +4,21 @@ import { storage } from "./storage";
 import { loginSchema, onboardingSchema, insertJobSchema, insertApplicationSchema, cvCreationSchema, insertAiEventSchema, insertAiFeedbackSchema, aiEvents, aiFeedback } from "@shared/schema";
 import { processCvFromNaturalLanguage } from "./cvProcessor";
 import { repoAgent } from "../ai/repoAgent";
+import { generateCVFromResponses, transcribeAudio } from "./cvGenerator";
 import { db } from "./db";
 import { desc } from "drizzle-orm";
 import { z } from "zod";
+import multer from "multer";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Multer configuration for audio uploads
+  const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+      fileSize: 10 * 1024 * 1024, // 10MB limit
+    },
+  });
+
   // Authentication routes
   app.post("/api/auth/login", async (req, res) => {
     try {
