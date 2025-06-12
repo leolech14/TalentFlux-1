@@ -43,10 +43,10 @@ export function AppShell({ children }: AppShellProps) {
 
   // Listen for sidebar open events from intent router
   useEffect(() => {
-    const handleOpenSidebar = () => setIsSidebarOpen(true);
+    const handleOpenSidebar = () => setSidebarOpen(true);
     window.addEventListener('openSidebar', handleOpenSidebar);
     return () => window.removeEventListener('openSidebar', handleOpenSidebar);
-  }, []);
+  }, [setSidebarOpen]);
 
   return (
     <div className="min-h-screen relative bg-background text-foreground transition-colors duration-300">

@@ -25,7 +25,7 @@ export function EmployerDashboard({ user }: EmployerDashboardProps) {
               variant="ghost" 
               size="sm"
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden text-muted-foreground hover:text-tf-accent"
+              className="text-muted-foreground hover:text-tf-accent"
             >
               <Menu className="w-4 h-4" />
             </Button>

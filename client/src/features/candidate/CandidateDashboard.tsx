@@ -22,7 +22,6 @@ export function CandidateDashboard({ user }: CandidateDashboardProps) {
               variant="ghost" 
               size="sm"
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden"
             >
               <Menu className="w-4 h-4" />
             </Button>
