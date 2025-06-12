@@ -1,0 +1,81 @@
+Below is **ONE consolidated prompt** that bundles all **six immediate fixes** *plus* the extended **triple-theme toggle** (Light / Dark / Alt-Brand palette applied app-wide).
+
+Copy-paste this directly to your Replit agent.
+
+---
+
+## 🛠 **Prompt “Fix-6 + Triple Theme Toggle”**
+
+> **TITLE:** *“Eliminate duplicate toggles, clamp FAB, clean overlay, wire intent engine, add AI-event tables, and implement Light / Dark / Alt brand theme switcher across entire UI.”*
+>
+> The following tasks must be completed together so the mobile-first, AI-first UX is consistent and future-proof.
+
+---
+
+### 🗂 **TASK LIST (all mandatory)**
+
+| #     | Task                                                                                                                                                                                                                                                                      |      |                                                                                  |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | -------------------------------------------------------------------------------- |
+| **1** | **Create one authoritative `ui/ThemeToggle.tsx`** that switches between three themes: `"light"`, `"dark"`, and `"alt"` (the iridescent palette you provided).<br>• Store choice in `localStorage`.<br>• Apply theme by toggling \`data-theme="light                       | dark | alt"`on`<html>\`.<br>• Remove all inline/duplicate theme toggles in other files. |
+| **2** | **Render ThemeToggle & FAB only if allowed by `LayoutContext`.**<br>• In `core/AppShell.tsx`, call `const { allowFAB, allowThemeToggle } = useLayout();` and conditionally render them.<br>• Ensure login/onboarding routes set `allowFAB:false, allowThemeToggle:false`. |      |                                                                                  |
+| **3** | **Clamp Magic-Star FAB inside safe bounds.**<br>Inside `ui/MagicStarButton.tsx`, wrap vertical drag with:<br>`const safeY = clamp(my, headerHeight+8, window.innerHeight - footerSafe);` where `headerHeight=56`, `footerSafe=80 + env(safe-area-inset-bottom)`.          |      |                                                                                  |
+| **4** | **Remove visible close icon from `AssistantOverlay.tsx`** and rely on backdrop tap to dismiss.<br>• Ensure `onClick={e=>e.stopPropagation()}` inside panel so tapping inside does not close.                                                                              |      |                                                                                  |
+| **5** | **Add Drizzle tables `ai_events` and `ai_feedback`** (as specified in Prompt H) and helpers `emitAIEvent` & `recordFeedback`.<br>• Import and call `emitAIEvent` right after every `intent.action()` in `AssistantOverlay`.<br>• Show 👍 / 👎 toast and store feedback.   |      |                                                                                  |
+| **6** | **Wire natural-language → intent**.<br>• Import `planFromUtterance` in `AssistantOverlay.tsx` and call it in `handleSubmit(text)`.<br>• Remove any direct string switch; rely on the router’s intents.                                                                    |      |                                                                                  |
+
+---
+
+### 🎨 **TRIPLE THEME IMPLEMENTATION DETAILS**
+
+1. **Update Tailwind config**
+
+   ```js
+   darkMode: 'class',            // keep for dark
+   plugins: [require('@tailwindcss/forms')],
+   ```
+2. **Global CSS** (e.g. `/src/index.css`)
+
+   ```css
+   :root[data-theme='light'] {
+     --bg:#F9FAFB;  --text:#222428; /* …other light tokens */
+   }
+   :root[data-theme='dark']  {
+     --bg:#0E0F11;  --text:#F1F2F4; /* …other dark tokens */
+   }
+   :root[data-theme='alt']   {      /* full iridescent theme */
+     --bg:#0C0D11;
+     --accent-gradient:linear-gradient(90deg,#FFD200,#C38CFF 60%,#FF66C8);
+     --surface:rgba(255,255,255,0.08);
+     /* copy rest of palette section you provided */
+   }
+   ```
+3. **ThemeToggle UI**
+
+   ```tsx
+   const [theme,setTheme] = useState(localStorage.getItem('theme')||'dark');
+   const cycle = () => {
+     const next = theme==='light'?'dark':theme==='dark'?'alt':'light';
+     setTheme(next);
+     localStorage.setItem('theme',next);
+     document.documentElement.dataset.theme = next;
+   };
+   ```
+
+   Simple icon: 🌞 / 🌜 / ✨.
+
+---
+
+### ✅ **ACCEPTANCE CHECKLIST**
+
+* Only **one** ThemeToggle exists and sits top-right next to login/user info.
+* Toggle cycles **light → dark → alt**; entire UI changes (not just buttons).
+* Magic-Star never hides under header/footer; position persists.
+* FAB & ThemeToggle vanish on `/login` and `/onboarding/*`.
+* AssistantOverlay has **no “X” icon** and dismisses on outer tap.
+* Any AI action logs to `ai_events`, and 👍/👎 feedback writes to `ai_feedback`.
+* `planFromUtterance` powers all natural-language routing.
+* All lints/tests pass; no duplicate FAB or toggles appear on any route.
+
+---
+
+Execute this prompt, then we’ll re-audit the zip.

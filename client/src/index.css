@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+:root[data-theme='light'] {
   /* TalentFlux brand colors - Light mode */
   --tf-primary: hsl(245, 246, 247);
   --tf-dark: hsl(14, 15, 17);
@@ -33,124 +33,214 @@
   --accent-foreground: hsl(24, 9.8%, 10%);
   --destructive: hsl(0, 84.2%, 60.2%);
   --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(20, 14.3%, 4.1%);
+  --ring: hsl(239, 84%, 67%);
   --radius: 0.5rem;
-  --magic: hsl(188, 94%, 43%);
-  --magic-foreground: hsl(0, 0%, 100%);
+  --surface: hsl(60, 4.8%, 95.9%);
+  
+  /* Custom brand gradients */
+  --tf-accent-gradient: linear-gradient(135deg, hsl(239, 84%, 67%), hsl(251, 100%, 70%));
+  --tf-halo: 0 0 30px hsla(239, 84%, 67%, 0.3);
 }
 
-.dark {
+:root[data-theme='dark'] {
   /* TalentFlux brand colors - Dark mode */
-  --tf-primary: hsl(14, 15, 17);
-  --tf-dark: hsl(245, 246, 247);
+  --tf-primary: hsl(20, 14.3%, 4.1%);
+  --tf-dark: hsl(241, 242, 244);
   --tf-text: hsl(241, 242, 244);
   --tf-text-dark: hsl(34, 36, 40);
   --tf-accent: hsl(255, 210, 0);
   --tf-success: hsl(40, 195, 134);
   --tf-warning: hsl(255, 181, 71);
   --tf-error: hsl(255, 92, 92);
-  --tf-stroke: hsl(64, 68, 75);
+  --tf-stroke: hsl(217.2, 32.6%, 17.5%);
   
   /* Shadcn system colors - Dark mode */
-  --background: hsl(222, 84%, 4.9%);
-  --foreground: hsl(210, 40%, 98%);
-  --muted: hsl(217, 32%, 17.5%);
-  --muted-foreground: hsl(215, 20.2%, 65.1%);
-  --popover: hsl(222, 84%, 4.9%);
-  --popover-foreground: hsl(210, 40%, 98%);
-  --card: hsl(222, 84%, 4.9%);
-  --card-foreground: hsl(210, 40%, 98%);
-  --border: hsl(217, 32%, 17.5%);
-  --input: hsl(217, 32%, 17.5%);
-  --primary: hsl(263, 70%, 67%);
-  --primary-foreground: hsl(210, 40%, 98%);
-  --secondary: hsl(217, 32%, 17.5%);
-  --secondary-foreground: hsl(210, 40%, 98%);
-  --accent: hsl(217, 32%, 17.5%);
-  --accent-foreground: hsl(210, 40%, 98%);
+  --background: hsl(20, 14.3%, 4.1%);
+  --foreground: hsl(60, 9.1%, 97.8%);
+  --muted: hsl(12, 6.5%, 15.1%);
+  --muted-foreground: hsl(24, 5.4%, 63.9%);
+  --popover: hsl(20, 14.3%, 4.1%);
+  --popover-foreground: hsl(60, 9.1%, 97.8%);
+  --card: hsl(20, 14.3%, 4.1%);
+  --card-foreground: hsl(60, 9.1%, 97.8%);
+  --border: hsl(12, 6.5%, 15.1%);
+  --input: hsl(12, 6.5%, 15.1%);
+  --primary: hsl(239, 84%, 67%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(12, 6.5%, 15.1%);
+  --secondary-foreground: hsl(60, 9.1%, 97.8%);
+  --accent: hsl(12, 6.5%, 15.1%);
+  --accent-foreground: hsl(60, 9.1%, 97.8%);
   --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(210, 40%, 98%);
-  --ring: hsl(263, 70%, 67%);
-  --magic: hsl(263, 70%, 67%);
-  --magic-foreground: hsl(210, 40%, 98%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(239, 84%, 67%);
+  --radius: 0.5rem;
+  --surface: hsl(12, 6.5%, 15.1%);
+  
+  /* Custom brand gradients */
+  --tf-accent-gradient: linear-gradient(135deg, hsl(239, 84%, 67%), hsl(251, 100%, 70%));
+  --tf-halo: 0 0 30px hsla(239, 84%, 67%, 0.3);
 }
 
-/* Alternative theme preview */
-.alt-theme {
-  --tf-accent: hsl(280, 100%, 70%);
-  --tf-success: hsl(142, 76%, 36%);
-  --tf-warning: hsl(32, 95%, 44%);
-  --tf-error: hsl(348, 86%, 61%);
+:root[data-theme='alt'] {
+  /* TalentFlux iridescent theme */
+  --tf-primary: hsl(228, 14%, 6%);
+  --tf-dark: #0C0D11;
+  --tf-text: #F1F2F4;
+  --tf-text-dark: hsl(34, 36, 40);
+  --tf-accent: hsl(255, 210, 0);
+  --tf-success: hsl(40, 195, 134);
+  --tf-warning: hsl(255, 181, 71);
+  --tf-error: hsl(255, 92, 92);
+  --tf-stroke: rgba(255, 255, 255, 0.12);
+  
+  /* Shadcn system colors - Alt theme */
+  --background: hsl(228, 14%, 6%);
+  --foreground: hsl(210, 20%, 95%);
+  --muted: hsl(228, 8%, 12%);
+  --muted-foreground: hsl(218, 11%, 65%);
+  --popover: hsl(228, 14%, 6%);
+  --popover-foreground: hsl(210, 20%, 95%);
+  --card: hsl(228, 14%, 6%);
+  --card-foreground: hsl(210, 20%, 95%);
+  --border: hsl(228, 8%, 12%);
+  --input: hsl(228, 8%, 12%);
+  --primary: hsl(210, 20%, 95%);
+  --primary-foreground: hsl(228, 14%, 6%);
+  --secondary: hsl(228, 8%, 12%);
+  --secondary-foreground: hsl(210, 20%, 95%);
+  --accent: hsl(228, 8%, 12%);
+  --accent-foreground: hsl(210, 20%, 95%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(210, 20%, 95%);
+  --ring: hsl(210, 20%, 95%);
+  --radius: 0.5rem;
+  --surface: rgba(255, 255, 255, 0.08);
+  
+  /* Custom iridescent gradients */
+  --tf-accent-gradient: linear-gradient(90deg, #FFD200 0%, #C38CFF 60%, #FF66C8 100%);
+  --tf-surface: rgba(255, 255, 255, 0.08);
+  --tf-glass: rgba(255, 255, 255, 0.12);
+  --tf-glow: rgba(255, 210, 0, 0.3);
+  --tf-halo: 0 0 30px rgba(255, 210, 0, 0.15);
 }
 
-.alt-theme .bg-tf-accent-gradient {
-  background: linear-gradient(90deg, hsl(280, 100%, 70%) 0%, hsl(310, 85%, 65%) 60%, hsl(340, 82%, 60%) 100%) !important;
+/* Default theme */
+:root {
+  /* Default to dark theme */
+  --background: hsl(20, 14.3%, 4.1%);
+  --foreground: hsl(60, 9.1%, 97.8%);
+  --muted: hsl(12, 6.5%, 15.1%);
+  --muted-foreground: hsl(24, 5.4%, 63.9%);
+  --popover: hsl(20, 14.3%, 4.1%);
+  --popover-foreground: hsl(60, 9.1%, 97.8%);
+  --card: hsl(20, 14.3%, 4.1%);
+  --card-foreground: hsl(60, 9.1%, 97.8%);
+  --border: hsl(12, 6.5%, 15.1%);
+  --input: hsl(12, 6.5%, 15.1%);
+  --primary: hsl(239, 84%, 67%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(12, 6.5%, 15.1%);
+  --secondary-foreground: hsl(60, 9.1%, 97.8%);
+  --accent: hsl(12, 6.5%, 15.1%);
+  --accent-foreground: hsl(60, 9.1%, 97.8%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(239, 84%, 67%);
+  --radius: 0.5rem;
+  --surface: hsl(12, 6.5%, 15.1%);
+  --tf-accent-gradient: linear-gradient(135deg, hsl(239, 84%, 67%), hsl(251, 100%, 70%));
+  --tf-halo: 0 0 30px hsla(239, 84%, 67%, 0.3);
 }
 
-.alt-theme .shadow-tf-halo {
-  box-shadow: 0 0 12px rgba(186, 85, 211, 0.35) !important;
+* {
+  border-color: hsl(var(--border));
 }
 
-.alt-theme .text-tf-accent {
-  color: hsl(280, 100%, 70%) !important;
-}
-
-.alt-theme .hover\\:text-tf-accent:hover {
-  color: hsl(280, 100%, 70%) !important;
-}
-
-.alt-theme .bg-tf-accent {
-  background-color: hsl(280, 100%, 70%) !important;
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
 }
 
 @layer base {
   * {
     @apply border-border;
   }
-
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply bg-background text-foreground;
   }
 }
 
 @layer utilities {
-  .magic-star-pulse {
-    animation: pulse 3s ease-in-out infinite;
+  .scrollbar-hide {
+    /* IE and Edge */
+    -ms-overflow-style: none;
+    /* Firefox */
+    scrollbar-width: none;
+    /* Safari and Chrome */
   }
-  
-  .magic-orbit {
-    animation: orbit 4s linear infinite;
-  }
-  
-  .magic-glow {
-    animation: glow 2s ease-in-out infinite alternate;
-  }
-  
-  .fade-in {
-    animation: fadeIn 0.5s ease-out;
-  }
-  
-  .slide-up {
-    animation: slideUp 0.3s ease-out;
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
 
-@keyframes orbit {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.gradient-text {
+  background: var(--tf-accent-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-@keyframes glow {
-  0% { box-shadow: 0 0 20px hsl(239, 84%, 67%, 0.3); }
-  100% { box-shadow: 0 0 30px hsl(239, 84%, 67%, 0.6); }
+.shadow-tf-halo {
+  box-shadow: var(--tf-halo);
 }
 
-@keyframes fadeIn {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
+.bg-tf-accent-gradient {
+  background: var(--tf-accent-gradient);
 }
 
-@keyframes slideUp {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
+.border-tf-accent {
+  border-color: hsl(var(--tf-accent));
+}
+
+/* Dark mode utilities */
+.dark {
+  color-scheme: dark;
+}
+
+/* Magic star animation */
+@keyframes sparkle {
+  0%, 100% { opacity: 0.7; transform: scale(1) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.1) rotate(180deg); }
+}
+
+.animate-sparkle {
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+/* AI Assistant specific styles */
+.ai-panel {
+  backdrop-filter: blur(20px);
+  border: 1px solid hsl(var(--border));
+}
+
+.glass-surface {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Visual Contract Firewall styles */
+.firewall-marker {
+  position: relative;
+}
+
+.firewall-marker::after {
+  content: "🛡️";
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 12px;
+  opacity: 0.6;
+  pointer-events: none;
 }
