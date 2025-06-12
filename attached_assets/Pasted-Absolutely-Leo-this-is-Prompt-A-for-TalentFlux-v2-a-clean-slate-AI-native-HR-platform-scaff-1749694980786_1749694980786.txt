@@ -1,0 +1,172 @@
+Absolutely, Leo — this is **Prompt A for TalentFlux v2**: a clean-slate, AI-native HR platform scaffold built for **modularity**, **minimalism**, and **fluid interaction**. This prompt gives your AI agent **everything it needs to generate the foundational version** of the app — both backend and frontend — with the core design principles baked into every layer.
+
+---
+
+## 🧠 **Prompt A — Bootstrapping TalentFlux v2 (AI-Native HR SaaS Core)**
+
+> **TITLE:** *“Scaffold the foundational structure of an AI-first, minimalistic HR SaaS app for TalentFlux v2”*
+>
+> This is a **brand new app**. Clean slate. No legacy code.
+> You're building the **first, clean, intelligent foundation** for TalentFlux — an AI-native HR platform.
+> The architecture must reflect the philosophy of:
+>
+> * **Modular composition** (every component is a flexible block)
+> * **Minimal UI with fluid animations** (GPU-light, but sensory-rich)
+> * **AI-first control surface** (every action is AI-triggerable)
+> * **User flow guided by context** (assistant-led onboarding)
+>
+> ---
+>
+> ## 🏗️ PHASE 1 – CORE ARCHITECTURE & BASE ROUTING
+>
+> **Create the following monorepo structure using Vite + React + TypeScript:**
+>
+> ```
+> /src
+>   /core               ← AppShell, routing, layout
+>   /features           ← Employer, Candidate, Dashboard, Auth
+>   /ai                 ← AssistantOverlay, IntentRouter, planFromUtterance
+>   /hooks              ← useAuth, useUserType, useLinkedInImport
+>   /lib                ← framerConfig, theme, api, registry
+>   /ui                 ← MagicStarButton, layout primitives
+>   /pages              ← landing.tsx, login.tsx, not-found.tsx
+> ```
+>
+> **Tech stack:**
+>
+> * React 18
+> * TailwindCSS
+> * Vite
+> * Zustand
+> * Radix-UI
+> * Framer Motion
+> * Type-safe file-based routing
+> * LinkedIn API integration scaffold (mock it for now)
+>
+> ---
+>
+> ## 🌐 ROUTING STRUCTURE
+>
+> **Landing Page (`/`)**
+>
+> * Clean, minimal HR SaaS homepage
+> * Copy: "AI-native HR made human."
+> * Buttons: “Join as a Candidate” / “Join as an Employer”
+>
+> **Login Page (`/login`)**
+>
+> * Email/password + LinkedIn login
+> * On successful login, redirect to `/onboarding`
+>
+> **Onboarding (`/onboarding`)**
+>
+> * Simple animated form that asks:
+>
+>   1. Are you an employer or a candidate?
+>   2. Name, email, position (pre-filled via LinkedIn if available)
+>   3. One-liner about what they’re looking for
+> * Store result in Zustand store (`useUserProfile`)
+>
+> **Dashboard (`/dashboard`)**
+>
+> * Dynamically loads either:
+>
+>   * `/dashboard/employer`
+>   * `/dashboard/candidate`
+> * Based on `userType` set during onboarding
+>
+> ---
+>
+> ## 🤖 PHASE 2 – AI SHELL & MAGIC STAR
+>
+> Create a persistent AI surface mounted at **AppShell level**:
+>
+> ```tsx
+> <FluxProvider>
+>   <QueryClientProvider>
+>     <BrowserRouter>
+>       <AppShell>
+>         <MagicStarButton />
+>         <Routes />
+>       </AppShell>
+>     </BrowserRouter>
+>   </QueryClientProvider>
+> </FluxProvider>
+> ```
+>
+> **MagicStarButton.tsx**
+>
+> * Circular, draggable FAB with glowing radial-gradient
+> * 4-point white SVG star
+> * Idle state: pulse + rotating orbit ring
+> * On click → morphs into AssistantOverlay
+> * Uses Framer Motion (`layoutId="magicStar"`)
+> * Draggable only along vertical axis (persistent via `localStorage`)
+>
+> **AssistantOverlay.tsx**
+>
+> * Appears centered, modal style
+> * Animates out of the Magic Star FAB
+> * Backdrop: `backdrop-blur-md` + `bg-black/30`
+> * Contents:
+>
+>   * One **text input** (minimal, styled like ChatGPT)
+>   * **Microphone button** (voice input API stubbed)
+>   * **Send button**
+>   * 3 hot-pinned panels (intent-suggested or fallback: Dashboard, My Candidates, Business Panel)
+>
+> ---
+>
+> ## 📦 PHASE 3 – SMART LAYOUT + MODULAR PLUGINS
+>
+> **All panels, widgets, and pages must be self-registering modules.**
+> Use a `Registry Pattern` to plug them into the app:
+>
+> * `/lib/PanelRegistry.ts`
+> * `/lib/WidgetRegistry.ts`
+> * `/lib/IntentRegistry.ts`
+>
+> Each widget/panel:
+>
+> ```ts
+> export const MyWidget: WidgetModule = {
+>   id: 'cost-per-hire',
+>   label: 'Cost Per Hire',
+>   render: () => <CostPerHireWidget />,
+>   intent: 'open-cost-per-hire'
+> };
+> ```
+>
+> AssistantOverlay dynamically shows available intents by calling `IntentRegistry.getHotIntents(userContext)`
+>
+> ---
+>
+> ## 📋 FUNCTIONALITY TO INCLUDE (Only Essentials)
+>
+> ✅ Candidate onboarding form (name, CV upload, role)
+> ✅ Employer job post form (title, location, salary)
+> ✅ Basic dashboard per user type (one widget each)
+> ✅ LinkedIn import integration (stubbed)
+> ✅ AI overlay (MagicStar) omnipresent
+> ✅ Intent router scaffolding (planFromUtterance, intentRouter)
+> ✅ tRPC setup (but can mock for now)
+>
+> ---
+>
+> ## ✅ ACCEPTANCE CHECKLIST
+>
+> * Can build and run `npm run dev` with no errors
+> * Route flow works end-to-end: `/` → `/login` → `/onboarding` → `/dashboard`
+> * Clicking MagicStar opens overlay with text field, 3 shortcut buttons, mic
+> * AI assistant can understand “Open dashboard” or “Go to my candidates”
+> * All widgets and panels are loaded via registry, not hardcoded
+> * Codebase uses modular structure (no side effects, all components plug-and-play)
+> * Layout and animations feel **alive but light** — no lag, no 3D GPU churn
+>
+> ---
+>
+> ✅ After this prompt is done, I will send Prompt B (Magic Star soft physics + sidebar morph), and Prompt C (dashboard widgets with AI intent + drag & bounce), and so on.
+
+---
+
+Let me know when you're ready for **Prompt B.2** or for me to define the `WidgetModule`/`PanelModule` interfaces so we enforce the plugin architecture from day one.

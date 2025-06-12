@@ -1,0 +1,15 @@
+# TalentFlux V2 – AI-Native HR Platform
+
+## Core Philosophy
+- AI-first: Every action is routed through an omnipresent assistant
+- Modular: All components (widgets, panels, pages) are plug-and-play
+- Minimalist UI: Clean layout, subtle animations, glyph-morphism
+- Dynamic routing based on user type: Employer or Candidate
+- Assistant is the main control surface (MagicStar FAB)
+
+## First User Flow
+1. User visits landing page
+2. Logs in (email or LinkedIn)
+3. Fills onboarding form (user type: employer/candidate)
+4. Redirects to role-based dashboard
+5. Assistant (MagicStar FAB) is present on every screen
