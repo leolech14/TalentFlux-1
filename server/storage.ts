@@ -1,4 +1,6 @@
 import { users, jobs, applications, type User, type InsertUser, type Job, type InsertJob, type Application, type InsertApplication } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -22,152 +24,93 @@ export interface IStorage {
   updateApplication(id: number, updates: Partial<Application>): Promise<Application | undefined>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private jobs: Map<number, Job>;
-  private applications: Map<number, Application>;
-  private currentUserId: number;
-  private currentJobId: number;
-  private currentApplicationId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.jobs = new Map();
-    this.applications = new Map();
-    this.currentUserId = 1;
-    this.currentJobId = 1;
-    this.currentApplicationId = 1;
-    
-    // Seed with test users for easy testing
-    this.seedTestData();
-  }
-
-  private seedTestData() {
-    // Create test candidate user
-    const candidateUser: User = {
-      id: 1,
-      email: "candidate@test.com",
-      password: "password",
-      name: "Alex Candidate",
-      userType: "candidate",
-      linkedinId: null,
-      profileData: null,
-      createdAt: new Date(),
-    };
-    this.users.set(1, candidateUser);
-
-    // Create test employer user
-    const employerUser: User = {
-      id: 2,
-      email: "employer@test.com",
-      password: "password",
-      name: "Sarah Employer",
-      userType: "employer",
-      linkedinId: null,
-      profileData: null,
-      createdAt: new Date(),
-    };
-    this.users.set(2, employerUser);
-
-    this.currentUserId = 3; // Next user will get ID 3
-  }
-
-  // User operations
+export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(user => user.email === email);
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = {
-      ...insertUser,
-      id,
-      createdAt: new Date(),
-    };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
   async updateUser(id: number, updates: Partial<User>): Promise<User | undefined> {
-    const user = this.users.get(id);
-    if (!user) return undefined;
-    
-    const updatedUser = { ...user, ...updates };
-    this.users.set(id, updatedUser);
-    return updatedUser;
+    const [user] = await db
+      .update(users)
+      .set(updates)
+      .where(eq(users.id, id))
+      .returning();
+    return user || undefined;
   }
 
-  // Job operations
   async getJob(id: number): Promise<Job | undefined> {
-    return this.jobs.get(id);
+    const [job] = await db.select().from(jobs).where(eq(jobs.id, id));
+    return job || undefined;
   }
 
   async getJobsByEmployer(employerId: number): Promise<Job[]> {
-    return Array.from(this.jobs.values()).filter(job => job.employerId === employerId);
+    return await db.select().from(jobs).where(eq(jobs.employerId, employerId));
   }
 
   async getAllActiveJobs(): Promise<Job[]> {
-    return Array.from(this.jobs.values()).filter(job => job.isActive);
+    return await db.select().from(jobs).where(eq(jobs.isActive, true));
   }
 
   async createJob(insertJob: InsertJob): Promise<Job> {
-    const id = this.currentJobId++;
-    const job: Job = {
-      ...insertJob,
-      id,
-      createdAt: new Date(),
-      isActive: insertJob.isActive ?? true,
-    };
-    this.jobs.set(id, job);
+    const [job] = await db
+      .insert(jobs)
+      .values(insertJob)
+      .returning();
     return job;
   }
 
   async updateJob(id: number, updates: Partial<Job>): Promise<Job | undefined> {
-    const job = this.jobs.get(id);
-    if (!job) return undefined;
-    
-    const updatedJob = { ...job, ...updates };
-    this.jobs.set(id, updatedJob);
-    return updatedJob;
+    const [job] = await db
+      .update(jobs)
+      .set(updates)
+      .where(eq(jobs.id, id))
+      .returning();
+    return job || undefined;
   }
 
-  // Application operations
   async getApplication(id: number): Promise<Application | undefined> {
-    return this.applications.get(id);
+    const [application] = await db.select().from(applications).where(eq(applications.id, id));
+    return application || undefined;
   }
 
   async getApplicationsByCandidate(candidateId: number): Promise<Application[]> {
-    return Array.from(this.applications.values()).filter(app => app.candidateId === candidateId);
+    return await db.select().from(applications).where(eq(applications.candidateId, candidateId));
   }
 
   async getApplicationsByJob(jobId: number): Promise<Application[]> {
-    return Array.from(this.applications.values()).filter(app => app.jobId === jobId);
+    return await db.select().from(applications).where(eq(applications.jobId, jobId));
   }
 
   async createApplication(insertApplication: InsertApplication): Promise<Application> {
-    const id = this.currentApplicationId++;
-    const application: Application = {
-      ...insertApplication,
-      id,
-      appliedAt: new Date(),
-      status: insertApplication.status ?? "pending",
-    };
-    this.applications.set(id, application);
+    const [application] = await db
+      .insert(applications)
+      .values(insertApplication)
+      .returning();
     return application;
   }
 
   async updateApplication(id: number, updates: Partial<Application>): Promise<Application | undefined> {
-    const application = this.applications.get(id);
-    if (!application) return undefined;
-    
-    const updatedApplication = { ...application, ...updates };
-    this.applications.set(id, updatedApplication);
-    return updatedApplication;
+    const [application] = await db
+      .update(applications)
+      .set(updates)
+      .where(eq(applications.id, id))
+      .returning();
+    return application || undefined;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

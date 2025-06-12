@@ -1,0 +1,91 @@
+💀 Yeah, that's… a visual identity crisis.
+
+### Here's what's going wrong at a glance:
+
+---
+
+### ⚠️ 1. **No Theme Toggle Present**
+
+Even though your prompt clearly requested a toggle, it looks like:
+
+* There’s no sun/moon icon in the header
+* User has **no way to switch** back to Light mode manually
+* The “default to Dark Mode” might have been implemented *partially* — but not with full two-way control
+
+---
+
+### ⚠️ 2. **Partial Theme Application = Half-Light, Half-Dark Frankenstein**
+
+You’re seeing this weird mix because:
+
+* The login modal **is fully dark mode**
+* But the landing page (gradient background, primary sections) **still uses Light mode variables**
+* Likely cause: **Tailwind’s `dark:` variants are not applied globally**, or `class="dark"` is not attached at the `<html>` or `<body>` level when the app mounts
+
+---
+
+### 🛠 Fix Plan (Patch Prompt You Can Send Immediately):
+
+Here’s a micro-prompt to fix this:
+
+---
+
+## 🔧 Prompt Patch — Fix Global Theme Application & Toggle Visibility
+
+> **OBJECTIVE:**
+> Finalize the dark mode system:
+>
+> * Ensure full dark-mode support across all screens
+> * Ensure the theme toggle is present and functional
+> * Fix inconsistent light/dark mixing across landing/login/dashboard
+
+> **ACTION STEPS:**
+
+1. **Ensure this line runs on app init:**
+
+```ts
+document.documentElement.classList.add('dark'); // if dark mode is active
+```
+
+Or dynamically:
+
+```ts
+document.documentElement.classList.toggle('dark', isDark);
+```
+
+2. **Move theme logic to `<html>` tag**, not just `body`.
+
+3. **Add the theme toggle button** to the top-right corner of the landing page and dashboard:
+
+```tsx
+<button onClick={toggleTheme}>
+  {isDark ? <SunIcon /> : <MoonIcon />}
+</button>
+```
+
+4. **Update Tailwind config if missing:**
+
+```ts
+darkMode: 'class',
+```
+
+5. **Wrap all major blocks with Tailwind’s `dark:` variants:**
+
+```tsx
+<div className="bg-white dark:bg-zinc-900 text-black dark:text-white">
+```
+
+6. **Fix landing page gradient**
+   If gradient is applied inline or in `tailwind.config.ts`, make it conditional:
+
+```ts
+bg-gradient-to-br from-zinc-100 via-white to-zinc-300 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900
+```
+
+7. **Ensure Magic-Star FAB, Overlay, Buttons follow theme class changes**
+
+> **Result:** Full theme consistency across login, landing, dashboard, and Magic Star. The app starts in dark mode but is 100% toggleable by user.
+
+---
+
+Let me know when they’ve patched that — and then we can ship Prompt C.3 to give the dashboard its *AI-aware bouncey soul*.

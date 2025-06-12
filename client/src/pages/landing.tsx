@@ -1,11 +1,14 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { Brain, MessageCircle, TrendingUp, Zap, User, Building } from "lucide-react";
+import { Brain, MessageCircle, TrendingUp, Zap, User, Building, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "../hooks/useTheme";
 
 export default function Landing() {
+  const { isDark, toggleTheme } = useTheme();
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-primary/5 text-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 dark:from-background dark:via-background dark:to-primary/10 text-foreground transition-colors duration-300">
       {/* Header */}
       <header className="px-6 py-4">
         <nav className="max-w-7xl mx-auto flex justify-between items-center">
@@ -13,13 +16,35 @@ export default function Landing() {
             <div className="w-8 h-8 bg-gradient-to-r from-primary to-purple-600 rounded-lg flex items-center justify-center">
               <Zap className="text-white w-4 h-4" />
             </div>
-            <span className="text-xl font-semibold">TalentFlux</span>
+            <span className="text-xl font-semibold text-foreground">TalentFlux</span>
           </div>
-          <Link href="/login">
-            <Button variant="ghost" className="text-primary hover:text-primary/80 font-medium">
-              Sign In
-            </Button>
-          </Link>
+          <div className="flex items-center space-x-4">
+            <motion.button
+              onClick={toggleTheme}
+              className={`w-10 h-10 rounded-full shadow-md transition-all duration-300 flex items-center justify-center ${
+                isDark 
+                  ? "bg-zinc-800 hover:bg-zinc-700 text-yellow-400 hover:text-yellow-300" 
+                  : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-700 border border-slate-200"
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <motion.div
+                key={isDark ? "moon" : "sun"}
+                initial={{ rotate: -180, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 180, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </motion.div>
+            </motion.button>
+            <Link href="/login">
+              <Button variant="ghost" className="text-primary hover:text-primary/80 font-medium">
+                Sign In
+              </Button>
+            </Link>
+          </div>
         </nav>
       </header>
       
@@ -31,10 +56,10 @@ export default function Landing() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-slate-900 to-primary bg-clip-text text-transparent">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
               AI-native HR made human.
             </h1>
-            <p className="text-xl text-slate-600 mb-12 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
               Streamline your hiring process with intelligent automation while keeping the human touch. 
               Connect talent with opportunity through AI-powered insights.
             </p>
