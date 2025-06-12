@@ -5,7 +5,7 @@ import { Link } from "wouter";
 import { useUserType } from "../hooks/useUserType";
 import { useUIState } from "../hooks/useUIState";
 import { registerSingleton, unregisterSingleton } from "../lib/SingletonRegistry";
-import { CVAssistantPanel } from "../features/cv/CVAssistantPanel";
+
 
 interface SidebarProps {
   isOpen: boolean;
@@ -22,7 +22,7 @@ interface NavItem {
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const userType = useUserType();
   const { setSidebarOpen } = useUIState();
-  const [showCVAssistant, setShowCVAssistant] = useState(false);
+
 
   useEffect(() => {
     setSidebarOpen(isOpen);
@@ -49,7 +49,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     { icon: Home, label: "Dashboard", path: "/dashboard" },
     { icon: Briefcase, label: "Find Jobs", path: "/dashboard?panel=job-list" },
     { icon: FileText, label: "My Applications", path: "/dashboard?panel=applications" },
-    { icon: Bot, label: "AI CV Assistant", action: () => setShowCVAssistant(true) },
+    { icon: Bot, label: "AI CV Assistant", action: () => {
+      window.dispatchEvent(new CustomEvent('open-cv-assistant'));
+      onClose(); // Close sidebar when opening CV assistant
+    }},
     { icon: FileText, label: "Upload CV", path: "/dashboard?panel=cv-upload" },
     { icon: Settings, label: "Profile", path: "/dashboard?panel=profile-settings" },
   ];
@@ -150,12 +153,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           </>
         )}
       </AnimatePresence>
-
-      {/* CV Assistant Panel */}
-      <CVAssistantPanel 
-        isOpen={showCVAssistant}
-        onClose={() => setShowCVAssistant(false)}
-      />
     </>
   );
 }
