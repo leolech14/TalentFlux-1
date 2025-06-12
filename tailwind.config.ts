@@ -11,6 +11,30 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       colors: {
+        // TalentFlux brand palette
+        'tf-primary': '#F5F6F7',
+        'tf-dark': '#0E0F11',
+        'tf-text': '#222428',
+        'tf-text-dark': '#F1F2F4',
+        'tf-accent': {
+          DEFAULT: '#FFD200',
+          50: '#FFF2B3',
+          100: '#FFEB80',
+          200: '#FFE04D',
+          300: '#FFD51A',
+          400: '#FFD200',
+          500: '#E6BD00',
+          600: '#CCA800',
+          700: '#B39300',
+          800: '#997E00',
+          900: '#806900',
+        },
+        'tf-success': '#28C386',
+        'tf-warning': '#FFB547',
+        'tf-error': '#FF5C5C',
+        'tf-stroke': '#D0D1D3',
+        
+        // Shadcn system colors
         background: "var(--background)",
         foreground: "var(--foreground)",
         card: {
@@ -61,6 +85,15 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
+      },
+      backgroundImage: {
+        'tf-accent-gradient': 'linear-gradient(90deg, #FFD200 0%, #C38CFF 60%, #FF66C8 100%)',
+        'tf-glass': 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+      },
+      boxShadow: {
+        'tf-glass': '0 8px 32px rgba(0,0,0,0.04)',
+        'tf-halo': '0 0 12px rgba(255,210,0,0.25)',
+        'tf-elevation': '0 4px 20px rgba(34, 36, 40, 0.08)',
       },
       keyframes: {
         "accordion-down": {

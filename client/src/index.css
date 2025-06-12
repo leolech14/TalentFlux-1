@@ -3,6 +3,18 @@
 @tailwind utilities;
 
 :root {
+  /* TalentFlux brand colors - Light mode */
+  --tf-primary: hsl(245, 246, 247);
+  --tf-dark: hsl(14, 15, 17);
+  --tf-text: hsl(34, 36, 40);
+  --tf-text-dark: hsl(241, 242, 244);
+  --tf-accent: hsl(255, 210, 0);
+  --tf-success: hsl(40, 195, 134);
+  --tf-warning: hsl(255, 181, 71);
+  --tf-error: hsl(255, 92, 92);
+  --tf-stroke: hsl(208, 209, 211);
+  
+  /* Shadcn system colors - Light mode */
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(20, 14.3%, 4.1%);
   --muted: hsl(60, 4.8%, 95.9%);
@@ -28,6 +40,18 @@
 }
 
 .dark {
+  /* TalentFlux brand colors - Dark mode */
+  --tf-primary: hsl(14, 15, 17);
+  --tf-dark: hsl(245, 246, 247);
+  --tf-text: hsl(241, 242, 244);
+  --tf-text-dark: hsl(34, 36, 40);
+  --tf-accent: hsl(255, 210, 0);
+  --tf-success: hsl(40, 195, 134);
+  --tf-warning: hsl(255, 181, 71);
+  --tf-error: hsl(255, 92, 92);
+  --tf-stroke: hsl(64, 68, 75);
+  
+  /* Shadcn system colors - Dark mode */
   --background: hsl(222, 84%, 4.9%);
   --foreground: hsl(210, 40%, 98%);
   --muted: hsl(217, 32%, 17.5%);
@@ -49,6 +73,14 @@
   --ring: hsl(263, 70%, 67%);
   --magic: hsl(263, 70%, 67%);
   --magic-foreground: hsl(210, 40%, 98%);
+}
+
+/* Alternative theme preview */
+.alt-theme {
+  --tf-accent: hsl(196, 140, 255);
+  --tf-success: hsl(34, 197, 94);
+  --tf-warning: hsl(251, 146, 60);
+  --tf-error: hsl(239, 68, 68);
 }
 
 @layer base {
