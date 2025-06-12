@@ -297,34 +297,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // General AI query endpoint
+  // AI query endpoint
   app.post("/api/ai/query", async (req, res) => {
     try {
-      const { query } = req.body;
+      const { prompt, context } = req.body;
       
-      if (!query || typeof query !== 'string') {
-        return res.status(400).json({ error: 'Query is required' });
+      if (!prompt) {
+        return res.status(400).json({ error: "Prompt is required" });
       }
 
-      // For now, return a helpful response about TalentFlux
-      // In production, this would use OpenAI or another AI service
-      const response = `I'm here to help you with TalentFlux! This is an AI-powered HR platform that helps:
+      // Check if OpenAI API key is configured
+      const apiKey = process.env.OPENAI_API_KEY;
+      if (!apiKey) {
+        return res.status(500).json({ error: "OpenAI API key not configured" });
+      }
 
-• Employers: Post jobs, manage candidates, schedule interviews, and track hiring metrics
-• Candidates: Create AI-powered CVs, apply for jobs, and track applications
+      // Make request to OpenAI
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: "gpt-4",
+          messages: [
+            {
+              role: "system",
+              content: context || "You are a helpful HR assistant helping with recruitment and career development."
+            },
+            {
+              role: "user",
+              content: prompt
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 500
+        })
+      });
 
-Some things I can help with:
-- Navigating the platform
-- Understanding features
-- Best practices for hiring or job searching
-- Technical support
+      if (!response.ok) {
+        const error = await response.text();
+        console.error("OpenAI API error:", error);
+        return res.status(500).json({ error: "Failed to get AI response" });
+      }
 
-What would you like to know more about?`;
+      const data = await response.json();
+      const aiResponse = data.choices[0]?.message?.content || "No response generated";
 
-      res.json({ response });
+      res.json({ response: aiResponse });
     } catch (error) {
-      console.error('AI query error:', error);
-      res.status(500).json({ error: 'Failed to process query' });
+      console.error("AI query error:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
   });
 

@@ -12,6 +12,12 @@ import { ComplianceWidget } from '@/features/widgets/ComplianceWidget';
 import { RecruitmentROIWidget } from '@/features/widgets/RecruitmentROIWidget';
 import { DiversityMetricsWidget } from '@/features/widgets/DiversityMetricsWidget';
 import { OnboardingProgressWidget } from '@/features/widgets/OnboardingProgressWidget';
+import { InterviewPrepWidget } from "@/features/widgets/InterviewPrepWidget";
+import { SkillGapWidget } from "@/features/widgets/SkillGapWidget";
+import { CareerPathWidget } from "@/features/widgets/CareerPathWidget";
+import { CandidateMatchingWidget } from "@/features/widgets/CandidateMatchingWidget";
+import { HiringPipelineWidget } from "@/features/widgets/HiringPipelineWidget";
+import { JobPerformanceWidget } from "@/features/widgets/JobPerformanceWidget";
 
 export const widgetRegistry: WidgetModule[] = [
   // Employer Widgets
@@ -132,6 +138,74 @@ export const widgetRegistry: WidgetModule[] = [
     intent: 'open-application-tracking',
     size: 'medium',
     category: 'tracking',
+  },
+  // New candidate widgets
+  {
+    id: 'interviewPrep',
+    label: 'Interview Prep Assistant',
+    userTypes: ['candidate'],
+    component: InterviewPrepWidget,
+    intent: 'open-interview-prep',
+    size: { w: 6, h: 4 },
+    minSize: { w: 4, h: 3 },
+    maxSize: { w: 8, h: 6 },
+    category: 'candidate',
+  },
+  {
+    id: 'skillGap',
+    label: 'Skill Gap Analysis',
+    userTypes: ['candidate'],
+    component: SkillGapWidget,
+    intent: 'open-skill-gap',
+    size: { w: 6, h: 4 },
+    minSize: { w: 4, h: 3 },
+    maxSize: { w: 8, h: 6 },
+    category: 'candidate',
+  },
+  {
+    id: 'careerPath',
+    label: 'Career Path Visualization',
+    userTypes: ['candidate'],
+    component: CareerPathWidget,
+    intent: 'open-career-path',
+    size: { w: 6, h: 5 },
+    minSize: { w: 4, h: 4 },
+    maxSize: { w: 8, h: 6 },
+    category: 'candidate',
+  },
+  // New employer widgets
+  {
+    id: 'candidateMatching',
+    label: 'AI Candidate Matching',
+    userTypes: ['employer'],
+    component: CandidateMatchingWidget,
+    intent: 'open-candidate-matching',
+    size: { w: 6, h: 5 },
+    minSize: { w: 4, h: 4 },
+    maxSize: { w: 8, h: 6 },
+    category: 'employer',
+  },
+  {
+    id: 'hiringPipeline',
+    label: 'Hiring Pipeline Analytics',
+    userTypes: ['employer'],
+    component: HiringPipelineWidget,
+    intent: 'open-hiring-pipeline',
+    size: { w: 6, h: 5 },
+    minSize: { w: 4, h: 4 },
+    maxSize: { w: 8, h: 6 },
+    category: 'employer',
+  },
+  {
+    id: 'jobPerformance',
+    label: 'Job Performance Insights',
+    userTypes: ['employer'],
+    component: JobPerformanceWidget,
+    intent: 'open-job-performance',
+    size: { w: 6, h: 4 },
+    minSize: { w: 4, h: 3 },
+    maxSize: { w: 8, h: 6 },
+    category: 'employer',
   },
 ];
 
