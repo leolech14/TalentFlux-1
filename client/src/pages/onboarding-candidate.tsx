@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, User, Linkedin, Chrome, Apple } from "lucide-react";
+import { Upload, User, Linkedin, Chrome, Apple, Sparkles, Wand2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,7 +21,7 @@ const candidateFormSchema = z.object({
 type CandidateFormData = z.infer<typeof candidateFormSchema>;
 
 export default function OnboardingCandidate() {
-  const [, navigate] = useLocation();
+  const [, setLocation] = useLocation();
   const [dragOver, setDragOver] = useState(false);
 
   const form = useForm<CandidateFormData>({
@@ -37,7 +37,7 @@ export default function OnboardingCandidate() {
     console.log("Candidate registration:", data);
     // In a real app, this would save to the database and set user context
     // For now, just navigate to dashboard
-    navigate("/dashboard");
+    setLocation("/dashboard");
   };
 
   const handleFileUpload = (files: FileList | null) => {
@@ -150,6 +150,60 @@ export default function OnboardingCandidate() {
                         Choose File
                       </Button>
                     </div>
+                    
+                    {/* Magic CV Creation Option */}
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-border" />
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-card px-2 text-muted-foreground">Or create with AI</span>
+                      </div>
+                    </div>
+
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="relative"
+                    >
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full group relative overflow-hidden border-flux-primary/20 hover:border-flux-primary/40 bg-gradient-to-r from-flux-primary/5 to-purple-500/5 hover:from-flux-primary/10 hover:to-purple-500/10 transition-all duration-300"
+                        onClick={() => setLocation('/create-cv')}
+                      >
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-flux-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        />
+                        <motion.div
+                          animate={{ 
+                            rotate: [0, 10, -10, 0],
+                            scale: [1, 1.1, 1]
+                          }}
+                          transition={{ 
+                            duration: 2,
+                            repeat: Infinity,
+                            repeatDelay: 3
+                          }}
+                          className="relative mr-2"
+                        >
+                          <Sparkles className="w-4 h-4 text-flux-primary" />
+                        </motion.div>
+                        <span className="relative font-medium">Create CV with Natural Language</span>
+                        <motion.div
+                          animate={{ x: [0, 3, 0] }}
+                          transition={{ 
+                            duration: 1.5,
+                            repeat: Infinity,
+                            repeatDelay: 2
+                          }}
+                          className="relative ml-2"
+                        >
+                          <Wand2 className="w-4 h-4 text-purple-500" />
+                        </motion.div>
+                      </Button>
+                    </motion.div>
                   </div>
 
                   {/* Social Import Options */}
