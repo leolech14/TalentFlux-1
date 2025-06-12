@@ -95,10 +95,10 @@ export function DevHUD() {
                               {typeof event.context === 'object' && event.context !== null ? (
                                 <>
                                   {(event.context as any).route && (
-                                    <span className="mr-2">📍 {(event.context as any).route}</span>
+                                    <span className="mr-2">📍 {String((event.context as any).route)}</span>
                                   )}
                                   {(event.context as any).device && (
-                                    <span className="mr-2">📱 {(event.context as any).device}</span>
+                                    <span className="mr-2">📱 {String((event.context as any).device)}</span>
                                   )}
                                 </>
                               ) : (

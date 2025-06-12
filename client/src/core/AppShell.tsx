@@ -1,6 +1,7 @@
 import { useLocation } from "wouter";
 import { MagicStarButton } from "../ui/MagicStarButton";
 import { AssistantOverlay } from "../ai/AssistantOverlay";
+import { DevHUD } from "../ai/DevHUD";
 import { Sidebar } from "../ui/Sidebar";
 import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
@@ -113,6 +114,9 @@ export function AppShell({ children }: AppShellProps) {
           </motion.div>
         </motion.button>
       )}
+
+      {/* Development HUD - shows AI events in real-time */}
+      <DevHUD />
     </div>
   );
 }
