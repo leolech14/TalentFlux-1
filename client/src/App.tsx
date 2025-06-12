@@ -18,41 +18,11 @@ import NotFound from "@/pages/not-found";
 function Router() {
   return (
     <Switch>
-      <Route path="/">
-        {() => (
-          <LayoutProvider allowFAB={false} allowAssistant={false} allowThemeToggle={false}>
-            <Landing />
-          </LayoutProvider>
-        )}
-      </Route>
-      <Route path="/login">
-        {() => (
-          <LayoutProvider allowFAB={false} allowAssistant={false} allowThemeToggle={false}>
-            <Login />
-          </LayoutProvider>
-        )}
-      </Route>
-      <Route path="/onboarding">
-        {() => (
-          <LayoutProvider allowFAB={false} allowAssistant={false} allowThemeToggle={false}>
-            <Onboarding />
-          </LayoutProvider>
-        )}
-      </Route>
-      <Route path="/onboarding/candidate">
-        {() => (
-          <LayoutProvider allowFAB={false} allowAssistant={false} allowThemeToggle={false}>
-            <OnboardingCandidate />
-          </LayoutProvider>
-        )}
-      </Route>
-      <Route path="/onboarding/employer">
-        {() => (
-          <LayoutProvider allowFAB={false} allowAssistant={false} allowThemeToggle={false}>
-            <OnboardingEmployer />
-          </LayoutProvider>
-        )}
-      </Route>
+      <Route path="/" component={Landing} />
+      <Route path="/login" component={Login} />
+      <Route path="/onboarding" component={Onboarding} />
+      <Route path="/onboarding/candidate" component={OnboardingCandidate} />
+      <Route path="/onboarding/employer" component={OnboardingEmployer} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/create-cv" component={CreateCv} />
       <Route component={NotFound} />

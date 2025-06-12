@@ -18,7 +18,10 @@ export function AppShell({ children }: AppShellProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [location] = useLocation();
   const { isAuthenticated } = useAuth();
-  const { allowFAB, allowThemeToggle } = useLayout();
+  // Handle layout conditionally based on route
+  const isRestrictedRoute = location === "/" || location === "/login" || location.startsWith("/onboarding");
+  const allowFAB = !isRestrictedRoute;
+  const allowThemeToggle = !isRestrictedRoute;
   const { assistantOpen, setAssistantOpen } = useUIState();
 
   // Show MagicStar only when layout context allows and user is authenticated
