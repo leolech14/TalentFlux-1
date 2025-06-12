@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { loginSchema, onboardingSchema, insertJobSchema, insertApplicationSchema, cvCreationSchema } from "@shared/schema";
 import { processCvFromNaturalLanguage } from "./cvProcessor";
+import { repoAgent } from "../ai/repoAgent";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -210,6 +211,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.status(400).json({ message: "Invalid CV ID" });
     }
+  });
+
+  // Repo-aware AI assistant endpoint
+  app.post("/api/repo/query", async (req, res) => {
+    try {
+      const { query } = req.body;
+      
+      if (!query || typeof query !== 'string') {
+        return res.status(400).json({ error: 'Query is required' });
+      }
+
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(500).json({ error: 'OpenAI API key not configured' });
+      }
+
+      const response = await repoAgent.processQuery(query);
+      
+      res.json({ 
+        response,
+        type: 'repo-query'
+      });
+    } catch (error) {
+      console.error('Repo query error:', error);
+      res.status(500).json({ 
+        error: 'Failed to process repository query',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  // Check repo agent availability
+  app.get("/api/repo/status", (req, res) => {
+    res.json({
+      available: !!process.env.OPENAI_API_KEY,
+      indexed: false
+    });
   });
 
   const httpServer = createServer(app);

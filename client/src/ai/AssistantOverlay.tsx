@@ -38,6 +38,44 @@ export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
     
     setThinking(true);
     
+    // Check if this is a repo-related query (development/code questions)
+    const isRepoQuery = text.toLowerCase().includes('code') || 
+                       text.toLowerCase().includes('implement') || 
+                       text.toLowerCase().includes('bug') ||
+                       text.toLowerCase().includes('where') ||
+                       text.toLowerCase().includes('how does') ||
+                       text.toLowerCase().includes('refactor') ||
+                       text.toLowerCase().includes('fix');
+
+    // Handle repo-aware queries for authenticated users
+    if (isAuthenticated && isRepoQuery) {
+      try {
+        const response = await fetch('/api/repo/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: text })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setThinking(false);
+          setInput("");
+          
+          toast({
+            title: "Repository Assistant",
+            description: data.response.slice(0, 200) + (data.response.length > 200 ? "..." : ""),
+            duration: 8000,
+          });
+          
+          // Close overlay after showing response
+          setTimeout(() => onClose(), 1000);
+          return;
+        }
+      } catch (error) {
+        console.warn('Repo query failed, falling back to intent routing');
+      }
+    }
+    
     // Simulate brief processing time for better UX
     await new Promise(resolve => setTimeout(resolve, 300));
     
