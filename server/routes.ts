@@ -365,9 +365,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const pdfBuffer = await generateCVPDF(cvData);
       
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="${cvData.personalInfo.fullName.replace(/\s+/g, '_')}_CV.pdf"`);
-      res.send(pdfBuffer);
+      res
+        .setHeader('Content-Type', 'application/pdf')
+        .setHeader('Content-Disposition', `attachment; filename="TalentFlux_CV.pdf"`)
+        .send(pdfBuffer);
       
     } catch (error) {
       console.error('PDF generation error:', error);

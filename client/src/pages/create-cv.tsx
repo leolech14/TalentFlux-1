@@ -42,12 +42,12 @@ export default function CreateCv() {
           userName: profile.name
         })
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || "Failed to create CV");
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
@@ -115,6 +115,10 @@ export default function CreateCv() {
       </div>
     );
   }
+
+  const handleCreateCV = () => {
+    window.dispatchEvent(new Event('open-cv-assistant'));
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">

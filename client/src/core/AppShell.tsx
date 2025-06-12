@@ -37,7 +37,7 @@ export function AppShell({ children }: AppShellProps) {
 
   // Show MagicStar only when layout context allows and user is authenticated
   const showMagicStar = allowFAB && isAuthenticated && location !== "/" && location !== "/login" && !location.startsWith("/onboarding");
-  
+
   // Show theme toggle when layout context allows
   const showThemeToggle = allowThemeToggle;
 
@@ -51,7 +51,7 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <div className="min-h-screen relative bg-background text-foreground transition-colors duration-300">
       {children}
-      
+
       {showMagicStar && !assistantOpen && (
         <MagicStarButton 
           onClick={() => setAssistantOpen(true)}
@@ -75,7 +75,7 @@ export function AppShell({ children }: AppShellProps) {
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
-      
+
       {/* Theme Toggle */}
       {showThemeToggle && (
         <div className="fixed top-4 right-4 z-50">

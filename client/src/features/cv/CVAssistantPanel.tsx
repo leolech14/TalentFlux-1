@@ -129,7 +129,7 @@ export function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelProps) {
 
       mediaRecorder.start();
       setIsRecording(true);
-      
+
       toast({
         title: "Recording started",
         description: "Speak clearly and click stop when finished",
@@ -228,7 +228,7 @@ export function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelProps) {
         const cvData = await response.json();
         setGeneratedCV(cvData);
         setShowPreview(true);
-        
+
         toast({
           title: "CV Generated Successfully!",
           description: "Your professional CV is ready for review",
@@ -267,13 +267,13 @@ export function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelProps) {
 
       if (response.ok) {
         const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
+        const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = `${generatedCV.personalInfo.fullName.replace(/\s+/g, '_')}_CV.pdf`;
         document.body.appendChild(a);
         a.click();
-        window.URL.revokeObjectURL(url);
+        URL.revokeObjectURL(url);
         document.body.removeChild(a);
 
         toast({
