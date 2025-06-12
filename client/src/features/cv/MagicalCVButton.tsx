@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import { Sparkles, Mic, Wand2 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "wouter";
 
 export function MagicalCVButton() {
   const [isHovered, setIsHovered] = useState(false);
   const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number }>>([]);
-  const navigate = useNavigate();
+  const [location, navigate] = useLocation();
 
   useEffect(() => {
     if (isHovered) {
