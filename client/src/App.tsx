@@ -14,6 +14,7 @@ import OnboardingCandidate from "./pages/onboarding-candidate";
 import OnboardingEmployer from "./pages/onboarding-employer";
 import Dashboard from "./pages/dashboard";
 import CreateCv from "./pages/create-cv";
+import CVAssistantPage from "./pages/cv-assistant";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -26,6 +27,7 @@ function Router() {
       <Route path="/onboarding/employer" component={OnboardingEmployer} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/create-cv" component={CreateCv} />
+      <Route path="/cv-assistant" component={CVAssistantPage} />
       <Route component={NotFound} />
     </Switch>
   );

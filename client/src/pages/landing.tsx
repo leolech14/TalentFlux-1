@@ -4,14 +4,10 @@ import { Brain, MessageCircle, TrendingUp, Zap, User, Building } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { useTheme } from "../hooks/useTheme";
 import { MagicalCVButton } from "@/features/cv/MagicalCVButton";
-import { EnhancedCVAssistant } from "@/features/cv/EnhancedCVAssistant";
-import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export default function Landing() {
   const { theme } = useTheme();
   const [, navigate] = useLocation();
-  const [showCVAssistant, setShowCVAssistant] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 dark:from-background dark:via-background dark:to-primary/10 text-foreground transition-colors duration-300">
@@ -59,7 +55,7 @@ export default function Landing() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <MagicalCVButton onClick={() => setShowCVAssistant(true)} />
+            <MagicalCVButton />
           </motion.div>
           
           {/* CTA Buttons */}
@@ -119,13 +115,6 @@ export default function Landing() {
           </motion.div>
         </div>
       </main>
-
-      {/* CV Assistant Dialog */}
-      <Dialog open={showCVAssistant} onOpenChange={setShowCVAssistant}>
-        <DialogContent className="max-w-5xl h-[90vh] overflow-y-auto bg-background/95 backdrop-blur-xl border-white/10">
-          <EnhancedCVAssistant />
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

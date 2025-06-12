@@ -1,14 +1,12 @@
 import { motion } from "framer-motion";
 import { Sparkles, Mic, Wand2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-interface MagicalCVButtonProps {
-  onClick: () => void;
-}
-
-export function MagicalCVButton({ onClick }: MagicalCVButtonProps) {
+export function MagicalCVButton() {
   const [isHovered, setIsHovered] = useState(false);
   const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number }>>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isHovered) {
@@ -25,6 +23,11 @@ export function MagicalCVButton({ onClick }: MagicalCVButtonProps) {
       return () => clearInterval(interval);
     }
   }, [isHovered]);
+
+  const handleClick = () => {
+    // Navigate to CV Assistant
+    navigate('/cv-assistant');
+  };
 
   return (
     <motion.div
@@ -67,9 +70,9 @@ export function MagicalCVButton({ onClick }: MagicalCVButtonProps) {
       {/* Main button */}
       <motion.button
         className="relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-semibold text-lg shadow-2xl overflow-hidden group"
-        onClick={onClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        onClick={handleClick}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >

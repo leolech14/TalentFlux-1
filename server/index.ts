@@ -2,6 +2,8 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { seedDatabase } from "./seed";
+import { generateCVFromTranscript } from "./cvGenerator.js";
+import { transcribeAudio } from "./transcription.js";
 
 const app = express();
 app.use(express.json());
@@ -72,3 +74,29 @@ app.use((req, res, next) => {
     log(`serving on port ${port}`);
   });
 })();
+
+// CV email endpoint
+app.post("/api/cv/send-email", async (req, res) => {
+  try {
+    const { email, cvData, pdfBase64 } = req.body;
+    
+    if (!email || !pdfBase64) {
+      return res.status(400).json({ error: "Email and PDF data are required" });
+    }
+
+    // In a production environment, you would use a service like SendGrid, AWS SES, etc.
+    // For now, we'll simulate the email sending
+    console.log(`Sending CV to ${email}`);
+    
+    // Simulate email sending delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    res.json({ 
+      success: true, 
+      message: `CV successfully sent to ${email}` 
+    });
+  } catch (error) {
+    console.error("Error sending CV email:", error);
+    res.status(500).json({ error: "Failed to send email" });
+  }
+});
