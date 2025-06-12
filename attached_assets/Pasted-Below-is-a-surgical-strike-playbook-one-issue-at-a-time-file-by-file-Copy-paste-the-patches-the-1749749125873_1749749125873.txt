@@ -1,0 +1,171 @@
+Below is a surgical-strike playbook — one issue at a time, file-by-file.
+Copy-paste the patches (they’re standard unified-diffs). If a file path doesn’t exist exactly as written, create it or adjust the import – don’t let the agent “guess”.
+
+⸻
+
+1 Kill the Clone Army of CV Panels
+
+✅ Goal
+
+One single source-of-truth panel (CVAssistantPanel.tsx) plus a thin overlay wrapper.
+
+🗂 Files touched
+
+client/src/features/cv/CVAssistantPanel.tsx      (keep & merge into this)
+client/src/features/cv/CVAIAssistantPanel.tsx    (delete)
+client/src/ai/CVAssistantOverlay.tsx             (rewrite)
+client/src/ai/AssistantOverlay.tsx               (delete)
+
+🩺 Patch  — CVAssistantOverlay.tsx
+
+- import CVAssistantOverlay from './CVAssistantOverlay';
+- ...
+- <CVAssistantOverlay open={cvAssistantOpen} onClose={close} />
++ import CVAssistantPanel from '@/features/cv/CVAssistantPanel';
++ ...
++ {cvAssistantOpen && (
++   <Portal>
++     <CVAssistantPanel onClose={close} />
++   </Portal>
++ )}
+
+🔪 Delete
+
+Simply nuke CVAIAssistantPanel.tsx and AssistantOverlay.tsx.
+No code elsewhere references them after the imports above are fixed.
+
+⸻
+
+2 Wire the “Create CV” button to actually open the panel
+
+🗂 File
+
+client/src/pages/create-cv.tsx (or whatever the route file is called)
+
+- const handleCreate = () => {
+-   // … old form submit
+- };
++ const handleCreate = () => {
++   window.dispatchEvent(new Event('open-cv-assistant'));   // <— key line
++ };
+
+Wherever you had <Button onClick={handleCreate}>Create CV with AI</Button> you’re done.
+
+⸻
+
+3 Give the shell somewhere to listen
+
+🗂 File
+
+client/src/layout/AppShell.tsx
+
++ const [cvAssistantOpen, setOpen] = useState(false);
++ useEffect(() => {
++   const open = () => setOpen(true);
++   window.addEventListener('open-cv-assistant', open);
++   return () => window.removeEventListener('open-cv-assistant', open);
++ }, []);
+
+Drop that at the top level of your shell component; the overlay code in step 1 already consumes cvAssistantOpen.
+
+⸻
+
+4 Un-fork dark-mode state
+
+🗂 File
+
+client/src/components/ThemeToggle.tsx
+
+- const [theme, setTheme] = useState<'light' | 'dark'>(localStorage.getItem('theme') ?? 'light');
++ import { useTheme } from '@/hooks/useTheme';
++ const [isDark, toggleTheme] = useTheme(state => [state.isDark, state.toggle]);
+
+Replace every local read of theme with isDark; replace setTheme(next) with toggleTheme().
+Delete the useEffect that syncs to localStorage – Zustand store already does it.
+
+⸻
+
+5 Stop widgets “jump-dragging” on tap
+
+🗂 File
+
+client/src/pages/dashboard/DashboardGrid.tsx
+
+- useSensor(PointerSensor, {
+-   activationConstraint: { distance: 8 }
+- });
++ useSensor(PointerSensor, {
++   activationConstraint: { delay: 250, tolerance: 5 }
++ });
+
+If you later need mouse-vs-touch nuance, swap in MouseSensor + TouchSensor + KeyboardSensor and an optional LongPressSensor. For now, the 250 ms delay feels natural on both desktop and mobile.
+
+⸻
+
+6 Return a real PDF & download it
+
+6a Server – server/cvGenerator.ts (Express route)
+
+- res.json({ ok: true });
++ res
++   .setHeader('Content-Type', 'application/pdf')
++   .setHeader('Content-Disposition', 'attachment; filename="TalentFlux_CV.pdf"')
++   .send(pdfBuffer);
+
+6b Client – inside CVAssistantPanel.tsx
+
+- await fetch('/api/cv/create', { method: 'POST', body: data });
++ const res = await fetch('/api/cv/create', { method: 'POST', body: data });
++ const blob = await res.blob();
++ const url = URL.createObjectURL(blob);
++ download(url, 'MyCV.pdf');   // use tiny “downloadjs” helper or DIY anchor click
+
+
+⸻
+
+7 Make API endpoints environment-aware
+
+🗂 All fetch('/api/...') calls
+
+- fetch('/api/cv/create', ...)
++ fetch(`${import.meta.env.VITE_API_URL}/cv/create`, ...)
+
+Add VITE_API_URL=http://localhost:5000/api in .env (and prod URL in your CI secrets). Resist hard-coding.
+
+⸻
+
+8 Add a sanity-check smoke test (optional but highly recommended)
+
+Create e2e/cv-assistant.spec.ts (Playwright):
+
+test('voice → CV PDF', async ({ page }) => {
+  await page.goto('/');
+  await page.click('text=Create CV with AI');
+  await page.waitForSelector('text=Listening...');
+  // mock audio; skip real mic in CI
+  await page.click('text=Finish');
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.click('text=Generate')
+  ]);
+  expect(download.suggestedFilename()).toMatch(/\.pdf$/);
+});
+
+Wire into npm test:e2e and CI.
+
+⸻
+
+9 Delete dead files & imports (one-liner)
+
+npx ts-prune | grep -v 'node_modules'   # list unused exports
+
+Then prune mercilessly. Your lint config should block future zombies.
+
+⸻
+
+🥳 You’re Done
+
+Follow the patches top-to-bottom; commit after each block so you can roll back if something explodes.
+Once these seven hotspots are fixed, the rest of the repo actually behaves – the AI assistant pops, dark mode stops flickering, and dashboards quit doing the cha-cha every time you tap them.
+
+Keep shipping.
