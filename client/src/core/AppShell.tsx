@@ -16,7 +16,6 @@ interface AppShellProps {
 }
 
 export function AppShell({ children }: AppShellProps) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [cvAssistantOpen, setCvAssistantOpen] = useState(false);
   const [location] = useLocation();
   const { isAuthenticated } = useAuth();
@@ -24,7 +23,7 @@ export function AppShell({ children }: AppShellProps) {
   const isRestrictedRoute = location === "/" || location === "/login" || location.startsWith("/onboarding");
   const allowFAB = !isRestrictedRoute;
   const allowThemeToggle = !isRestrictedRoute;
-  const { assistantOpen, setAssistantOpen } = useUIState();
+  const { assistantOpen, setAssistantOpen, sidebarOpen, setSidebarOpen } = useUIState();
 
   // Listen for CV assistant events
   useEffect(() => {
@@ -73,8 +72,8 @@ export function AppShell({ children }: AppShellProps) {
 
       {/* Sidebar */}
       <Sidebar 
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
       
       {/* Theme Toggle */}

@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
-import { Bell, Sun, Moon } from "lucide-react";
+import { Bell, Sun, Moon, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { User } from "@shared/schema";
 import { DashboardGrid } from "../dashboard/DashboardGrid";
 import { ThemePreviewToggle } from "../../ui/ThemePreviewToggle";
 import { useTheme } from "../../hooks/useTheme";
+import { useUIState } from "../../hooks/useUIState";
 
 interface EmployerDashboardProps {
   user: User;
@@ -12,6 +13,7 @@ interface EmployerDashboardProps {
 
 export function EmployerDashboard({ user }: EmployerDashboardProps) {
   const { isDark, toggleTheme } = useTheme();
+  const { setSidebarOpen } = useUIState();
 
   return (
     <>
@@ -19,6 +21,14 @@ export function EmployerDashboard({ user }: EmployerDashboardProps) {
       <header className="bg-background border-b border-border px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden text-muted-foreground hover:text-tf-accent"
+            >
+              <Menu className="w-4 h-4" />
+            </Button>
             <div className="w-8 h-8 bg-tf-accent-gradient rounded-lg flex items-center justify-center shadow-tf-halo">
               <span className="text-tf-dark font-semibold text-sm">TF</span>
             </div>

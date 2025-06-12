@@ -1,20 +1,31 @@
 import { motion } from "framer-motion";
-import { Bell } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { User } from "@shared/schema";
 import { DashboardGrid } from "../dashboard/DashboardGrid";
+import { useUIState } from "../../hooks/useUIState";
 
 interface CandidateDashboardProps {
   user: User;
 }
 
 export function CandidateDashboard({ user }: CandidateDashboardProps) {
+  const { setSidebarOpen } = useUIState();
+
   return (
     <>
       {/* Header */}
       <header className="bg-background border-b border-border px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden"
+            >
+              <Menu className="w-4 h-4" />
+            </Button>
             <div className="w-8 h-8 bg-gradient-to-r from-primary to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-semibold text-sm">TF</span>
             </div>
