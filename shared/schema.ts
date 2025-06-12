@@ -35,6 +35,23 @@ export const applications = pgTable("applications", {
   appliedAt: timestamp("applied_at").defaultNow(),
 });
 
+export const cvs = pgTable("cvs", {
+  id: serial("id").primaryKey(),
+  candidateId: integer("candidate_id").references(() => users.id).notNull(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  location: text("location"),
+  summary: text("summary"),
+  experience: text("experience").array(), // JSON strings of experience entries
+  education: text("education").array(), // JSON strings of education entries
+  skills: text("skills").array(), // Array of skill names
+  certifications: text("certifications").array(), // JSON strings of certification entries
+  languages: text("languages").array(), // JSON strings of language entries
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
   createdAt: true,
@@ -50,6 +67,12 @@ export const insertApplicationSchema = createInsertSchema(applications).omit({
   appliedAt: true,
 });
 
+export const insertCvSchema = createInsertSchema(cvs).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
@@ -61,11 +84,18 @@ export const onboardingSchema = z.object({
   profileData: z.record(z.any()).optional(),
 });
 
+export const cvCreationSchema = z.object({
+  description: z.string().min(10, "Please provide more details about your background"),
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertJob = z.infer<typeof insertJobSchema>;
 export type Job = typeof jobs.$inferSelect;
 export type InsertApplication = z.infer<typeof insertApplicationSchema>;
 export type Application = typeof applications.$inferSelect;
+export type InsertCv = z.infer<typeof insertCvSchema>;
+export type Cv = typeof cvs.$inferSelect;
 export type LoginData = z.infer<typeof loginSchema>;
 export type OnboardingData = z.infer<typeof onboardingSchema>;
+export type CvCreationData = z.infer<typeof cvCreationSchema>;

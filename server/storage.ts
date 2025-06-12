@@ -1,4 +1,4 @@
-import { users, jobs, applications, type User, type InsertUser, type Job, type InsertJob, type Application, type InsertApplication } from "@shared/schema";
+import { users, jobs, applications, cvs, type User, type InsertUser, type Job, type InsertJob, type Application, type InsertApplication, type Cv, type InsertCv } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 
@@ -22,6 +22,13 @@ export interface IStorage {
   getApplicationsByJob(jobId: number): Promise<Application[]>;
   createApplication(application: InsertApplication): Promise<Application>;
   updateApplication(id: number, updates: Partial<Application>): Promise<Application | undefined>;
+
+  // CV operations
+  getCv(id: number): Promise<Cv | undefined>;
+  getCvByCandidate(candidateId: number): Promise<Cv | undefined>;
+  createCv(cv: InsertCv): Promise<Cv>;
+  updateCv(id: number, updates: Partial<Cv>): Promise<Cv | undefined>;
+  deleteCv(id: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -110,6 +117,58 @@ export class DatabaseStorage implements IStorage {
       .where(eq(applications.id, id))
       .returning();
     return application || undefined;
+  }
+
+  async getCv(id: number): Promise<Cv | undefined> {
+    try {
+      const [cv] = await db.select().from(cvs).where(eq(cvs.id, id));
+      return cv || undefined;
+    } catch (error) {
+      console.error('Error getting CV:', error);
+      return undefined;
+    }
+  }
+
+  async getCvByCandidate(candidateId: number): Promise<Cv | undefined> {
+    try {
+      const [cv] = await db.select().from(cvs).where(eq(cvs.candidateId, candidateId));
+      return cv || undefined;
+    } catch (error) {
+      console.error('Error getting CV by candidate:', error);
+      return undefined;
+    }
+  }
+
+  async createCv(insertCv: InsertCv): Promise<Cv> {
+    const [cv] = await db
+      .insert(cvs)
+      .values(insertCv)
+      .returning();
+    return cv;
+  }
+
+  async updateCv(id: number, updates: Partial<Cv>): Promise<Cv | undefined> {
+    try {
+      const [updatedCv] = await db
+        .update(cvs)
+        .set({ ...updates, updatedAt: new Date() })
+        .where(eq(cvs.id, id))
+        .returning();
+      return updatedCv || undefined;
+    } catch (error) {
+      console.error('Error updating CV:', error);
+      return undefined;
+    }
+  }
+
+  async deleteCv(id: number): Promise<boolean> {
+    try {
+      const result = await db.delete(cvs).where(eq(cvs.id, id));
+      return (result.rowCount || 0) > 0;
+    } catch (error) {
+      console.error('Error deleting CV:', error);
+      return false;
+    }
   }
 }
 
