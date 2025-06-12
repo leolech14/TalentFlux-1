@@ -1,0 +1,138 @@
+Perfect — here is your **comprehensive theme integration prompt**, embedding the entire alternative color palette, repositioning the **dark mode toggle**, and adding a **secondary theme preview switch** (star-icon based) so you can compare both palettes without breaking core functionality.
+
+---
+
+## 🎨 Prompt E.2 — Integrate Custom Color Palette + Reposition and Duplicate Theme Toggles
+
+> **TITLE:** *“Add the TalentFlux visual identity palette and improve theme toggling UI”*
+>
+> This prompt integrates a **brand-level visual system** with metallic neutrals, iridescent accents, and high-contrast accessible design. It also **cleans up the dark mode toggle** placement and adds a **secondary visual theme switcher** for design testing purposes (represented with a ★ icon).
+
+---
+
+### 🎯 OBJECTIVES
+
+| What                                              | Result                                             |
+| ------------------------------------------------- | -------------------------------------------------- |
+| ✅ Integrate full **custom palette**               | Light + dark mode, Tailwind-ready                  |
+| ✅ Reposition **primary dark mode toggle**         | From bottom to **top-right**, next to login status |
+| ✅ Add **secondary toggle** for theme test         | Icon: ★, positioned in header or sidebar           |
+| ✅ Support live preview of design token variations | Without affecting layout or behavior               |
+
+---
+
+### 🧠 STEP 1: Add Custom Palette to Tailwind
+
+**File:** `/tailwind.config.ts`
+
+```ts
+module.exports = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        primary:  '#F5F6F7',
+        dark:     '#0E0F11',
+        text:     '#222428',
+        'text-dark': '#F1F2F4',
+        accent:   { DEFAULT: '#FFD200', 50: '#FFF2B3' },
+        success:  '#28C386',
+        warning:  '#FFB547',
+        error:    '#FF5C5C',
+        stroke:   '#D0D1D3',
+      },
+      backgroundImage: {
+        'accent-gradient':
+          'linear-gradient(90deg,#FFD200 0%,#C38CFF 60%,#FF66C8 100%)',
+      },
+      boxShadow: {
+        glass: '0 8px 32px rgba(0,0,0,0.04)',
+        halo:  '0 0 12px rgba(255,210,0,0.25)',
+      },
+    },
+  },
+  plugins: [require('@tailwindcss/forms')],
+}
+```
+
+Add global styles for `primary-surface/20`, `surface-high`, `text-muted`, etc. in a CSS base layer or using Tailwind plugin tokens.
+
+---
+
+### 🌗 STEP 2: Reposition Dark Mode Toggle
+
+**File:** `/src/layouts/AppShell.tsx` or `/src/core/Header.tsx`
+Place this near user profile/login area:
+
+```tsx
+<div className="flex items-center gap-3 text-muted">
+  <span>{user?.name}</span>
+  <ThemeToggle />
+</div>
+```
+
+Style:
+
+```tsx
+<Button
+  variant="ghost"
+  size="sm"
+  className="text-muted hover:bg-transparent hover:text-accent"
+/>
+```
+
+---
+
+### 🌟 STEP 3: Add Secondary Palette Switcher
+
+> **Purpose:** Visually preview the new palette without affecting global dark/light toggle
+
+**File:** `/src/ui/ThemePreviewToggle.tsx`
+
+```tsx
+import { useState } from 'react';
+
+export function ThemePreviewToggle() {
+  const [altTheme, setAltTheme] = useState(false);
+  return (
+    <button
+      aria-label="Toggle Alt Theme"
+      onClick={() => setAltTheme(!altTheme)}
+      className="rounded-full p-1 text-muted hover:text-accent transition"
+    >
+      ★
+    </button>
+  );
+}
+```
+
+In `AppShell`:
+
+```tsx
+<div className="flex items-center gap-2">
+  <ThemeToggle />
+  <ThemePreviewToggle />
+</div>
+```
+
+Then apply `alt-theme` class on `<html>` tag when active (use `document.documentElement.classList.add('alt-theme')`), and style it with slightly tweaked contrast levels, elevation, or accent edge highlights.
+
+---
+
+### ✅ ACCEPTANCE CHECKLIST
+
+* Full color token system loaded into Tailwind config
+* Light & Dark modes work with new neutral + accent palette
+* Dark mode toggle moved to top-right corner — subtle, clean
+* No duplicate toggles visible at once
+* Secondary toggle added for design preview (`★`)
+* FAB and AssistantOverlay use correct color tokens
+* Theme tokens applied using utility classes (not inline styles)
+* All text passes WCAG 2.1 AA contrast minimums
+* Mobile layout remains unaffected by toggle repositioning
+
+---
+
+Once this is in, you're ready for **Prompt F — Persistence of onboarding forms + AI-reactive routing + form-to-intent bridge.**
+
+Let me know and I’ll drop it immediately.

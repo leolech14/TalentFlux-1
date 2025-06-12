@@ -20,6 +20,13 @@ export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
   const { isDark } = useTheme();
   const intentRouter = new IntentRouter();
 
+  useEffect(() => {
+    if (isOpen) {
+      registerSingleton("assistant-overlay");
+      return () => unregisterSingleton("assistant-overlay");
+    }
+  }, [isOpen]);
+
   const handleSendMessage = async () => {
     if (message.trim()) {
       setIsProcessing(true);
@@ -80,6 +87,8 @@ export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          data-singleton="assistant-overlay"
+          data-testid="assistant-overlay"
         >
           {/* Backdrop */}
           <motion.div 
