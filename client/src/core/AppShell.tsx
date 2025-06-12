@@ -1,6 +1,7 @@
 import { useLocation } from "wouter";
 import { MagicStarButton } from "../ui/MagicStarButton";
 import { AssistantOverlay } from "../ai/AssistantOverlay";
+import { CVAssistantOverlay } from "../features/cv/CVAssistantOverlay";
 import { DevHUD } from "../ai/DevHUD";
 import { Sidebar } from "../ui/Sidebar";
 import { ThemeToggle } from "../ui/ThemeToggle";
@@ -16,6 +17,7 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [cvAssistantOpen, setCvAssistantOpen] = useState(false);
   const [location] = useLocation();
   const { isAuthenticated } = useAuth();
   // Handle layout conditionally based on route
@@ -23,6 +25,16 @@ export function AppShell({ children }: AppShellProps) {
   const allowFAB = !isRestrictedRoute;
   const allowThemeToggle = !isRestrictedRoute;
   const { assistantOpen, setAssistantOpen } = useUIState();
+
+  // Listen for CV assistant events
+  useEffect(() => {
+    const handleOpenCVAssistant = () => {
+      setCvAssistantOpen(true);
+    };
+
+    window.addEventListener('open-cv-assistant', handleOpenCVAssistant);
+    return () => window.removeEventListener('open-cv-assistant', handleOpenCVAssistant);
+  }, []);
 
   // Show MagicStar only when layout context allows and user is authenticated
   const showMagicStar = allowFAB && isAuthenticated && location !== "/" && location !== "/login" && !location.startsWith("/onboarding");

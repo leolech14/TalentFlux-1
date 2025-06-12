@@ -35,6 +35,15 @@ export function useIntentRouter() {
       action: () => navigate('/create-cv'),
       userTypes: ['candidate']
     },
+    'cv-assistant': {
+      id: 'cv-assistant',
+      description: 'Opening AI CV Assistant',
+      action: (navigate) => {
+        // Trigger CV Assistant overlay directly
+        window.dispatchEvent(new CustomEvent('open-cv-assistant'));
+      },
+      userTypes: ['candidate']
+    },
     'view-jobs': {
       id: 'view-jobs',
       description: 'Showing available jobs',
