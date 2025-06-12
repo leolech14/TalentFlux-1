@@ -1,10 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Mic, Send, Home, Users, BarChart3, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../hooks/useTheme";
 import { IntentRouter } from "./IntentRouter";
+import { registerSingleton, unregisterSingleton } from "../lib/SingletonRegistry";
 
 interface AssistantOverlayProps {
   isOpen: boolean;

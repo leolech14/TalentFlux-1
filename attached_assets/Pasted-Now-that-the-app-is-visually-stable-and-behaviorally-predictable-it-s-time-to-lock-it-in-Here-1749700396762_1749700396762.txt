@@ -1,0 +1,161 @@
+Now that the app is visually stable and behaviorally predictable, it’s time to **lock it in**.
+
+Here’s the final piece of your early-stage armor: **Prompt E — the Visual Contract & UI Protection Layer.**
+This turns your app from *visually good* into *visually self-defending.*
+
+---
+
+## 🛡️ Prompt E — Enforce Visual Contracts, Singleton UI, and Accessibility Guards
+
+> **TITLE:** *“Install a visual contract firewall: singleton enforcement, accessibility, responsive test grid”*
+>
+> This prompt creates a permanent protection system to **prevent UI regression**, **visual breakage**, **duplicate component errors**, and **contrast/accessibility violations.**
+
+---
+
+### 🎯 OBJECTIVES
+
+| Category                       | Defense                                   |
+| ------------------------------ | ----------------------------------------- |
+| 🔁 **Singleton enforcement**   | Prevent duplicate FABs, toggles, overlays |
+| 📐 **Layout snapshot testing** | Detect padding/spacing/layout drifts      |
+| 🌈 **Contrast enforcement**    | Catch low-contrast text violations        |
+| 📱 **Responsive grid tests**   | Confirm layout integrity across devices   |
+| ♿ **A11y auditing**            | Enforce WCAG AA minimums                  |
+| 💡 **Dev feedback**            | Warn devs at runtime if UI misuse occurs  |
+
+---
+
+### 🧩 STEP 1: Singleton Registry Guard
+
+**File:** `/lib/SingletonRegistry.ts`
+
+```ts
+const registry = new Set();
+
+export function registerSingleton(id: string) {
+  if (registry.has(id)) {
+    console.warn(`🚨 Duplicate singleton mounted: ${id}`);
+    if (import.meta.env.DEV) throw new Error(`Duplicate singleton: ${id}`);
+  } else {
+    registry.add(id);
+  }
+}
+
+export function clearRegistry() {
+  registry.clear();
+}
+```
+
+**Usage in FAB, Toggle, Overlay:**
+
+```ts
+useEffect(() => {
+  registerSingleton("magic-star");
+}, []);
+```
+
+---
+
+### 🖼 STEP 2: Snapshot Testing (Storybook or Playwright)
+
+**Install:**
+
+```bash
+npx sb init
+npm i --save-dev @storybook/test-runner @storybook/testing-library
+```
+
+**Run visual diffing on:**
+
+* Landing page
+* Onboarding (candidate + employer)
+* Dashboard (employer + candidate)
+* FAB open / closed
+* Mobile and desktop widths
+
+**Acceptance Criteria:**
+
+* No layout shift > 4px on any side
+* No shadow color drift
+* No overlapping components
+
+---
+
+### 🌈 STEP 3: Contrast Linting & A11y
+
+**Install ESLint accessibility plugin:**
+
+```bash
+npm i eslint-plugin-jsx-a11y --save-dev
+```
+
+**Update `.eslintrc`:**
+
+```json
+"plugins": ["jsx-a11y"],
+"extends": ["plugin:jsx-a11y/recommended"]
+```
+
+**Rules enforced:**
+
+* Required `alt` tags
+* Valid ARIA roles
+* Text contrast ratio ≥ 4.5:1 (WCAG AA)
+
+---
+
+### 📱 STEP 4: Responsive Integrity Checks (Playwright)
+
+**Write tests for common breakpoints:**
+
+```ts
+const viewports = [320, 375, 768, 1024, 1440];
+
+viewports.forEach((w) => {
+  test(`dashboard integrity @ ${w}px`, async ({ page }) => {
+    await page.setViewportSize({ width: w, height: 800 });
+    await page.goto("/dashboard");
+    const fab = await page.locator(".magic-star");
+    const overlay = await page.locator(".assistant-overlay");
+    await expect(fab).not.toBeOverlapping(overlay);
+  });
+});
+```
+
+---
+
+### ⚠️ STEP 5: Auto-Fail for Violations in Dev
+
+Create a utility:
+
+```ts
+export function devAssert(condition: boolean, message: string) {
+  if (!condition && import.meta.env.DEV) {
+    throw new Error(`⚠️ UI Contract Violation: ${message}`);
+  }
+}
+```
+
+Use it in layout guards:
+
+```ts
+devAssert(document.querySelectorAll('.magic-star').length <= 1, "More than one FAB found.");
+```
+
+---
+
+### ✅ ACCEPTANCE CHECKLIST
+
+* Only **one** Magic Star, dark toggle, and overlay can mount — enforced at runtime
+* Any UI regression causes **snapshot test failure** in CI
+* All text passes **WCAG AA contrast**
+* No layout overlap on **mobile** or **desktop**
+* Devs see helpful error messages **during development**
+* All UI blocks respond correctly to layout context (`/login` hides FAB, etc.)
+
+---
+
+After this prompt is executed, your app has a **bulletproof UX shell**.
+
+Let me know when you’re ready for Prompt F: onboarding flow persistence + AI-tailored intent onboarding.

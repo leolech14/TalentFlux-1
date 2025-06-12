@@ -1,10 +1,12 @@
 import { useLocation } from "wouter";
 import { MagicStarButton } from "../ui/MagicStarButton";
 import { AssistantOverlay } from "../ai/AssistantOverlay";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../hooks/useTheme";
 import { useLayout } from "../lib/LayoutContext";
+import { registerSingleton, unregisterSingleton } from "../lib/SingletonRegistry";
+import { checkSingletonIntegrity, checkLayoutIntegrity } from "../lib/DevAssert";
 import { Sun, Moon } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -24,6 +26,25 @@ export function AppShell({ children }: AppShellProps) {
   
   // Show theme toggle when layout context allows
   const showThemeToggle = allowThemeToggle;
+
+  // Register theme toggle singleton and run integrity checks
+  useEffect(() => {
+    if (showThemeToggle) {
+      registerSingleton("theme-toggle");
+      return () => unregisterSingleton("theme-toggle");
+    }
+  }, [showThemeToggle]);
+
+  // Run integrity checks in development
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      const timeoutId = setTimeout(() => {
+        checkSingletonIntegrity();
+        checkLayoutIntegrity();
+      }, 100);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [showMagicStar, showThemeToggle, isAssistantOpen]);
 
   return (
     <div className="min-h-screen relative bg-background text-foreground transition-colors duration-300">
@@ -61,6 +82,9 @@ export function AppShell({ children }: AppShellProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
+          data-singleton="theme-toggle"
+          data-testid="theme-toggle"
+          aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
         >
           <motion.div
             key={isDark ? "moon" : "sun"}

@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import { useDock } from "../hooks/useDock";
 import { useTheme } from "../hooks/useTheme";
+import { registerSingleton, unregisterSingleton } from "../lib/SingletonRegistry";
+import { useEffect } from "react";
 
 interface MagicStarButtonProps {
   onClick: () => void;
@@ -11,6 +13,11 @@ interface MagicStarButtonProps {
 export function MagicStarButton({ onClick, isOpen }: MagicStarButtonProps) {
   const { position, updatePosition, constrainY } = useDock();
   const { isDark } = useTheme();
+
+  useEffect(() => {
+    registerSingleton("magic-star");
+    return () => unregisterSingleton("magic-star");
+  }, []);
 
   const handleDragEnd = (event: any, info: any) => {
     const constrainedY = constrainY(info.point.y - window.innerHeight / 2);
@@ -49,6 +56,8 @@ export function MagicStarButton({ onClick, isOpen }: MagicStarButtonProps) {
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       layoutId="magic-star"
+      data-singleton="magic-star"
+      data-testid="magic-star-fab"
     >
       <motion.button
         onClick={onClick}
