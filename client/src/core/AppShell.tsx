@@ -63,7 +63,7 @@ export function AppShell({ children }: AppShellProps) {
 
       {showMagicStar && !assistantOpen && (
         <MagicStarButton 
-          onClick={() => setAssistantOpen(true)}
+          onClick={() => { if (!cvAssistantOpen) setAssistantOpen(true); }}
           isOpen={assistantOpen}
         />
       )}

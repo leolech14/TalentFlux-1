@@ -409,10 +409,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await browser.close();
       
       res
-        .setHeader('Content-Type', 'application/pdf')
+        .setHeader("Content-Type", "application/pdf")
         .setHeader(
-          'Content-Disposition',
-          `attachment; filename="${cvData.personalInfo.fullName.replace(/\s+/g, '_')}_CV.pdf"`
+          "Content-Disposition",
+          `attachment; filename="${cvData.personalInfo.fullName.replace(/\s+/g, "_")}_CV.pdf"`
         )
         .send(pdfBuffer);
     } catch (error) {

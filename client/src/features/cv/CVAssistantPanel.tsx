@@ -162,17 +162,15 @@ export default function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelPr
         body: formData
       });
 
-      if (response.ok) {
-        const { text } = await response.json();
-        setCurrentInput(text);
-        toast({
-          title: "Audio transcribed",
-          description: "You can edit the text before submitting",
-          duration: 3000,
-        });
-      } else {
-        throw new Error('Transcription failed');
-      }
+      if (!response.ok) throw new Error('Transcription failed');
+
+      const { text } = await response.json();
+      setCurrentInput(text);
+      toast({
+        title: "Audio transcribed",
+        description: "You can edit the text before submitting",
+        duration: 3000,
+      });
     } catch (error) {
       toast({
         title: "Transcription failed",

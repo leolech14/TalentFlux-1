@@ -180,8 +180,9 @@ export default function CreateCv() {
                   Create CV with AI
                 </Button>
                 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="button"
+                  onClick={form.handleSubmit(onSubmit)}
                   disabled={createCvMutation.isPending}
                   variant="outline"
                   className="flex-1"

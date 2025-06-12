@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { useUIState } from "@/hooks/useUIState";
+import { HelpfulBanner } from "@/components/feedback/HelpfulBanner";
 
 const candidateFormSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
@@ -176,39 +177,11 @@ export default function OnboardingCandidate() {
                       
                       <Button
                         type="button"
-                        variant="outline"
-                        className="w-full group relative overflow-hidden border-flux-primary/20 hover:border-flux-primary/40 bg-gradient-to-r from-flux-primary/5 to-purple-500/5 hover:from-flux-primary/10 hover:to-purple-500/10 transition-all duration-300"
-                        onClick={() => setAssistantOpen(true)}
+                        onClick={() => window.dispatchEvent(new Event("open-cv-assistant"))}
+                        className="w-full"
                       >
-                        <motion.div
-                          className="absolute inset-0 bg-gradient-to-r from-flux-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        />
-                        <motion.div
-                          animate={{ 
-                            rotate: [0, 10, -10, 0],
-                            scale: [1, 1.1, 1]
-                          }}
-                          transition={{ 
-                            duration: 2,
-                            repeat: Infinity,
-                            repeatDelay: 3
-                          }}
-                          className="relative mr-2"
-                        >
-                          <Sparkles className="w-4 h-4 text-flux-primary" />
-                        </motion.div>
-                        <span className="relative font-medium">Preview AI CV Assistant</span>
-                        <motion.div
-                          animate={{ x: [0, 3, 0] }}
-                          transition={{ 
-                            duration: 1.5,
-                            repeat: Infinity,
-                            repeatDelay: 2
-                          }}
-                          className="relative ml-2"
-                        >
-                          <Wand2 className="w-4 h-4 text-purple-500" />
-                        </motion.div>
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Create CV with AI
                       </Button>
                     </motion.div>
                   </div>
