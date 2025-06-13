@@ -74,6 +74,7 @@
     "openai": "^5.3.0",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
+    "puppeteer": "^24.10.1",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
@@ -118,10 +119,5 @@
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
-  },
-  "resolutions": {
-    "proxy-agent": "6.3.0",
-    "debug": "4.3.4",
-    "@puppeteer/browsers/proxy-agent": "6.3.0"
   }
 }

@@ -43,7 +43,7 @@ interface CVData {
 }
 
 export async function generateCVFromResponses(responses: string[]): Promise<CVData> {
-  const systemPrompt = `You are a professional CV writer specializing in LinkedIn-quality resumes. 
+  const systemPrompt = `You are a professional CV writer specializing in LinkedIn-quality resumes.
 
 Convert the user's natural language responses into a structured, professional CV. Follow these guidelines:
 1. Extract and format information professionally

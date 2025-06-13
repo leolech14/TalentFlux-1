@@ -401,42 +401,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'CV data is required' });
       }
 
-      // Generate HTML for PDF conversion
-      const htmlContent = generateCVHTML(cvData);
-
-      // Convert to PDF using Puppeteer
-      const puppeteer = require('puppeteer');
-      const browser = await puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      // PDF generation is now handled client-side using jsPDF
+      // This endpoint is kept for backward compatibility
+      res.status(200).json({ 
+        message: 'PDF generation should be done client-side',
+        cvData: cvData 
       });
-
-      const page = await browser.newPage();
-      await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-
-      const pdfBuffer = await page.pdf({
-        format: 'A4',
-        printBackground: true,
-        margin: {
-          top: '20mm',
-          right: '20mm',
-          bottom: '20mm',
-          left: '20mm'
-        }
-      });
-
-      await browser.close();
-
-      res
-        .setHeader("Content-Type", "application/pdf")
-        .setHeader(
-          "Content-Disposition",
-          `attachment; filename="${cvData.personalInfo.fullName.replace(/\s+/g, "_")}_CV.pdf"`
-        )
-        .send(pdfBuffer);
     } catch (error) {
-      console.error('PDF generation error:', error);
-      res.status(500).json({ error: 'Failed to generate PDF' });
+      console.error('PDF endpoint error:', error);
+      res.status(500).json({ error: 'Failed to process request' });
     }
   });
 
