@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Search, Globe, Check } from 'lucide-react';
+import { motion, useDragControls, PanInfo } from 'framer-motion';
 import { useLanguageContext } from './LanguageContext';
 import { SUPPORTED_LANGUAGES } from '@/services/translationService';
 import { cn } from '@/lib/utils';
@@ -8,8 +9,12 @@ export function LanguageSearch() {
   const { currentLanguage, changeLanguage } = useLanguageContext();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const constraintsRef = useRef<HTMLDivElement>(null);
+  const dragControls = useDragControls();
 
   const currentLang = SUPPORTED_LANGUAGES.find(lang => lang.code === currentLanguage);
   
@@ -31,10 +36,39 @@ export function LanguageSearch() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Load saved position on component mount
+  useEffect(() => {
+    const savedPosition = localStorage.getItem('languageButtonPosition');
+    if (savedPosition) {
+      setPosition(JSON.parse(savedPosition));
+    }
+  }, []);
+
   const handleLanguageSelect = (languageCode: string) => {
-    changeLanguage(languageCode);
-    setIsOpen(false);
-    setSearchQuery('');
+    if (!isDragging) {
+      changeLanguage(languageCode);
+      setIsOpen(false);
+      setSearchQuery('');
+    }
+  };
+
+  const handleDragEnd = (event: any, info: PanInfo) => {
+    setIsDragging(false);
+    setPosition({ x: info.offset.x, y: info.offset.y });
+    
+    // Store position in localStorage to persist across page reloads
+    localStorage.setItem('languageButtonPosition', JSON.stringify({ x: info.offset.x, y: info.offset.y }));
+  };
+
+  const handleDragStart = () => {
+    setIsDragging(true);
+    setIsOpen(false); // Close dropdown when dragging starts
+  };
+
+  const handleButtonClick = () => {
+    if (!isDragging) {
+      setIsOpen(!isOpen);
+    }
   };
 
   const toggleDropdown = () => {
