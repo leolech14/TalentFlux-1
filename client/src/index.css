@@ -268,6 +268,22 @@ body {
   border-color: hsl(var(--tf-accent));
 }
 
+.text-tf-accent {
+  color: hsl(var(--tf-accent));
+}
+
+.text-tf-text {
+  color: hsl(var(--tf-text));
+}
+
+.text-tf-text-dark {
+  color: hsl(var(--tf-text-dark));
+}
+
+.hover\:text-tf-accent\/80:hover {
+  color: hsla(var(--tf-accent), 0.8);
+}
+
 /* Dark mode utilities */
 .dark {
   color-scheme: dark;
