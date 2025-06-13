@@ -78,17 +78,20 @@ export default function Landing() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-              <span className="text-safe-contrast font-extrabold drop-shadow-sm">Connect </span>
-              <span className="text-gradient-safe font-black">
+              <span className="text-foreground font-extrabold" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1)' }}>Connect </span>
+              <span className="bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent font-black" 
+                    style={{ textShadow: '0 2px 8px rgba(139, 92, 246, 0.3), 0 1px 4px rgba(139, 92, 246, 0.2)' }}>
                 Talent
               </span>
               <br />
-              <span className="text-safe-contrast font-extrabold drop-shadow-sm">with </span>
-              <span className="text-gradient-safe font-black">
+              <span className="text-foreground font-extrabold" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1)' }}>with </span>
+              <span className="bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent font-black"
+                    style={{ textShadow: '0 2px 8px rgba(139, 92, 246, 0.3), 0 1px 4px rgba(139, 92, 246, 0.2)' }}>
                 Opportunity
               </span>
             </h1>
-            <p className="text-xl text-safe-contrast/80 mb-12 max-w-2xl mx-auto leading-relaxed font-medium">
+            <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed" 
+               style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.1)' }}>
               <TranslatedText text="The AI-powered platform that brings together talented professionals and innovative companies for perfect career matches." />
             </p>
           </motion.div>
@@ -102,24 +105,22 @@ export default function Landing() {
           >
             <Button 
               size="lg" 
-              className="group btn-primary-safe hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 px-8 py-4 font-semibold"
+              className="group bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 px-8 py-4"
               onClick={() => navigate('/login')}
+              style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)' }}
             >
-              <User className="w-5 h-5 group-hover:scale-110 transition-transform text-white" />
-              <span className="text-white font-medium">
-                <TranslatedText text="I'm a Candidate" />
-              </span>
+              <User className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              <TranslatedText text="I'm a Candidate" />
             </Button>
             <Button 
               size="lg" 
               variant="outline" 
-              className="group btn-outline-safe hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 px-8 py-4 font-semibold"
+              className="group bg-background/90 backdrop-blur-sm border-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 text-foreground hover:text-primary transition-all duration-200 flex items-center space-x-2 px-8 py-4 shadow-md hover:shadow-lg"
               onClick={() => navigate('/login')}
+              style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)' }}
             >
               <Building className="w-5 h-5 group-hover:scale-110 transition-transform text-primary" />
-              <span className="font-medium">
-                <TranslatedText text="I'm an Employer" />
-              </span>
+              <TranslatedText text="I'm an Employer" />
             </Button>
           </motion.div>
           
