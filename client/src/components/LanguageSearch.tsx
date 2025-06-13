@@ -1,18 +1,19 @@
 import { useState, useRef, useEffect } from 'react';
 import { Search, Globe, Check } from 'lucide-react';
-import { useTranslation } from '@/hooks/useTranslation';
+import { useLanguageContext } from './LanguageContext';
+import { SUPPORTED_LANGUAGES } from '@/services/translationService';
 import { cn } from '@/lib/utils';
 
 export function LanguageSearch() {
-  const { currentLanguage, changeLanguage, supportedLanguages, getCurrentLanguageInfo } = useTranslation();
+  const { currentLanguage, changeLanguage } = useLanguageContext();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const currentLang = getCurrentLanguageInfo();
+  const currentLang = SUPPORTED_LANGUAGES.find(lang => lang.code === currentLanguage);
   
-  const filteredLanguages = supportedLanguages.filter(lang => 
+  const filteredLanguages = SUPPORTED_LANGUAGES.filter(lang => 
     lang.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     lang.nativeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
     lang.code.toLowerCase().includes(searchQuery.toLowerCase())

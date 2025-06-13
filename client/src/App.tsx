@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "./features/auth/AuthContext";
 import { LayoutProvider } from "./hooks/useLayout";
 import { AppShell } from "./core/AppShell";
+import { LanguageProvider } from "./components/LanguageContext";
 
 import Landing from "./pages/landing";
 import Login from "./pages/login";
@@ -55,16 +56,18 @@ export default function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <LayoutProvider>
-            <TooltipProvider>
-              <AppShell>
-                <Toaster />
-                <Router />
-              </AppShell>
-            </TooltipProvider>
-          </LayoutProvider>
-        </AuthProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <LayoutProvider>
+              <TooltipProvider>
+                <AppShell>
+                  <Toaster />
+                  <Router />
+                </AppShell>
+              </TooltipProvider>
+            </LayoutProvider>
+          </AuthProvider>
+        </LanguageProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
