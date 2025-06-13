@@ -1,35 +1,19 @@
 import { motion } from "framer-motion";
-import { Link, useLocation } from "wouter";
-import { Brain, MessageCircle, TrendingUp, Zap, User, Building } from "lucide-react";
+import { useLocation } from "wouter";
+import { Brain, MessageCircle, TrendingUp, User, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "../hooks/useTheme";
+import { AppHeader } from "@/components/AppHeader";
 import { MagicalCVButton } from "@/features/cv/MagicalCVButton";
+import { useTranslation } from "@/hooks/useLanguage";
 
 export default function Landing() {
-  const { theme } = useTheme();
   const [, navigate] = useLocation();
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 dark:from-background dark:via-background dark:to-primary/10 text-foreground transition-colors duration-300">
       {/* Header */}
-      <header className="px-6 py-4">
-        <nav className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-tf-accent-gradient rounded-lg flex items-center justify-center shadow-tf-halo">
-              <Zap className="text-tf-dark w-4 h-4" />
-            </div>
-            <span className="text-xl font-semibold text-tf-text dark:text-tf-text-dark">TalentFlux</span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <p className="text-sm text-muted-foreground">
-              Already a member?{" "}
-              <Link href="/login" className="text-tf-accent hover:text-tf-accent/80 hover:underline font-medium transition-colors">
-                Log in here
-              </Link>
-            </p>
-          </div>
-        </nav>
-      </header>
+      <AppHeader />
       
       {/* Hero Section */}
       <main className="px-6 py-20">
@@ -40,11 +24,10 @@ export default function Landing() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-tf-text dark:from-tf-text-dark to-tf-accent bg-clip-text text-transparent">
-              AI-native HR made human.
+              {t('heroTitle')}
             </h1>
             <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
-              Streamline your hiring process with intelligent automation while keeping the human touch. 
-              Connect talent with opportunity through AI-powered insights.
+              {t('heroSubtitle')}
             </p>
           </motion.div>
           
@@ -71,7 +54,7 @@ export default function Landing() {
               onClick={() => navigate('/login')}
             >
               <User className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <span>I'm a Candidate</span>
+              <span>{t('candidateButton')}</span>
             </Button>
             <Button 
               size="lg" 
@@ -80,7 +63,7 @@ export default function Landing() {
               onClick={() => navigate('/login')}
             >
               <Building className="w-5 h-5 group-hover:scale-110 transition-transform text-primary" />
-              <span>I'm an Employer</span>
+              <span>{t('employerButton')}</span>
             </Button>
           </motion.div>
           
@@ -95,22 +78,22 @@ export default function Landing() {
               <div className="w-12 h-12 bg-cyan-400/10 dark:bg-cyan-400/20 rounded-xl flex items-center justify-center mb-4">
                 <Brain className="text-cyan-500 w-6 h-6" />
               </div>
-              <h3 className="font-semibold text-lg mb-2 text-card-foreground">AI-Powered Matching</h3>
-              <p className="text-muted-foreground">Smart algorithms connect the right talent with the right opportunities.</p>
+              <h3 className="font-semibold text-lg mb-2 text-card-foreground">{t('aiMatching')}</h3>
+              <p className="text-muted-foreground">{t('aiMatchingDesc')}</p>
             </div>
             <div className="bg-card rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-border">
               <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center mb-4">
                 <MessageCircle className="text-primary w-6 h-6" />
               </div>
-              <h3 className="font-semibold text-lg mb-2 text-card-foreground">Conversational Interface</h3>
-              <p className="text-muted-foreground">Interact naturally with your AI assistant for all HR tasks.</p>
+              <h3 className="font-semibold text-lg mb-2 text-card-foreground">{t('conversationalInterface')}</h3>
+              <p className="text-muted-foreground">{t('conversationalDesc')}</p>
             </div>
             <div className="bg-card rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-border">
               <div className="w-12 h-12 bg-green-500/10 dark:bg-green-500/20 rounded-xl flex items-center justify-center mb-4">
                 <TrendingUp className="text-green-500 w-6 h-6" />
               </div>
-              <h3 className="font-semibold text-lg mb-2 text-card-foreground">Analytics & Insights</h3>
-              <p className="text-muted-foreground">Data-driven insights to optimize your hiring process.</p>
+              <h3 className="font-semibold text-lg mb-2 text-card-foreground">{t('analyticsInsights')}</h3>
+              <p className="text-muted-foreground">{t('analyticsDesc')}</p>
             </div>
           </motion.div>
         </div>

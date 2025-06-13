@@ -39,6 +39,22 @@ export const translations = {
     signup: "Sign Up",
     welcomeBack: "Welcome Back",
     createAccount: "Create Account",
+    alreadyMember: "Already a member?",
+    loginHere: "Log in here",
+    
+    // Landing Page
+    heroTitle: "AI-native HR made human.",
+    heroSubtitle: "Streamline your hiring process with intelligent automation while keeping the human touch. Connect talent with opportunity through AI-powered insights.",
+    candidateButton: "I'm a Candidate",
+    employerButton: "I'm an Employer",
+    
+    // Features
+    aiMatching: "AI-Powered Matching",
+    aiMatchingDesc: "Smart algorithms connect the right talent with the right opportunities.",
+    conversationalInterface: "Conversational Interface", 
+    conversationalDesc: "Interact naturally with your AI assistant for all HR tasks.",
+    analyticsInsights: "Analytics & Insights",
+    analyticsDesc: "Data-driven insights to optimize your hiring process.",
     
     // CV Assistant
     cvAssistant: "CV Assistant",
@@ -74,6 +90,22 @@ export const translations = {
     signup: "Cadastrar",
     welcomeBack: "Bem-vindo de Volta",
     createAccount: "Criar Conta",
+    alreadyMember: "Já é membro?",
+    loginHere: "Entre aqui",
+    
+    // Landing Page
+    heroTitle: "RH nativo de IA feito humano.",
+    heroSubtitle: "Simplifique seu processo de contratação com automação inteligente mantendo o toque humano. Conecte talentos com oportunidades através de insights alimentados por IA.",
+    candidateButton: "Sou Candidato",
+    employerButton: "Sou Empregador",
+    
+    // Features
+    aiMatching: "Correspondência Alimentada por IA",
+    aiMatchingDesc: "Algoritmos inteligentes conectam o talento certo com as oportunidades certas.",
+    conversationalInterface: "Interface Conversacional",
+    conversationalDesc: "Interaja naturalmente com seu assistente de IA para todas as tarefas de RH.",
+    analyticsInsights: "Análises e Insights",
+    analyticsDesc: "Insights baseados em dados para otimizar seu processo de contratação.",
     
     // CV Assistant
     cvAssistant: "Assistente de CV",
