@@ -10,8 +10,14 @@ import { desc } from "drizzle-orm";
 import { z } from "zod";
 import multer from "multer";
 import repoRoutes from "./repoRoutes";
+import OpenAI from "openai";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Initialize OpenAI client
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+
   // Multer configuration for audio uploads
   const upload = multer({
     storage: multer.memoryStorage(),
@@ -459,6 +465,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Translation endpoints using OpenAI
   app.post("/api/translate", async (req: Request, res: Response) => {
     try {
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(500).json({ error: "OpenAI API key not configured" });
+      }
+
       const { text, targetLanguage } = req.body;
       
       if (!text || !targetLanguage) {
@@ -481,8 +491,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const targetLanguageName = languageNames[targetLanguage] || targetLanguage;
 
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
+      const openaiClient = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
+
+      const response = await openaiClient.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
         messages: [
           {
             role: "system",
