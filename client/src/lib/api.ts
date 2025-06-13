@@ -59,4 +59,14 @@ export const api = {
       return response.json();
     },
   },
+  translation: {
+    translate: async (text: string, targetLanguage: string) => {
+      const response = await apiRequest("POST", "/api/translate", { text, targetLanguage });
+      return response.json();
+    },
+    translateBatch: async (texts: string[], targetLanguage: string) => {
+      const response = await apiRequest("POST", "/api/translate-batch", { texts, targetLanguage });
+      return response.json();
+    },
+  },
 };
