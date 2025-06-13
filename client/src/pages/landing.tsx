@@ -24,21 +24,11 @@ export default function Landing() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-tf-text dark:from-tf-text-dark to-tf-accent bg-clip-text text-transparent">
-              <TranslatedText text="Transform Your Career with AI-Powered Talent Solutions" />
+              <TranslatedText text="Connect Talent with Opportunity" />
             </h1>
             <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
-              <TranslatedText text="Connect talented professionals with innovative companies through intelligent matching, seamless communication, and data-driven insights." />
+              <TranslatedText text="The AI-powered platform that brings together talented professionals and innovative companies for perfect career matches." />
             </p>
-          </motion.div>
-          
-          {/* Magical CV Button */}
-          <motion.div 
-            className="flex justify-center mb-12"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
-            <MagicalCVButton />
           </motion.div>
           
           {/* CTA Buttons */}

@@ -13,6 +13,7 @@ import Login from "./pages/login";
 import Onboarding from "./pages/onboarding";
 import OnboardingCandidate from "./pages/onboarding-candidate";
 import OnboardingEmployer from "./pages/onboarding-employer";
+import CandidateOnboarding from "./pages/candidate-onboarding";
 import Dashboard from "./pages/dashboard";
 import CreateCv from "./pages/create-cv";
 import CVAssistantPage from "./pages/cv-assistant";
@@ -25,6 +26,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Landing} />
       <Route path="/login" component={Login} />
+      <Route path="/candidate-onboarding" component={CandidateOnboarding} />
       <Route path="/onboarding" component={Onboarding} />
       <Route path="/onboarding/candidate" component={OnboardingCandidate} />
       <Route path="/onboarding/employer" component={OnboardingEmployer} />
