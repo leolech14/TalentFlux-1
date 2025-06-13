@@ -23,7 +23,9 @@ export function LanguageSelector() {
   }, []);
 
   const handleLanguageChange = (lang: "en" | "pt") => {
-    setLanguage(lang);
+    if (language !== lang) {
+      setLanguage(lang);
+    }
     localStorage.setItem("language-chosen", "true");
     setShowBanner(false);
   };
@@ -35,7 +37,12 @@ export function LanguageSelector() {
         className="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all shadow-lg"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        onClick={() => setLanguage(language === "en" ? "pt" : "en")}
+        onClick={() => {
+          const newLang = language === "en" ? "pt" : "en";
+          if (language !== newLang) {
+            setLanguage(newLang);
+          }
+        }}
       >
         <div className="flex items-center gap-2">
           <Globe className="w-5 h-5" />
