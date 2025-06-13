@@ -3,10 +3,9 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { seedDatabase } from "./seed";
-import { transcribeAudio } from "./transcription.js";
-import { db } from "./db.js";
-import { setupAuth } from "./auth.js";
-import { setupRoutes } from "./routes.js";
+import { transcribeAudio } from "./cvGenerator";
+import { db } from "./db";
+import repoRouter from "./repoRoutes";
 
 const app = express();
 app.use(express.json());
