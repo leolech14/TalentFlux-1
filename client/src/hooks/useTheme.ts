@@ -13,7 +13,7 @@ let isApplyingTheme = false;
 const applyTheme = (theme: Theme) => {
   if (isApplyingTheme) return;
   isApplyingTheme = true;
-  
+
   // Remove all theme classes
   document.documentElement.classList.remove('dark', 'alt');
   document.documentElement.removeAttribute('data-theme');
@@ -28,7 +28,7 @@ const applyTheme = (theme: Theme) => {
   } else {
     document.documentElement.setAttribute('data-theme', 'light');
   }
-  
+
   // Reset flag after a microtask to ensure DOM updates are complete
   Promise.resolve().then(() => {
     isApplyingTheme = false;
