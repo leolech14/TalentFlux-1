@@ -4,7 +4,6 @@ import { Brain, MessageCircle, TrendingUp, Zap, User, Building } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { useTheme } from "../hooks/useTheme";
 import { MagicalCVButton } from "@/features/cv/MagicalCVButton";
-import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
 
 export default function Landing() {
   const { theme } = useTheme();
@@ -22,7 +21,6 @@ export default function Landing() {
             <span className="text-xl font-semibold text-tf-text dark:text-tf-text-dark">TalentFlux</span>
           </div>
           <div className="flex items-center space-x-4">
-            <ThemeSwitch />
             <p className="text-sm text-muted-foreground">
               Already a member?{" "}
               <Link href="/login" className="text-tf-accent hover:text-tf-accent/80 hover:underline font-medium transition-colors">
