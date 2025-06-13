@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
@@ -42,7 +43,7 @@ app.use((req, res, next) => {
 (async () => {
   // Seed database with test data
   await seedDatabase();
-  
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -62,15 +63,10 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
+  // Use PORT from environment or default to 3001 (to avoid conflict with AirPlay on 5000)
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 3001;
+
+  server.listen(port, "0.0.0.0", () => {
     log(`serving on port ${port}`);
   });
 })();
@@ -79,7 +75,7 @@ app.use((req, res, next) => {
 app.post("/api/cv/send-email", async (req, res) => {
   try {
     const { email, cvData, pdfBase64 } = req.body;
-    
+
     if (!email || !pdfBase64) {
       return res.status(400).json({ error: "Email and PDF data are required" });
     }
@@ -87,13 +83,13 @@ app.post("/api/cv/send-email", async (req, res) => {
     // In a production environment, you would use a service like SendGrid, AWS SES, etc.
     // For now, we'll simulate the email sending
     console.log(`Sending CV to ${email}`);
-    
+
     // Simulate email sending delay
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    res.json({ 
-      success: true, 
-      message: `CV successfully sent to ${email}` 
+
+    res.json({
+      success: true,
+      message: `CV successfully sent to ${email}`
     });
   } catch (error) {
     console.error("Error sending CV email:", error);

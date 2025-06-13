@@ -4,6 +4,7 @@ import { Brain, MessageCircle, TrendingUp, Zap, User, Building } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { useTheme } from "../hooks/useTheme";
 import { MagicalCVButton } from "@/features/cv/MagicalCVButton";
+import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
 
 export default function Landing() {
   const { theme } = useTheme();
@@ -21,9 +22,10 @@ export default function Landing() {
             <span className="text-xl font-semibold text-tf-text dark:text-tf-text-dark">TalentFlux</span>
           </div>
           <div className="flex items-center space-x-4">
+            <ThemeSwitch />
             <p className="text-sm text-muted-foreground">
               Already a member?{" "}
-              <Link href="/dashboard" className="text-tf-accent hover:text-tf-accent/80 hover:underline font-medium transition-colors">
+              <Link href="/login" className="text-tf-accent hover:text-tf-accent/80 hover:underline font-medium transition-colors">
                 Log in here
               </Link>
             </p>
@@ -68,7 +70,7 @@ export default function Landing() {
             <Button 
               size="lg" 
               className="group bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 px-8 py-4"
-              onClick={() => navigate('/onboarding/candidate')}
+              onClick={() => navigate('/login')}
             >
               <User className="w-5 h-5 group-hover:scale-110 transition-transform" />
               <span>I'm a Candidate</span>
@@ -77,7 +79,7 @@ export default function Landing() {
               size="lg" 
               variant="outline" 
               className="group border-2 border-primary/20 hover:bg-primary/5 hover:border-primary/30 transition-all duration-200 flex items-center space-x-2 px-8 py-4"
-              onClick={() => navigate('/onboarding/employer')}
+              onClick={() => navigate('/login')}
             >
               <Building className="w-5 h-5 group-hover:scale-110 transition-transform text-primary" />
               <span>I'm an Employer</span>

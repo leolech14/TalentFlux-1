@@ -29,33 +29,33 @@ interface Question {
 const guidedQuestions: Question[] = [
   {
     id: "1",
-    text: "Tell me about your professional background and experience",
-    hint: "Include your current role, years of experience, and key responsibilities",
+    text: "What is your current role and professional experience?",
+    hint: "Include your job title, company, and years of experience",
     category: "Experience"
   },
   {
     id: "2",
-    text: "What are your most significant achievements?",
-    hint: "Mention specific accomplishments, metrics, or projects you're proud of",
-    category: "Achievements"
-  },
-  {
-    id: "3",
-    text: "What are your key skills and expertise?",
-    hint: "List technical skills, tools, frameworks, and soft skills",
+    text: "What are your key skills and areas of expertise?",
+    hint: "Technical skills, tools, frameworks, and soft skills",
     category: "Skills"
   },
   {
-    id: "4",
-    text: "Describe your educational background",
-    hint: "Include degrees, institutions, certifications, and relevant coursework",
+    id: "3",
+    text: "What is your educational background?",
+    hint: "Degrees, institutions, certifications, and relevant coursework",
     category: "Education"
   },
   {
+    id: "4",
+    text: "What are your most significant achievements?",
+    hint: "Specific accomplishments, metrics, or projects you're proud of",
+    category: "Achievements"
+  },
+  {
     id: "5",
-    text: "What are your career goals and what type of role are you seeking?",
-    hint: "Share your aspirations and the kind of position you're looking for",
-    category: "Goals"
+    text: "Tell us anything else about yourself",
+    hint: "Feel free to share your career goals, hobbies, languages, or anything that makes you unique",
+    category: "Personal"
   }
 ];
 
@@ -69,14 +69,13 @@ export function EnhancedCVAssistant() {
     location: ""
   });
   const [isRecording, setIsRecording] = useState(false);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
   const [audioLevel, setAudioLevel] = useState(0);
-  const [transcript, setTranscript] = useState("");
+  const [currentTranscript, setCurrentTranscript] = useState("");
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [photoData, setPhotoData] = useState<string | null>(null);
   const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  
+
   const { toast } = useToast();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -121,24 +120,25 @@ export function EnhancedCVAssistant() {
       const source = audioContextRef.current.createMediaStreamSource(stream);
       source.connect(analyserRef.current);
       analyserRef.current.fftSize = 256;
-      
+
       visualizeAudio();
-      
+
       mediaRecorderRef.current = new MediaRecorder(stream);
       const chunks: Blob[] = [];
-      
+
       mediaRecorderRef.current.ondataavailable = (e) => {
         chunks.push(e.data);
       };
-      
+
       mediaRecorderRef.current.onstop = () => {
         const blob = new Blob(chunks, { type: "audio/webm" });
+        // In production, send to transcription API
         simulateTranscription();
       };
-      
+
       mediaRecorderRef.current.start();
       setIsRecording(true);
-      
+      setCurrentTranscript("");
       simulateRealtimeTranscription();
     } catch (error) {
       toast({
@@ -154,7 +154,7 @@ export function EnhancedCVAssistant() {
       mediaRecorderRef.current.stop();
       mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
       setIsRecording(false);
-      
+
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
@@ -164,31 +164,25 @@ export function EnhancedCVAssistant() {
 
   const visualizeAudio = () => {
     if (!analyserRef.current) return;
-    
+
     const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
     analyserRef.current.getByteFrequencyData(dataArray);
-    
+
     const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
     setAudioLevel(average / 255 * 100);
-    
+
     animationFrameRef.current = requestAnimationFrame(visualizeAudio);
   };
 
   const simulateRealtimeTranscription = () => {
-    const sampleAnswers = [
-      "I am a senior software engineer with over 8 years of experience in full-stack development...",
-      "Led the development of a microservices architecture that improved system performance by 40%...",
-      "Expert in React, TypeScript, Node.js, Python, AWS, and Docker. Strong leadership skills...",
-      "Bachelor's degree in Computer Science from UC Berkeley, graduated with honors...",
-      "Looking for a senior engineering role where I can lead teams and architect scalable solutions..."
-    ];
-    
-    const words = sampleAnswers[currentQuestion].split(" ");
+    // Simulate transcription for demo
+    const sampleText = "I am a senior software engineer with over 8 years of experience in full-stack development. I specialize in React, TypeScript, and Node.js...";
+    const words = sampleText.split(" ");
     let index = 0;
-    
+
     const interval = setInterval(() => {
       if (index < words.length && isRecording) {
-        setTranscript(prev => prev + (prev ? " " : "") + words[index]);
+        setCurrentTranscript(prev => prev + (prev ? " " : "") + words[index]);
         index++;
       } else {
         clearInterval(interval);
@@ -197,28 +191,28 @@ export function EnhancedCVAssistant() {
   };
 
   const simulateTranscription = () => {
-    const currentQ = guidedQuestions[currentQuestion];
-    setAnswers(prev => ({
-      ...prev,
-      [currentQ.id]: transcript
-    }));
+    // Save the current transcript to answers
+    const allAnswers = { ...answers };
     
-    if (currentQuestion < guidedQuestions.length - 1) {
-      setCurrentQuestion(prev => prev + 1);
-      setTranscript("");
-    } else {
-      toast({
-        title: "Voice Recording Complete!",
-        description: "Now let's capture your photo for the CV",
-      });
-      setTimeout(() => setCurrentStep("photo-capture"), 1500);
-    }
+    // Combine all transcripts into a comprehensive answer
+    const combinedAnswers = Object.values(allAnswers).join(" ") + " " + currentTranscript;
+    
+        // Update answers with the combined response
+    setAnswers({
+      combined: combinedAnswers
+    });
+
+    toast({
+      title: "Recording Complete!",
+      description: "Now let's capture your photo for the CV",
+    });
+    setTimeout(() => setCurrentStep("photo-capture"), 1500);
   };
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: "user" } 
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user" }
       });
       streamRef.current = stream;
       if (videoRef.current) {
@@ -242,11 +236,11 @@ export function EnhancedCVAssistant() {
         context.drawImage(videoRef.current, 0, 0);
         const dataUrl = canvasRef.current.toDataURL('image/jpeg');
         setPhotoData(dataUrl);
-        
+
         if (streamRef.current) {
           streamRef.current.getTracks().forEach(track => track.stop());
         }
-        
+
         generatePDF();
       }
     }
@@ -258,7 +252,7 @@ export function EnhancedCVAssistant() {
       // In a real app, you would process the answers with AI
       // For now, we'll use mock data as a base
       const cvData = generateMockCVData();
-      
+
       // Override with actual personal info and photo
       cvData.personalInfo = {
         name: personalInfo.fullName,
@@ -269,13 +263,13 @@ export function EnhancedCVAssistant() {
         dateOfBirth: personalInfo.dateOfBirth,
         photo: photoData || undefined
       };
-      
+
       // Process answers to create a summary (in real app, this would use AI)
       const allAnswers = Object.values(answers).join(' ');
       if (allAnswers.length > 100) {
         cvData.summary = allAnswers.substring(0, 300) + "...";
       }
-      
+
       const blob = generateCVPDF(cvData);
       setPdfBlob(blob);
       setCurrentStep("preview");
@@ -300,7 +294,7 @@ export function EnhancedCVAssistant() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      
+
       toast({
         title: "CV Downloaded!",
         description: "Your CV has been saved to your downloads folder",
@@ -316,7 +310,7 @@ export function EnhancedCVAssistant() {
         reader.readAsDataURL(pdfBlob);
         reader.onloadend = async () => {
           const base64data = reader.result as string;
-          
+
           const response = await fetch('/api/cv/send-email', {
             method: 'POST',
             headers: {
@@ -351,11 +345,11 @@ export function EnhancedCVAssistant() {
     }
   };
 
-  const progress = currentStep === "voice-recording" 
-    ? ((currentQuestion + 1) / guidedQuestions.length) * 33 + 33
-    : currentStep === "photo-capture" ? 66
+  const progress = currentStep === "voice-recording"
+    ? 50
+    : currentStep === "photo-capture" ? 75
     : currentStep === "preview" ? 100
-    : 33;
+    : 25;
 
   return (
     <motion.div
@@ -490,7 +484,7 @@ export function EnhancedCVAssistant() {
             </motion.div>
           )}
 
-          {/* Step 2: Voice Recording */}
+          {/* Step 2: Voice Recording - All Questions Visible */}
           {currentStep === "voice-recording" && (
             <motion.div
               key="voice-recording"
@@ -499,13 +493,36 @@ export function EnhancedCVAssistant() {
               exit={{ opacity: 0, x: -20 }}
               className="p-6"
             >
-              <div className="text-center mb-8">
+              <div className="text-center mb-6">
                 <h3 className="text-xl font-semibold mb-2">
-                  {guidedQuestions[currentQuestion].text}
+                  Tell us about yourself
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  {guidedQuestions[currentQuestion].hint}
+                  Answer the questions below in a single recording. Take your time and speak naturally.
                 </p>
+              </div>
+
+              {/* All Questions Display */}
+              <div className="space-y-4 mb-8 max-w-2xl mx-auto">
+                {guidedQuestions.map((question, index) => (
+                  <motion.div
+                    key={question.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-white/5 rounded-lg p-4 border border-white/10"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-sm font-semibold text-purple-400">{index + 1}</span>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium mb-1">{question.text}</h4>
+                        <p className="text-sm text-muted-foreground">{question.hint}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
 
               {/* Audio Visualization */}
@@ -521,7 +538,7 @@ export function EnhancedCVAssistant() {
                       transition={{ duration: 0.1 }}
                     />
                   )}
-                  
+
                   <div className="absolute inset-0 flex items-center justify-center">
                     {isRecording ? (
                       <div className="flex items-center gap-2">
@@ -531,7 +548,7 @@ export function EnhancedCVAssistant() {
                         >
                           <Mic className="w-6 h-6 text-purple-400" />
                         </motion.div>
-                        <span className="text-sm text-purple-400">Listening...</span>
+                        <span className="text-sm text-purple-400">Recording... Feel free to speak naturally</span>
                       </div>
                     ) : (
                       <span className="text-sm text-muted-foreground">
@@ -563,13 +580,13 @@ export function EnhancedCVAssistant() {
               </div>
 
               {/* Transcript Display */}
-              {transcript && (
+              {currentTranscript && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
-                  className="mb-6 p-4 bg-white/5 rounded-lg border border-white/10"
+                  className="mb-6 p-4 bg-white/5 rounded-lg border border-white/10 max-h-40 overflow-y-auto"
                 >
-                  <p className="text-sm">{transcript}</p>
+                  <p className="text-sm">{currentTranscript}</p>
                 </motion.div>
               )}
 
@@ -577,8 +594,8 @@ export function EnhancedCVAssistant() {
               <div className="flex justify-center">
                 <motion.button
                   className={`p-6 rounded-full ${
-                    isRecording 
-                      ? "bg-red-500 hover:bg-red-600" 
+                    isRecording
+                      ? "bg-red-500 hover:bg-red-600"
                       : "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
                   } text-white shadow-2xl transition-all duration-300`}
                   onClick={isRecording ? stopRecording : startRecording}
@@ -593,19 +610,11 @@ export function EnhancedCVAssistant() {
                 </motion.button>
               </div>
 
-              {/* Progress Indicators */}
-              <div className="flex justify-center gap-2 mt-8">
-                {guidedQuestions.map((_, index) => (
-                  <div
-                    key={index}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                      index <= currentQuestion
-                        ? "bg-purple-500 w-8"
-                        : "bg-white/20"
-                    }`}
-                  />
-                ))}
-              </div>
+              {isRecording && (
+                <p className="text-center text-sm text-muted-foreground mt-4">
+                  When you're done, click the button to stop recording
+                </p>
+              )}
             </motion.div>
           )}
 
@@ -634,12 +643,12 @@ export function EnhancedCVAssistant() {
                     playsInline
                     className="w-full h-full object-cover"
                   />
-                  
+
                   {/* Face Frame Overlay */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="w-48 h-64 border-4 border-purple-400 rounded-full opacity-50" />
                   </div>
-                  
+
                   {/* Instructions */}
                   <div className="absolute top-4 left-0 right-0 text-center">
                     <div className="inline-flex items-center gap-2 bg-black/50 backdrop-blur px-4 py-2 rounded-full">

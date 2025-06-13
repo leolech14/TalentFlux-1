@@ -30,15 +30,15 @@ export function LanguageSelector() {
 
   return (
     <>
-      {/* Language Toggle Button */}
+      {/* Language Toggle Button - Bottom right corner */}
       <motion.button
-        className="fixed top-4 right-20 z-50 p-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all"
+        className="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all shadow-lg"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setLanguage(language === "en" ? "pt" : "en")}
       >
         <div className="flex items-center gap-2">
-          <Globe className="w-4 h-4" />
+          <Globe className="w-5 h-5" />
           <span className="text-sm font-medium">
             {language === "en" ? "EN" : "PT"}
           </span>

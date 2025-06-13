@@ -24,7 +24,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/login", async (req, res) => {
     try {
       const { email, password } = loginSchema.parse(req.body);
-      
+
       const user = await storage.getUserByEmail(email);
       if (!user || user.password !== password) {
         return res.status(401).json({ message: "Invalid credentials" });
@@ -41,7 +41,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/register", async (req, res) => {
     try {
       const userData = req.body;
-      
+
       // Check if user exists
       const existing = await storage.getUserByEmail(userData.email);
       if (existing) {
@@ -60,7 +60,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { userId, ...onboardingData } = req.body;
       const validatedData = onboardingSchema.parse(onboardingData);
-      
+
       const updatedUser = await storage.updateUser(userId, {
         userType: validatedData.userType,
         name: validatedData.name,
@@ -83,7 +83,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       const user = await storage.getUser(id);
-      
+
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -186,7 +186,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const result = await processCvFromNaturalLanguage(description, candidateId, userEmail, userName);
-      
+
       if (!result.success || !result.cv) {
         return res.status(400).json({ message: result.error || "Failed to process CV" });
       }
@@ -226,47 +226,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Repo-aware AI assistant endpoint
-  app.post("/api/repo/query", async (req, res) => {
-    try {
-      const { query } = req.body;
-      
-      if (!query || typeof query !== 'string') {
-        return res.status(400).json({ error: 'Query is required' });
-      }
-
-      if (!process.env.OPENAI_API_KEY) {
-        return res.status(500).json({ error: 'OpenAI API key not configured' });
-      }
-
-      const response = await repoAgent.processQuery(query);
-      
-      res.json({ 
-        response,
-        type: 'repo-query'
-      });
-    } catch (error) {
-      console.error('Repo query error:', error);
-      res.status(500).json({ 
-        error: 'Failed to process repository query',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      });
-    }
-  });
-
-  // Check repo agent availability
-  app.get("/api/repo/status", (req, res) => {
-    res.json({
-      available: !!process.env.OPENAI_API_KEY,
-      indexed: false
-    });
-  });
-
   // AI event tracking endpoints
   app.post("/api/ai/events", async (req, res) => {
     try {
       const eventData = insertAiEventSchema.parse(req.body);
-      
+
       const [event] = await db.insert(aiEvents).values({
         userId: eventData.userId,
         intentId: eventData.intentId,
@@ -283,7 +247,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/ai/feedback", async (req, res) => {
     try {
       const feedbackData = insertAiFeedbackSchema.parse(req.body);
-      
+
       await db.insert(aiFeedback).values({
         eventId: feedbackData.eventId,
         thumbsUp: feedbackData.thumbsUp,
@@ -301,7 +265,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/ai/query", async (req, res) => {
     try {
       const { prompt, context } = req.body;
-      
+
       if (!prompt) {
         return res.status(400).json({ error: "Prompt is required" });
       }
@@ -371,7 +335,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/cv/generate", async (req, res) => {
     try {
       const { responses, userId } = req.body;
-      
+
       if (!responses || !Array.isArray(responses) || responses.length < 6) {
         return res.status(400).json({ error: 'Invalid responses array' });
       }
@@ -382,7 +346,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const cvData = await generateCVFromResponses(responses);
       res.json(cvData);
-      
+
     } catch (error) {
       console.error('CV generation error:', error);
       res.status(500).json({ error: 'Failed to generate CV' });
@@ -393,7 +357,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/cv/generate-ai", async (req, res) => {
     try {
       const { responses, userId } = req.body;
-      
+
       if (!responses || !Array.isArray(responses) || responses.length < 2) {
         return res.status(400).json({ error: 'Need at least 2 responses' });
       }
@@ -404,7 +368,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const cvData = await generateCVFromAIResponses(responses);
       res.json(cvData);
-      
+
     } catch (error) {
       console.error('AI CV generation error:', error);
       res.status(500).json({ error: 'Failed to generate CV' });
@@ -432,24 +396,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/cv/download", async (req, res) => {
     try {
       const { cvData } = req.body;
-      
+
       if (!cvData) {
         return res.status(400).json({ error: 'CV data is required' });
       }
 
       // Generate HTML for PDF conversion
       const htmlContent = generateCVHTML(cvData);
-      
+
       // Convert to PDF using Puppeteer
       const puppeteer = require('puppeteer');
       const browser = await puppeteer.launch({
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
-      
+
       const page = await browser.newPage();
       await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-      
+
       const pdfBuffer = await page.pdf({
         format: 'A4',
         printBackground: true,
@@ -460,9 +424,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           left: '20mm'
         }
       });
-      
+
       await browser.close();
-      
+
       res
         .setHeader("Content-Type", "application/pdf")
         .setHeader(
@@ -480,7 +444,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/repo/query", async (req, res) => {
     try {
       const { query } = req.body;
-      
+
       if (!query || typeof query !== 'string') {
         return res.status(400).json({ error: 'Query is required' });
       }
@@ -490,14 +454,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const response = await repoAgent.processQuery(query);
-      
-      res.json({ 
+
+      res.json({
         response,
         type: 'repo-query'
       });
     } catch (error) {
       console.error('Repo query error:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Failed to process repository query',
         details: error instanceof Error ? error.message : 'Unknown error'
       });

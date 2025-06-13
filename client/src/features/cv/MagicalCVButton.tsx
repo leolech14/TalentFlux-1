@@ -6,7 +6,7 @@ import { useLocation } from "wouter";
 export function MagicalCVButton() {
   const [isHovered, setIsHovered] = useState(false);
   const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number }>>([]);
-  const [location, navigate] = useLocation();
+  const [, navigate] = useLocation();
 
   useEffect(() => {
     if (isHovered) {

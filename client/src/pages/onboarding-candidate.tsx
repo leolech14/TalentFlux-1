@@ -4,14 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, User, Linkedin, Chrome, Apple, Sparkles, Wand2, Info } from "lucide-react";
+import { Upload, User, Linkedin, Chrome, Apple, Sparkles, Info } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { useUIState } from "@/hooks/useUIState";
-import { HelpfulBanner } from "@/components/feedback/HelpfulBanner";
 
 const candidateFormSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
