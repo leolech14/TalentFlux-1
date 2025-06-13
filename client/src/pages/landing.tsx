@@ -77,8 +77,18 @@ export default function Landing() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-tf-text dark:from-tf-text-dark to-tf-accent bg-clip-text text-transparent">
-              <TranslatedText text="Connect Talent with Opportunity" />
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+              <span className="text-foreground font-extrabold drop-shadow-sm">Connect </span>
+              <span className="bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent font-black drop-shadow-lg" 
+                    style={{ WebkitTextStroke: '0.5px rgba(139, 92, 246, 0.3)' }}>
+                Talent
+              </span>
+              <br />
+              <span className="text-foreground font-extrabold drop-shadow-sm">with </span>
+              <span className="bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent font-black drop-shadow-lg"
+                    style={{ WebkitTextStroke: '0.5px rgba(139, 92, 246, 0.3)' }}>
+                Opportunity
+              </span>
             </h1>
             <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
               <TranslatedText text="The AI-powered platform that brings together talented professionals and innovative companies for perfect career matches." />
@@ -94,20 +104,24 @@ export default function Landing() {
           >
             <Button 
               size="lg" 
-              className="group bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 px-8 py-4"
+              className="group bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 px-8 py-4 border border-primary/20"
               onClick={() => navigate('/login')}
             >
-              <User className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <TranslatedText text="I'm a Candidate" />
+              <User className="w-5 h-5 group-hover:scale-110 transition-transform text-white" />
+              <span className="text-white font-medium">
+                <TranslatedText text="I'm a Candidate" />
+              </span>
             </Button>
             <Button 
               size="lg" 
               variant="outline" 
-              className="group border-2 border-primary/20 hover:bg-primary/5 hover:border-primary/30 transition-all duration-200 flex items-center space-x-2 px-8 py-4"
+              className="group bg-background/80 backdrop-blur-sm border-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 text-foreground hover:text-primary transition-all duration-200 flex items-center space-x-2 px-8 py-4 shadow-md hover:shadow-lg font-semibold"
               onClick={() => navigate('/login')}
             >
               <Building className="w-5 h-5 group-hover:scale-110 transition-transform text-primary" />
-              <TranslatedText text="I'm an Employer" />
+              <span className="text-foreground group-hover:text-primary font-medium">
+                <TranslatedText text="I'm an Employer" />
+              </span>
             </Button>
           </motion.div>
           

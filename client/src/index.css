@@ -54,6 +54,12 @@
     --text-secondary: 0 0% 35%;
     --text-tertiary: 0 0% 55%;
 
+    /* High contrast safeguards for text visibility */
+    --text-high-contrast: 0 0% 5%; /* Darkest for light backgrounds */
+    --text-safe-light: 0 0% 15%; /* Safe dark text on light */
+    --bg-safe-light: 0 0% 100%; /* Pure white backgrounds */
+    --gradient-outline: rgba(139, 92, 246, 0.15); /* Subtle outline for gradient text */
+
     /* TalentFlux theme variables */
     --tf-accent: 262.1 83.3% 57.8%;
     --tf-text: 0 0% 15%;
