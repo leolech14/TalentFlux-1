@@ -49,12 +49,35 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 dark:from-background dark:via-background dark:to-primary/10 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 dark:from-background dark:via-background dark:to-primary/10 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Enhanced Gradient Backlight */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Primary gradient orb */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] opacity-30">
+          <div className="absolute inset-0 bg-gradient-radial from-primary/25 via-purple-500/15 to-transparent blur-3xl"></div>
+        </div>
+        
+        {/* Secondary accent gradients */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-radial from-blue-500/15 via-cyan-400/8 to-transparent blur-2xl opacity-50"></div>
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-gradient-radial from-pink-500/15 via-purple-400/8 to-transparent blur-2xl opacity-45"></div>
+        
+        {/* Texture overlay */}
+        <div className="absolute inset-0 opacity-[0.015] dark:opacity-[0.03]">
+          <div className="w-full h-full" style={{
+            backgroundImage: `radial-gradient(circle at 25% 25%, #fff 1px, transparent 1px),
+                             radial-gradient(circle at 75% 75%, #fff 1px, transparent 1px)`,
+            backgroundSize: '50px 50px'
+          }}></div>
+        </div>
+        
+        {/* Mesh gradient overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-purple-500/3 dark:from-primary/6 dark:to-purple-500/6"></div>
+      </div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="w-full max-w-md"
+        className="relative z-10 w-full max-w-md"
       >
         <Card className="bg-card/80 backdrop-blur-sm border border-border/50 shadow-xl">
           <CardHeader className="text-center pb-6">

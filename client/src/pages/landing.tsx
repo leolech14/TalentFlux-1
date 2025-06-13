@@ -16,8 +16,62 @@ export default function Landing() {
       <AppHeader />
       
       {/* Hero Section */}
-      <main className="px-6 py-20">
-        <div className="max-w-4xl mx-auto text-center">
+      <main className="relative px-6 py-20 overflow-hidden">
+        {/* Enhanced Gradient Backlight */}
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Primary gradient orb */}
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] opacity-40">
+            <div className="absolute inset-0 bg-gradient-radial from-primary/30 via-purple-500/20 to-transparent blur-3xl"></div>
+          </div>
+          
+          {/* Secondary accent gradients */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-radial from-pink-500/20 via-purple-400/10 to-transparent blur-2xl opacity-60"></div>
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-radial from-blue-500/15 via-cyan-400/10 to-transparent blur-2xl opacity-50"></div>
+          
+          {/* Animated floating orbs */}
+          <motion.div
+            className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-radial from-yellow-400/20 via-orange-400/10 to-transparent blur-xl"
+            animate={{
+              x: [0, 50, -30, 0],
+              y: [0, -40, 20, 0],
+              scale: [1, 1.2, 0.8, 1],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          
+          <motion.div
+            className="absolute top-3/4 right-1/4 w-48 h-48 bg-gradient-radial from-purple-500/25 via-pink-400/15 to-transparent blur-xl"
+            animate={{
+              x: [0, -60, 40, 0],
+              y: [0, 30, -50, 0],
+              scale: [1, 0.7, 1.3, 1],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2
+            }}
+          />
+          
+          {/* Texture overlay */}
+          <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]">
+            <div className="w-full h-full" style={{
+              backgroundImage: `radial-gradient(circle at 25% 25%, #fff 1px, transparent 1px),
+                               radial-gradient(circle at 75% 75%, #fff 1px, transparent 1px)`,
+              backgroundSize: '60px 60px'
+            }}></div>
+          </div>
+          
+          {/* Mesh gradient overlay for depth */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-500/5 dark:from-primary/10 dark:to-purple-500/10"></div>
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

@@ -28,8 +28,46 @@ export default function CandidateOnboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 dark:from-background dark:via-background dark:to-primary/10 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 dark:from-background dark:via-background dark:to-primary/10 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Enhanced Gradient Backlight */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Primary gradient orb */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] opacity-35">
+          <div className="absolute inset-0 bg-gradient-radial from-primary/28 via-purple-500/18 to-transparent blur-3xl"></div>
+        </div>
+        
+        {/* Secondary accent gradients */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-radial from-pink-500/18 via-purple-400/12 to-transparent blur-2xl opacity-55"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-radial from-blue-500/16 via-cyan-400/10 to-transparent blur-2xl opacity-50"></div>
+        
+        {/* Animated floating orbs */}
+        <motion.div
+          className="absolute top-1/4 right-1/3 w-56 h-56 bg-gradient-radial from-yellow-400/18 via-orange-400/8 to-transparent blur-xl"
+          animate={{
+            x: [0, 40, -25, 0],
+            y: [0, -30, 15, 0],
+            scale: [1, 1.15, 0.85, 1],
+          }}
+          transition={{
+            duration: 9,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        
+        {/* Texture overlay */}
+        <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.04]">
+          <div className="w-full h-full" style={{
+            backgroundImage: `radial-gradient(circle at 25% 25%, #fff 1px, transparent 1px),
+                             radial-gradient(circle at 75% 75%, #fff 1px, transparent 1px)`,
+            backgroundSize: '55px 55px'
+          }}></div>
+        </div>
+        
+        {/* Mesh gradient overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/4 via-transparent to-purple-500/4 dark:from-primary/8 dark:to-purple-500/8"></div>
+      </div>
+      <div className="relative z-10 w-full max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

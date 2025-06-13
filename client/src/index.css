@@ -216,6 +216,43 @@
       background-position: 0% 50%;
     }
   }
+
+  /* Radial gradient utilities for backlight effects */
+  .bg-gradient-radial {
+    background: radial-gradient(ellipse at center, var(--tw-gradient-stops));
+  }
+
+  .bg-gradient-radial-at-t {
+    background: radial-gradient(ellipse at top, var(--tw-gradient-stops));
+  }
+
+  .bg-gradient-radial-at-b {
+    background: radial-gradient(ellipse at bottom, var(--tw-gradient-stops));
+  }
+
+  .bg-gradient-radial-at-l {
+    background: radial-gradient(ellipse at left, var(--tw-gradient-stops));
+  }
+
+  .bg-gradient-radial-at-r {
+    background: radial-gradient(ellipse at right, var(--tw-gradient-stops));
+  }
+
+  .bg-gradient-radial-at-tl {
+    background: radial-gradient(ellipse at top left, var(--tw-gradient-stops));
+  }
+
+  .bg-gradient-radial-at-tr {
+    background: radial-gradient(ellipse at top right, var(--tw-gradient-stops));
+  }
+
+  .bg-gradient-radial-at-bl {
+    background: radial-gradient(ellipse at bottom left, var(--tw-gradient-stops));
+  }
+
+  .bg-gradient-radial-at-br {
+    background: radial-gradient(ellipse at bottom right, var(--tw-gradient-stops));
+  }
 }
 
 * {
