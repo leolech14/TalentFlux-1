@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { api } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import { SocialLogin } from "@/features/auth/SocialLogin";
+import { TranslatedText } from "@/components/TranslatedText";
 
 export default function Login() {
   const [email, setEmail] = useState("");

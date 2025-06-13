@@ -56,6 +56,19 @@ interface CVData {
   }>;
 }
 
+const questions = [
+  "Let's start with your basic information. What's your full name?",
+  "What's your email address?", 
+  "What's your phone number?",
+  "What's your current location (city, country)?",
+  "Tell me about your professional summary or career objective.",
+  "Describe your most recent work experience, including job title, company, and key achievements.",
+  "What are your top technical skills and proficiencies?",
+  "Tell me about your educational background.",
+  "What are some of your key accomplishments or projects you're proud of?",
+  "Any certifications, awards, or additional information you'd like to include?"
+];
+
 export default function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<string[]>([]);
@@ -63,85 +76,80 @@ export default function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelPr
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [generatedCV, setGeneratedCV] = useState<CVData | null>(null);
-  const [showPreview, setShowPreview] = useState(false);
   const [showSuccessNotification, setShowSuccessNotification] = useState(false);
+  const [audioLevel, setAudioLevel] = useState(0);
+  
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const animationFrameRef = useRef<number>();
+  
   const { toast } = useToast();
   const { user } = useAuth();
 
-  const cvQuestions = [
-    {
-      id: "intro",
-      question: "Hi! I'm your AI CV Assistant. Let's create a professional LinkedIn-quality CV together. First, tell me your full name, email, phone number, and current location.",
-      placeholder: "e.g., John Smith, john.smith@email.com, +1-555-0123, New York, NY"
-    },
-    {
-      id: "summary",
-      question: "Great! Now, describe yourself professionally. What's your current role, years of experience, and key strengths? This will become your professional summary.",
-      placeholder: "e.g., I'm a senior software engineer with 5 years of experience in full-stack development, specializing in React and Node.js..."
-    },
-    {
-      id: "experience",
-      question: "Tell me about your work experience. For each job, include: company name, your title, dates worked, location, and key responsibilities or achievements.",
-      placeholder: "e.g., I worked at Google as a Software Engineer from Jan 2020 to Dec 2022 in Mountain View, CA. I developed web applications, improved system performance by 30%..."
-    },
-    {
-      id: "education",
-      question: "What's your educational background? Include degrees, institutions, graduation dates, and any honors or notable achievements.",
-      placeholder: "e.g., Bachelor of Science in Computer Science from Stanford University, graduated May 2019, Magna Cum Laude, GPA 3.8"
-    },
-    {
-      id: "skills",
-      question: "List your key skills. Include technical skills (programming languages, tools, frameworks), soft skills, and any languages you speak.",
-      placeholder: "e.g., Technical: JavaScript, Python, React, AWS, Docker. Soft skills: Leadership, Problem-solving. Languages: English (native), Spanish (fluent)"
-    },
-    {
-      id: "certifications",
-      question: "Do you have any certifications, awards, or additional qualifications? If not, just say 'none' or 'skip'.",
-      placeholder: "e.g., AWS Certified Solutions Architect, PMP Certification, Google Cloud Professional..."
-    }
-  ];
-
   useEffect(() => {
-    if (isOpen) {
-      setCurrentStep(0);
-      setResponses([]);
-      setCurrentInput("");
-      setGeneratedCV(null);
-      setShowPreview(false);
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      if (audioContextRef.current?.state !== 'closed') {
+        audioContextRef.current?.close();
+      }
+    };
+  }, []);
+
+  const updateAudioLevel = () => {
+    if (analyserRef.current) {
+      const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
+      analyserRef.current.getByteFrequencyData(dataArray);
+      
+      const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
+      setAudioLevel(average / 255);
+      
+      if (isRecording) {
+        animationFrameRef.current = requestAnimationFrame(updateAudioLevel);
+      }
     }
-  }, [isOpen]);
+  };
 
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      audioChunksRef.current = [];
-
-      mediaRecorder.ondataavailable = (event) => {
-        audioChunksRef.current.push(event.data);
+      
+      // Set up audio analysis
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      analyserRef.current = audioContextRef.current.createAnalyser();
+      const source = audioContextRef.current.createMediaStreamSource(stream);
+      source.connect(analyserRef.current);
+      analyserRef.current.fftSize = 256;
+      
+      // Set up recording
+      mediaRecorderRef.current = new MediaRecorder(stream);
+      const audioChunks: Blob[] = [];
+      
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        audioChunks.push(event.data);
       };
-
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+      
+      mediaRecorderRef.current.onstop = async () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
         await transcribeAudio(audioBlob);
+        
+        // Clean up
         stream.getTracks().forEach(track => track.stop());
+        if (audioContextRef.current?.state !== 'closed') {
+          audioContextRef.current?.close();
+        }
       };
-
-      mediaRecorder.start();
+      
+      mediaRecorderRef.current.start();
       setIsRecording(true);
-
-      toast({
-        title: "Recording started",
-        description: "Speak clearly and click stop when finished",
-        duration: 2000,
-      });
+      updateAudioLevel();
+      
     } catch (error) {
       toast({
         title: "Recording failed",
-        description: "Please check microphone permissions",
+        description: "Please check your microphone permissions",
         variant: "destructive",
       });
     }
@@ -201,53 +209,42 @@ export default function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelPr
         timestamp: new Date()
       });
     } catch (error) {
-      console.warn('Failed to emit AI event:', error);
+      console.error('Failed to emit AI event:', error);
     }
 
-    if (currentStep < cvQuestions.length - 1) {
+    if (currentStep < questions.length - 1) {
       setCurrentStep(currentStep + 1);
       setCurrentInput("");
     } else {
-      // All questions answered, generate CV
+      // Generate CV
       await generateCV(newResponses);
     }
   };
 
-  const generateCV = async (allResponses: string[]) => {
+  const generateCV = async (responses: string[]) => {
     setIsProcessing(true);
     try {
       const response = await fetch('/api/cv/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          responses: allResponses,
-          userId: user?.id 
-        })
+        body: JSON.stringify({ responses, userId: user?.id })
       });
 
-      if (!response.ok) throw new Error('Generation failed');
-      
+      if (!response.ok) throw new Error('CV generation failed');
+
       const cvData = await response.json();
       setGeneratedCV(cvData);
-      setShowPreview(true);
-
+      
       toast({
-        title: "CV Generated Successfully!",
-        description: "Your professional CV is ready for review",
-        duration: 4000,
+        title: "CV Generated!",
+        description: "Your professional CV is ready for download",
+        duration: 5000,
       });
-
-      // Emit AI event for successful CV generation
-      await emitAIEvent('cv-generated', {
-        userId: user?.id?.toString() || 'anonymous',
-        route: '/cv-assistant',
-        device: window.innerWidth < 768 ? 'mobile' : 'desktop'
-      });
-    } catch (err) {
+    } catch (error) {
       toast({
-        title: 'Something went wrong',
-        description: 'Generation failed – try again.',
-        variant: 'destructive'
+        title: "Generation failed",
+        description: "Please try again or contact support",
+        variant: "destructive",
       });
     } finally {
       setIsProcessing(false);
@@ -256,28 +253,30 @@ export default function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelPr
 
   const downloadCV = async () => {
     if (!generatedCV) return;
-
+    
     try {
       const response = await fetch('/api/cv/download', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cvData: generatedCV })
+        body: JSON.stringify(generatedCV)
       });
 
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${generatedCV.personalInfo.fullName.replace(/\s+/g, '_')}_CV.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        URL.revokeObjectURL(url);
-        document.body.removeChild(a);
+      if (!response.ok) throw new Error('Download failed');
 
-        setShowSuccessNotification(true);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${generatedCV.personalInfo.fullName.replace(/\s+/g, '_')}_CV.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
 
-        // Emit AI event for CV download
+      setShowSuccessNotification(true);
+
+      // Emit AI event for CV download
+      if (user?.id) {
         await emitAIEvent('cv-downloaded', {
           userId: user?.id?.toString() || 'anonymous',
           route: '/cv-assistant',
@@ -313,151 +312,139 @@ export default function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelPr
           className="fixed inset-0 bg-black/70 backdrop-blur-lg z-50 flex items-center justify-center p-4"
           onClick={(e) => e.target === e.currentTarget && onClose()}
         >
-        <motion.div
-          initial={{ scale: 0.9, y: 20 }}
-          animate={{ scale: 1, y: 0 }}
-          exit={{ scale: 0.9, y: 20 }}
-          className="relative bg-white/10 dark:bg-gray-900/10 backdrop-blur-2xl rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-white/20 dark:border-gray-700/20"
-        >
-          {/* Glass frame effect with gradient */}
-          <div className="absolute inset-0 rounded-2xl border border-white/30 dark:border-gray-400/30 pointer-events-none" />
-          <div className="absolute inset-[1px] rounded-2xl border border-white/10 dark:border-gray-500/10 pointer-events-none" />
-          
-          {/* Inner glass background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/5 to-transparent dark:from-gray-100/20 dark:via-gray-100/5 dark:to-transparent pointer-events-none" />
-          
-          <div className="relative">
-          <div className="flex flex-col h-full">
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500">
-                  <FileText className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-semibold">AI CV Assistant</h2>
-                  <p className="text-sm text-muted-foreground">
-                    Create a professional LinkedIn-quality CV
-                  </p>
-                </div>
-              </div>
-              <Button variant="ghost" size="sm" onClick={onClose}>
-                ✕
-              </Button>
-            </div>
-
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto">
-              {!showPreview ? (
-                <div className="p-6 space-y-6">
-                  {/* Progress Indicator */}
-                  <div className="flex items-center gap-2 mb-6">
-                    {cvQuestions.map((_, index) => (
-                      <div
-                        key={index}
-                        className={`h-2 flex-1 rounded-full transition-colors ${
-                          index <= currentStep ? 'bg-primary' : 'bg-muted'
-                        }`}
-                      />
-                    ))}
+          <motion.div
+            initial={{ scale: 0.9, y: 20 }}
+            animate={{ scale: 1, y: 0 }}
+            exit={{ scale: 0.9, y: 20 }}
+            className="relative bg-white/10 dark:bg-gray-900/10 backdrop-blur-2xl rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-white/20 dark:border-gray-700/20"
+          >
+            {/* Glass frame effect with gradient */}
+            <div className="absolute inset-0 rounded-2xl border border-white/30 dark:border-gray-400/30 pointer-events-none" />
+            <div className="absolute inset-[1px] rounded-2xl border border-white/10 dark:border-gray-500/10 pointer-events-none" />
+            
+            {/* Inner glass background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/5 to-transparent dark:from-gray-100/20 dark:via-gray-100/5 dark:to-transparent pointer-events-none" />
+            
+            <div className="relative flex flex-col h-full">
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b border-white/10 dark:border-gray-700/30">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500">
+                    <Sparkles className="w-5 h-5 text-white" />
                   </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                      <TranslatedText text="AI CV Assistant" />
+                    </h2>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                      <TranslatedText text={`Step ${currentStep + 1} of ${questions.length}`} />
+                    </p>
+                  </div>
+                </div>
+                <Button variant="ghost" onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                  ×
+                </Button>
+              </div>
 
-                  {/* Current Question */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Sparkles className="w-5 h-5 text-yellow-500" />
-                        Step {currentStep + 1} of {cvQuestions.length}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        {cvQuestions[currentStep].question}
-                      </p>
-
-                      <div className="space-y-4">
-                        <Textarea
-                          value={currentInput}
-                          onChange={(e) => setCurrentInput(e.target.value)}
-                          placeholder={cvQuestions[currentStep].placeholder}
-                          className="min-h-[120px] resize-none"
-                          disabled={isProcessing || isRecording}
-                        />
-
-                        <div className="flex items-center gap-3">
-                          <Button
-                            onClick={isRecording ? stopRecording : startRecording}
-                            variant={isRecording ? "destructive" : "outline"}
-                            size="sm"
-                            disabled={isProcessing}
-                          >
-                            {isRecording ? (
-                              <>
-                                <MicOff className="w-4 h-4 mr-2" />
-                                Stop Recording
-                              </>
-                            ) : (
-                              <>
-                                <Mic className="w-4 h-4 mr-2" />
-                                Record Audio
-                              </>
-                            )}
-                          </Button>
-
-                          <Button
-                            onClick={handleSubmitResponse}
-                            disabled={!currentInput.trim() || isProcessing || isRecording}
-                            className="ml-auto"
-                          >
-                            {isProcessing ? (
-                              "Processing..."
-                            ) : currentStep === cvQuestions.length - 1 ? (
-                              <>
-                                <Sparkles className="w-4 h-4 mr-2" />
-                                Generate CV
-                              </>
-                            ) : (
-                              <>
-                                <Send className="w-4 h-4 mr-2" />
-                                Next Question
-                              </>
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Previous Responses */}
-                  {responses.length > 0 && (
-                    <Card>
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto p-6">
+                {!generatedCV ? (
+                  <div className="space-y-6">
+                    {/* Current Question */}
+                    <Card className="bg-white/20 dark:bg-gray-800/20 border-white/20 dark:border-gray-700/30 backdrop-blur-sm">
                       <CardHeader>
-                        <CardTitle className="text-sm">Your Responses</CardTitle>
+                        <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                          <User className="w-5 h-5" />
+                          <TranslatedText text="Question" />
+                        </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="space-y-3">
-                          {responses.map((response, index) => (
-                            <div key={index} className="p-3 bg-muted rounded-lg">
-                              <p className="text-xs text-muted-foreground mb-1">
-                                {cvQuestions[index].id}
-                              </p>
-                              <p className="text-sm">{response}</p>
-                            </div>
-                          ))}
+                        <p className="text-gray-800 dark:text-gray-200 text-lg leading-relaxed">
+                          <TranslatedText text={questions[currentStep]} />
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    {/* Response Input */}
+                    <Card className="bg-white/20 dark:bg-gray-800/20 border-white/20 dark:border-gray-700/30 backdrop-blur-sm">
+                      <CardContent className="p-6">
+                        <div className="space-y-4">
+                          <Textarea
+                            value={currentInput}
+                            onChange={(e) => setCurrentInput(e.target.value)}
+                            placeholder="Type your response or use voice recording..."
+                            className="min-h-32 bg-white/50 dark:bg-gray-800/50 border-white/30 dark:border-gray-600/30 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                            disabled={isProcessing}
+                          />
+                          
+                          <div className="flex items-center gap-3">
+                            {!isRecording ? (
+                              <Button
+                                onClick={startRecording}
+                                variant="outline"
+                                size="sm"
+                                className="bg-white/20 border-white/30 text-gray-900 dark:text-gray-100 hover:bg-white/30"
+                                disabled={isProcessing}
+                              >
+                                <Mic className="w-4 h-4 mr-2" />
+                                <TranslatedText text="Record" />
+                              </Button>
+                            ) : (
+                              <Button
+                                onClick={stopRecording}
+                                variant="outline"
+                                size="sm"
+                                className="bg-red-500/20 border-red-400/30 text-red-600 dark:text-red-400 hover:bg-red-500/30"
+                              >
+                                <MicOff className="w-4 h-4 mr-2" />
+                                <TranslatedText text="Stop" />
+                              </Button>
+                            )}
+                            
+                            {isRecording && (
+                              <div className="flex items-center gap-2">
+                                <div className="flex gap-1">
+                                  {[...Array(5)].map((_, i) => (
+                                    <div
+                                      key={i}
+                                      className="w-1 bg-red-500 rounded-full transition-all duration-100"
+                                      style={{
+                                        height: `${Math.max(4, audioLevel * 20 + Math.random() * 8)}px`,
+                                      }}
+                                    />
+                                  ))}
+                                </div>
+                                <span className="text-sm text-red-600 dark:text-red-400">
+                                  <TranslatedText text="Recording..." />
+                                </span>
+                              </div>
+                            )}
+                            
+                            <Button
+                              onClick={handleSubmitResponse}
+                              disabled={!currentInput.trim() || isProcessing}
+                              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700"
+                            >
+                              {isProcessing ? (
+                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+                              ) : (
+                                <Send className="w-4 h-4 mr-2" />
+                              )}
+                              <TranslatedText text={currentStep === questions.length - 1 ? "Generate CV" : "Next"} />
+                            </Button>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
-                  )}
-                </div>
-              ) : (
-                <CVPreview cv={generatedCV} onDownload={downloadCV} />
-              )}
+                  </div>
+                ) : (
+                  <CVPreview cv={generatedCV} onDownload={downloadCV} />
+                )}
+              </div>
             </div>
-          </div>
-          </div>
+          </motion.div>
         </motion.div>
-      </motion.div>
-    </AnimatePresence>
+      </AnimatePresence>
     </>
   );
 }
@@ -468,126 +455,59 @@ function CVPreview({ cv, onDownload }: { cv: CVData | null; onDownload: () => vo
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold flex items-center gap-2">
-          <Eye className="w-5 h-5" />
-          CV Preview
+        <h3 className="text-lg font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
+          <FileText className="w-5 h-5" />
+          <TranslatedText text="Your Professional CV" />
         </h3>
-        <Button onClick={onDownload} className="flex items-center gap-2">
-          <Download className="w-4 h-4" />
-          Download PDF
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={onDownload} className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
+            <Download className="w-4 h-4 mr-2" />
+            <TranslatedText text="Download PDF" />
+          </Button>
+        </div>
       </div>
 
-      <div className="bg-white text-black p-8 rounded-lg border shadow-sm space-y-6 max-h-[600px] overflow-y-auto">
-        {/* Header */}
-        <div className="text-center border-b pb-4">
-          <h1 className="text-2xl font-bold">{cv.personalInfo.fullName}</h1>
-          <div className="text-sm text-gray-600 mt-2 space-y-1">
-            <p>{cv.personalInfo.email} • {cv.personalInfo.phone}</p>
-            <p>{cv.personalInfo.location}</p>
-            {cv.personalInfo.linkedinUrl && (
-              <p>{cv.personalInfo.linkedinUrl}</p>
-            )}
-          </div>
-        </div>
-
-        {/* Professional Summary */}
-        <div>
-          <h2 className="text-lg font-semibold mb-2 text-blue-800">Professional Summary</h2>
-          <p className="text-sm text-gray-700 leading-relaxed">{cv.personalInfo.summary}</p>
-        </div>
-
-        {/* Experience */}
-        <div>
-          <h2 className="text-lg font-semibold mb-3 text-blue-800">Professional Experience</h2>
-          <div className="space-y-4">
-            {cv.experience.map((exp, index) => (
-              <div key={index}>
-                <div className="flex justify-between items-start mb-1">
-                  <h3 className="font-medium">{exp.title}</h3>
-                  <span className="text-sm text-gray-600">{exp.startDate} - {exp.endDate}</span>
-                </div>
-                <p className="text-sm text-gray-600 mb-1">{exp.company} • {exp.location}</p>
-                <p className="text-sm text-gray-700 mb-2">{exp.description}</p>
-                {exp.achievements.length > 0 && (
-                  <ul className="text-sm text-gray-700 list-disc list-inside space-y-1">
-                    {exp.achievements.map((achievement, i) => (
-                      <li key={i}>{achievement}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Education */}
-        <div>
-          <h2 className="text-lg font-semibold mb-3 text-blue-800">Education</h2>
-          <div className="space-y-3">
-            {cv.education.map((edu, index) => (
-              <div key={index}>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-medium">{edu.degree}</h3>
-                    <p className="text-sm text-gray-600">{edu.institution} • {edu.location}</p>
-                    {edu.gpa && <p className="text-sm text-gray-600">GPA: {edu.gpa}</p>}
-                    {edu.honors && <p className="text-sm text-gray-600">{edu.honors}</p>}
-                  </div>
-                  <span className="text-sm text-gray-600">{edu.graduationDate}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Skills */}
-        <div>
-          <h2 className="text-lg font-semibold mb-3 text-blue-800">Skills</h2>
-          <div className="space-y-2">
-            {cv.skills.technical.length > 0 && (
-              <div>
-                <h4 className="font-medium text-sm">Technical Skills:</h4>
-                <p className="text-sm text-gray-700">{cv.skills.technical.join(', ')}</p>
-              </div>
-            )}
-            {cv.skills.soft.length > 0 && (
-              <div>
-                <h4 className="font-medium text-sm">Soft Skills:</h4>
-                <p className="text-sm text-gray-700">{cv.skills.soft.join(', ')}</p>
-              </div>
-            )}
-            {cv.skills.languages.length > 0 && (
-              <div>
-                <h4 className="font-medium text-sm">Languages:</h4>
-                <p className="text-sm text-gray-700">{cv.skills.languages.join(', ')}</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Certifications */}
-        {cv.certifications.length > 0 && (
+      <div className="bg-white/20 dark:bg-gray-800/20 rounded-lg p-6 border border-white/20 dark:border-gray-700/30 backdrop-blur-sm max-h-96 overflow-y-auto">
+        <div className="space-y-4 text-gray-900 dark:text-gray-100">
           <div>
-            <h2 className="text-lg font-semibold mb-3 text-blue-800">Certifications</h2>
-            <div className="space-y-2">
-              {cv.certifications.map((cert, index) => (
-                <div key={index}>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-medium text-sm">{cert.name}</h3>
-                      <p className="text-sm text-gray-600">{cert.issuer}</p>
-                      {cert.credentialId && (
-                        <p className="text-xs text-gray-500">ID: {cert.credentialId}</p>
-                      )}
-                    </div>
-                    <span className="text-sm text-gray-600">{cert.date}</span>
-                  </div>
+            <h4 className="font-bold text-xl">{cv.personalInfo.fullName}</h4>
+            <p className="text-gray-700 dark:text-gray-300">{cv.personalInfo.email} | {cv.personalInfo.phone}</p>
+            <p className="text-gray-700 dark:text-gray-300">{cv.personalInfo.location}</p>
+          </div>
+          
+          {cv.personalInfo.summary && (
+            <div>
+              <h5 className="font-semibold">
+                <TranslatedText text="Professional Summary" />
+              </h5>
+              <p className="text-gray-700 dark:text-gray-300">{cv.personalInfo.summary}</p>
+            </div>
+          )}
+          
+          {cv.experience.length > 0 && (
+            <div>
+              <h5 className="font-semibold">
+                <TranslatedText text="Experience" />
+              </h5>
+              {cv.experience.map((exp, i) => (
+                <div key={i} className="mt-2">
+                  <p className="font-medium">{exp.title} at {exp.company}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{exp.startDate} - {exp.endDate}</p>
+                  <p className="text-gray-700 dark:text-gray-300">{exp.description}</p>
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          )}
+          
+          {cv.skills.technical.length > 0 && (
+            <div>
+              <h5 className="font-semibold">
+                <TranslatedText text="Technical Skills" />
+              </h5>
+              <p className="text-gray-700 dark:text-gray-300">{cv.skills.technical.join(', ')}</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
