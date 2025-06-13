@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "./features/auth/AuthContext";
 import { LayoutProvider } from "./hooks/useLayout";
 import { AppShell } from "./core/AppShell";
-import { LanguageSelector } from "./components/LanguageSelector";
+
 import Landing from "./pages/landing";
 import Login from "./pages/login";
 import Onboarding from "./pages/onboarding";
@@ -60,7 +60,6 @@ export default function App() {
             <TooltipProvider>
               <AppShell>
                 <Toaster />
-                <LanguageSelector />
                 <Router />
               </AppShell>
             </TooltipProvider>
