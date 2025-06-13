@@ -3,7 +3,7 @@ import { MagicStarButton } from "../ui/MagicStarButton";
 import { AssistantOverlay } from "../ai/AssistantOverlay";
 import CVAssistantOverlay from "../features/cv/CVAssistantOverlay";
 import { RepoQueryPanel } from "../features/dev/RepoQueryPanel";
-import { DevHUD } from "../ai/DevHUD";
+
 import { Sidebar } from "../ui/Sidebar";
 import { ThemeSwitch } from "../components/ui/ThemeSwitch";
 import { useState, useEffect } from "react";
@@ -99,8 +99,7 @@ export function AppShell({ children }: AppShellProps) {
         </div>
       )}
 
-      {/* Development HUD - shows AI events in real-time */}
-      <DevHUD />
+
     </div>
   );
 }
