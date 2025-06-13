@@ -456,6 +456,110 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Translation endpoints using OpenAI
+  app.post("/api/translate", async (req: Request, res: Response) => {
+    try {
+      const { text, targetLanguage } = req.body;
+      
+      if (!text || !targetLanguage) {
+        return res.status(400).json({ error: "Missing text or target language" });
+      }
+
+      if (targetLanguage === 'en') {
+        return res.json({ translatedText: text });
+      }
+
+      const languageNames: { [key: string]: string } = {
+        'pt': 'Portuguese', 'es': 'Spanish', 'fr': 'French', 'de': 'German', 'it': 'Italian',
+        'nl': 'Dutch', 'pl': 'Polish', 'ru': 'Russian', 'ar': 'Arabic', 'zh': 'Chinese',
+        'ja': 'Japanese', 'ko': 'Korean', 'hi': 'Hindi', 'tr': 'Turkish', 'sv': 'Swedish',
+        'da': 'Danish', 'no': 'Norwegian', 'fi': 'Finnish', 'cs': 'Czech', 'sk': 'Slovak',
+        'bg': 'Bulgarian', 'hr': 'Croatian', 'uk': 'Ukrainian', 'th': 'Thai', 'vi': 'Vietnamese',
+        'ms': 'Malay', 'id': 'Indonesian', 'he': 'Hebrew', 'el': 'Greek', 'hu': 'Hungarian',
+        'ro': 'Romanian', 'ca': 'Catalan'
+      };
+
+      const targetLanguageName = languageNames[targetLanguage] || targetLanguage;
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: `You are a professional translator. Translate the following text to ${targetLanguageName}. Maintain the original meaning, tone, and context. Return only the translated text without any explanations or additional content.`
+          },
+          {
+            role: "user",
+            content: text
+          }
+        ],
+        temperature: 0.1,
+        max_tokens: 1000
+      });
+
+      const translatedText = response.choices[0].message.content?.trim() || text;
+      res.json({ translatedText });
+    } catch (error) {
+      console.error("Translation error:", error);
+      res.status(500).json({ error: "Translation failed" });
+    }
+  });
+
+  app.post("/api/translate-batch", async (req: Request, res: Response) => {
+    try {
+      const { texts, targetLanguage } = req.body;
+      
+      if (!texts || !Array.isArray(texts) || !targetLanguage) {
+        return res.status(400).json({ error: "Missing texts array or target language" });
+      }
+
+      if (targetLanguage === 'en') {
+        return res.json({ translations: texts });
+      }
+
+      const languageNames: { [key: string]: string } = {
+        'pt': 'Portuguese', 'es': 'Spanish', 'fr': 'French', 'de': 'German', 'it': 'Italian',
+        'nl': 'Dutch', 'pl': 'Polish', 'ru': 'Russian', 'ar': 'Arabic', 'zh': 'Chinese',
+        'ja': 'Japanese', 'ko': 'Korean', 'hi': 'Hindi', 'tr': 'Turkish', 'sv': 'Swedish',
+        'da': 'Danish', 'no': 'Norwegian', 'fi': 'Finnish', 'cs': 'Czech', 'sk': 'Slovak',
+        'bg': 'Bulgarian', 'hr': 'Croatian', 'uk': 'Ukrainian', 'th': 'Thai', 'vi': 'Vietnamese',
+        'ms': 'Malay', 'id': 'Indonesian', 'he': 'Hebrew', 'el': 'Greek', 'hu': 'Hungarian',
+        'ro': 'Romanian', 'ca': 'Catalan'
+      };
+
+      const targetLanguageName = languageNames[targetLanguage] || targetLanguage;
+      const textsToTranslate = texts.join('\n---SEPARATOR---\n');
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: `You are a professional translator. Translate each text segment separated by "---SEPARATOR---" to ${targetLanguageName}. Maintain the original meaning, tone, and context. Return the translations in the same order, separated by the same "---SEPARATOR---" delimiter. Do not include any explanations or additional content.`
+          },
+          {
+            role: "user",
+            content: textsToTranslate
+          }
+        ],
+        temperature: 0.1,
+        max_tokens: 2000
+      });
+
+      const translatedBatch = response.choices[0].message.content?.trim() || textsToTranslate;
+      const translations = translatedBatch.split('---SEPARATOR---').map((t: string) => t.trim());
+      
+      while (translations.length < texts.length) {
+        translations.push(texts[translations.length] || '');
+      }
+
+      res.json({ translations: translations.slice(0, texts.length) });
+    } catch (error) {
+      console.error("Batch translation error:", error);
+      res.status(500).json({ error: "Batch translation failed" });
+    }
+  });
+
   // CV Assistant endpoints
   app.post("/api/cv/generate", async (req, res) => {
     try {
@@ -686,214 +790,6 @@ function generateCVHTML(cvData: any): string {
 </html>
   `;
 }
-
-  // Translation endpoints using OpenAI
-  app.post("/api/translate", async (req: Request, res: Response) => {
-    try {
-      const { text, targetLanguage } = req.body;
-      
-      if (!text || !targetLanguage) {
-        return res.status(400).json({ error: "Missing text or target language" });
-      }
-
-      if (targetLanguage === 'en') {
-        return res.json({ translatedText: text });
-      }
-
-      const languageNames: { [key: string]: string } = {
-        'pt': 'Portuguese', 'es': 'Spanish', 'fr': 'French', 'de': 'German', 'it': 'Italian',
-        'nl': 'Dutch', 'pl': 'Polish', 'ru': 'Russian', 'ar': 'Arabic', 'zh': 'Chinese',
-        'ja': 'Japanese', 'ko': 'Korean', 'hi': 'Hindi', 'tr': 'Turkish', 'sv': 'Swedish',
-        'da': 'Danish', 'no': 'Norwegian', 'fi': 'Finnish', 'cs': 'Czech', 'sk': 'Slovak',
-        'bg': 'Bulgarian', 'hr': 'Croatian', 'uk': 'Ukrainian', 'th': 'Thai', 'vi': 'Vietnamese',
-        'ms': 'Malay', 'id': 'Indonesian', 'he': 'Hebrew', 'el': 'Greek', 'hu': 'Hungarian',
-        'ro': 'Romanian', 'ca': 'Catalan'
-      };
-
-      const targetLanguageName = languageNames[targetLanguage] || targetLanguage;
-
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: `You are a professional translator. Translate the following text to ${targetLanguageName}. Maintain the original meaning, tone, and context. Return only the translated text without any explanations or additional content.`
-          },
-          {
-            role: "user",
-            content: text
-          }
-        ],
-        temperature: 0.1,
-        max_tokens: 1000
-      });
-
-      const translatedText = response.choices[0].message.content?.trim() || text;
-      res.json({ translatedText });
-    } catch (error) {
-      console.error("Translation error:", error);
-      res.status(500).json({ error: "Translation failed" });
-    }
-  });
-
-  app.post("/api/translate-batch", async (req: Request, res: Response) => {
-    try {
-      const { texts, targetLanguage } = req.body;
-      
-      if (!texts || !Array.isArray(texts) || !targetLanguage) {
-        return res.status(400).json({ error: "Missing texts array or target language" });
-      }
-
-      if (targetLanguage === 'en') {
-        return res.json({ translations: texts });
-      }
-
-      const languageNames: { [key: string]: string } = {
-        'pt': 'Portuguese', 'es': 'Spanish', 'fr': 'French', 'de': 'German', 'it': 'Italian',
-        'nl': 'Dutch', 'pl': 'Polish', 'ru': 'Russian', 'ar': 'Arabic', 'zh': 'Chinese',
-        'ja': 'Japanese', 'ko': 'Korean', 'hi': 'Hindi', 'tr': 'Turkish', 'sv': 'Swedish',
-        'da': 'Danish', 'no': 'Norwegian', 'fi': 'Finnish', 'cs': 'Czech', 'sk': 'Slovak',
-        'bg': 'Bulgarian', 'hr': 'Croatian', 'uk': 'Ukrainian', 'th': 'Thai', 'vi': 'Vietnamese',
-        'ms': 'Malay', 'id': 'Indonesian', 'he': 'Hebrew', 'el': 'Greek', 'hu': 'Hungarian',
-        'ro': 'Romanian', 'ca': 'Catalan'
-      };
-
-      const targetLanguageName = languageNames[targetLanguage] || targetLanguage;
-      const textsToTranslate = texts.join('\n---SEPARATOR---\n');
-
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: `You are a professional translator. Translate each text segment separated by "---SEPARATOR---" to ${targetLanguageName}. Maintain the original meaning, tone, and context. Return the translations in the same order, separated by the same "---SEPARATOR---" delimiter. Do not include any explanations or additional content.`
-          },
-          {
-            role: "user",
-            content: textsToTranslate
-          }
-        ],
-        temperature: 0.1,
-        max_tokens: 2000
-      });
-
-      const translatedBatch = response.choices[0].message.content?.trim() || textsToTranslate;
-      const translations = translatedBatch.split('---SEPARATOR---').map((t: string) => t.trim());
-      
-      while (translations.length < texts.length) {
-        translations.push(texts[translations.length] || '');
-      }
-
-      res.json({ translations: translations.slice(0, texts.length) });
-    } catch (error) {
-      console.error("Batch translation error:", error);
-      res.status(500).json({ error: "Batch translation failed" });
-    }
-  });
-
-  // Translation endpoints using OpenAI
-  app.post("/api/translate", async (req: Request, res: Response) => {
-    try {
-      const { text, targetLanguage } = req.body;
-      
-      if (!text || !targetLanguage) {
-        return res.status(400).json({ error: "Missing text or target language" });
-      }
-
-      if (targetLanguage === 'en') {
-        return res.json({ translatedText: text });
-      }
-
-      const languageNames: { [key: string]: string } = {
-        'pt': 'Portuguese', 'es': 'Spanish', 'fr': 'French', 'de': 'German', 'it': 'Italian',
-        'nl': 'Dutch', 'pl': 'Polish', 'ru': 'Russian', 'ar': 'Arabic', 'zh': 'Chinese',
-        'ja': 'Japanese', 'ko': 'Korean', 'hi': 'Hindi', 'tr': 'Turkish', 'sv': 'Swedish',
-        'da': 'Danish', 'no': 'Norwegian', 'fi': 'Finnish', 'cs': 'Czech', 'sk': 'Slovak',
-        'bg': 'Bulgarian', 'hr': 'Croatian', 'uk': 'Ukrainian', 'th': 'Thai', 'vi': 'Vietnamese',
-        'ms': 'Malay', 'id': 'Indonesian', 'he': 'Hebrew', 'el': 'Greek', 'hu': 'Hungarian',
-        'ro': 'Romanian', 'ca': 'Catalan'
-      };
-
-      const targetLanguageName = languageNames[targetLanguage] || targetLanguage;
-
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: `You are a professional translator. Translate the following text to ${targetLanguageName}. Maintain the original meaning, tone, and context. Return only the translated text without any explanations or additional content.`
-          },
-          {
-            role: "user",
-            content: text
-          }
-        ],
-        temperature: 0.1,
-        max_tokens: 1000
-      });
-
-      const translatedText = response.choices[0].message.content?.trim() || text;
-      res.json({ translatedText });
-    } catch (error) {
-      console.error("Translation error:", error);
-      res.status(500).json({ error: "Translation failed" });
-    }
-  });
-
-  app.post("/api/translate-batch", async (req: Request, res: Response) => {
-    try {
-      const { texts, targetLanguage } = req.body;
-      
-      if (!texts || !Array.isArray(texts) || !targetLanguage) {
-        return res.status(400).json({ error: "Missing texts array or target language" });
-      }
-
-      if (targetLanguage === 'en') {
-        return res.json({ translations: texts });
-      }
-
-      const languageNames: { [key: string]: string } = {
-        'pt': 'Portuguese', 'es': 'Spanish', 'fr': 'French', 'de': 'German', 'it': 'Italian',
-        'nl': 'Dutch', 'pl': 'Polish', 'ru': 'Russian', 'ar': 'Arabic', 'zh': 'Chinese',
-        'ja': 'Japanese', 'ko': 'Korean', 'hi': 'Hindi', 'tr': 'Turkish', 'sv': 'Swedish',
-        'da': 'Danish', 'no': 'Norwegian', 'fi': 'Finnish', 'cs': 'Czech', 'sk': 'Slovak',
-        'bg': 'Bulgarian', 'hr': 'Croatian', 'uk': 'Ukrainian', 'th': 'Thai', 'vi': 'Vietnamese',
-        'ms': 'Malay', 'id': 'Indonesian', 'he': 'Hebrew', 'el': 'Greek', 'hu': 'Hungarian',
-        'ro': 'Romanian', 'ca': 'Catalan'
-      };
-
-      const targetLanguageName = languageNames[targetLanguage] || targetLanguage;
-      const textsToTranslate = texts.join('\n---SEPARATOR---\n');
-
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: `You are a professional translator. Translate each text segment separated by "---SEPARATOR---" to ${targetLanguageName}. Maintain the original meaning, tone, and context. Return the translations in the same order, separated by the same "---SEPARATOR---" delimiter. Do not include any explanations or additional content.`
-          },
-          {
-            role: "user",
-            content: textsToTranslate
-          }
-        ],
-        temperature: 0.1,
-        max_tokens: 2000
-      });
-
-      const translatedBatch = response.choices[0].message.content?.trim() || textsToTranslate;
-      const translations = translatedBatch.split('---SEPARATOR---').map((t: string) => t.trim());
-      
-      while (translations.length < texts.length) {
-        translations.push(texts[translations.length] || '');
-      }
-
-      res.json({ translations: translations.slice(0, texts.length) });
-    } catch (error) {
-      console.error("Batch translation error:", error);
-      res.status(500).json({ error: "Batch translation failed" });
-    }
-  });
 
   return server;
 }

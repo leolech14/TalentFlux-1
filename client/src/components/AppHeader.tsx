@@ -1,14 +1,8 @@
 import { Link } from "wouter";
-import { Globe, Zap } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Zap } from "lucide-react";
 import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
-import { useLanguage, useTranslation } from "@/hooks/useLanguage";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { LanguageSearch } from "./LanguageSearch";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function AppHeader() {
   const { language, setLanguage } = useLanguage();
