@@ -1,14 +1,17 @@
-import { motion } from "framer-motion";
+import { motion, useDragControls, PanInfo } from "framer-motion";
 import { Sparkles, Mic, Wand2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
-import { useTranslation } from "@/hooks/useLanguage";
+import { TranslatedText } from "@/components/TranslatedText";
 
 export function MagicalCVButton() {
   const [isHovered, setIsHovered] = useState(false);
   const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number }>>([]);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
   const [, navigate] = useLocation();
-  const { t } = useTranslation();
+  const dragControls = useDragControls();
+  const constraintsRef = useRef(null);
 
   useEffect(() => {
     if (isHovered) {
@@ -27,142 +30,198 @@ export function MagicalCVButton() {
   }, [isHovered]);
 
   const handleClick = () => {
-    // Navigate to CV Assistant
-    navigate('/cv-assistant');
+    if (!isDragging) {
+      navigate('/cv-assistant');
+    }
   };
 
+  const handleDragEnd = (event: any, info: PanInfo) => {
+    setIsDragging(false);
+    setPosition({ x: info.offset.x, y: info.offset.y });
+    
+    // Store position in localStorage to persist across page reloads
+    localStorage.setItem('magicButtonPosition', JSON.stringify({ x: info.offset.x, y: info.offset.y }));
+  };
+
+  const handleDragStart = () => {
+    setIsDragging(true);
+  };
+
+  // Load saved position on component mount
+  useEffect(() => {
+    const savedPosition = localStorage.getItem('magicButtonPosition');
+    if (savedPosition) {
+      setPosition(JSON.parse(savedPosition));
+    }
+  }, []);
+
   return (
-    <motion.div
-      className="relative"
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{
-        type: "spring",
-        stiffness: 260,
-        damping: 20,
-        delay: 0.5,
-      }}
-    >
-      {/* Glow effect */}
+    <div ref={constraintsRef} className="fixed inset-0 pointer-events-none z-50">
       <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full blur-xl"
-        animate={{
-          scale: isHovered ? 1.2 : 1,
-          opacity: isHovered ? 0.8 : 0.4,
+        className="relative pointer-events-auto cursor-grab active:cursor-grabbing"
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ 
+          scale: 1, 
+          opacity: 1,
+          x: position.x,
+          y: position.y
         }}
-        transition={{ duration: 0.3 }}
-      />
-
-      {/* Particles */}
-      {particles.map(particle => (
-        <motion.div
-          key={particle.id}
-          className="absolute w-1 h-1 bg-white rounded-full"
-          initial={{ x: 0, y: 0, opacity: 1 }}
-          animate={{
-            x: particle.x,
-            y: particle.y,
-            opacity: 0,
-          }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          style={{ left: "50%", top: "50%" }}
-        />
-      ))}
-
-      {/* Main button */}
-      <motion.button
-        className="relative px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-semibold text-sm shadow-2xl overflow-hidden group"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={handleClick}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        transition={{
+          type: "spring",
+          stiffness: 260,
+          damping: 20,
+          delay: 0.5,
+        }}
+        drag
+        dragControls={dragControls}
+        dragConstraints={constraintsRef}
+        dragElastic={0.1}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        whileDrag={{ scale: 1.1, zIndex: 1000 }}
       >
-        {/* Shimmer effect */}
+        {/* Glow effect */}
         <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+          className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full blur-xl"
           animate={{
-            x: [-200, 200],
+            scale: isHovered ? 1.2 : 1,
+            opacity: isHovered ? 0.8 : 0.6,
           }}
-          transition={{
-            repeat: Infinity,
-            duration: 3,
-            ease: "linear",
-          }}
+          transition={{ duration: 0.3 }}
         />
 
-        {/* Button content */}
-        <div className="relative flex items-center gap-2">
+        {/* Particles */}
+        {particles.map(particle => (
           <motion.div
-            animate={{
-              rotate: isHovered ? 360 : 0,
+            key={particle.id}
+            className="absolute w-1 h-1 bg-yellow-400 rounded-full"
+            initial={{
+              x: particle.x,
+              y: particle.y,
+              opacity: 1,
             }}
-            transition={{ duration: 0.5 }}
-          >
-            <Wand2 className="w-4 h-4" />
-          </motion.div>
-          
-          <span className="text-sm font-bold">{t('createCV')}</span>
-          
-          <motion.div
             animate={{
-              scale: isHovered ? [1, 1.2, 1] : 1,
+              x: particle.x,
+              y: particle.y,
+              opacity: 0,
+            }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            style={{ left: "50%", top: "50%" }}
+          />
+        ))}
+
+        {/* Main button */}
+        <motion.button
+          className="relative px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-semibold text-sm shadow-2xl overflow-hidden group"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onClick={handleClick}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          {/* Shimmer effect */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+            animate={{
+              x: isHovered ? ["0%", "200%"] : "0%",
             }}
             transition={{
-              repeat: isHovered ? Infinity : 0,
-              duration: 1,
+              duration: 0.6,
+              ease: "easeInOut",
             }}
-          >
-            <Sparkles className="w-4 h-4" />
-          </motion.div>
-        </div>
+          />
 
-        {/* Pulse rings */}
+          {/* Button content */}
+          <div className="relative flex items-center gap-2">
+            <motion.div
+              animate={{
+                rotate: isHovered ? 360 : 0,
+              }}
+              transition={{ duration: 0.5 }}
+            >
+              <Wand2 className="w-4 h-4" />
+            </motion.div>
+            
+            <span className="text-sm font-bold">
+              <TranslatedText text="Create Magical CV" />
+            </span>
+            
+            <motion.div
+              animate={{
+                scale: isHovered ? [1, 1.2, 1] : 1,
+              }}
+              transition={{
+                repeat: isHovered ? Infinity : 0,
+                duration: 1,
+              }}
+            >
+              <Sparkles className="w-4 h-4" />
+            </motion.div>
+          </div>
+
+          {/* Pulse rings */}
+          <motion.div
+            className="absolute inset-0 rounded-full border-2 border-white/30"
+            animate={{
+              scale: isHovered ? [1, 1.4] : 1,
+              opacity: isHovered ? [0.5, 0] : 0.5,
+            }}
+            transition={{
+              duration: 1,
+              repeat: isHovered ? Infinity : 0,
+              ease: "easeOut",
+            }}
+          />
+
+          <motion.div
+            className="absolute inset-0 rounded-full border-2 border-white/20"
+            animate={{
+              scale: isHovered ? [1, 1.8] : 1,
+              opacity: isHovered ? [0.3, 0] : 0.3,
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: isHovered ? Infinity : 0,
+              ease: "easeOut",
+              delay: 0.2,
+            }}
+          />
+        </motion.button>
+
+        {/* Floating icons */}
         <motion.div
-          className="absolute inset-0 rounded-full border-2 border-white/30"
+          className="absolute -top-8 -right-4 text-yellow-400"
           animate={{
-            scale: [1, 1.5],
-            opacity: [0.5, 0],
+            y: isHovered ? [-5, 5, -5] : 0,
+            rotate: isHovered ? [0, 10, -10, 0] : 0,
+            opacity: isHovered ? 1 : 0.7,
           }}
           transition={{
-            repeat: Infinity,
             duration: 2,
-            ease: "easeOut",
+            repeat: isHovered ? Infinity : 0,
+            ease: "easeInOut",
           }}
-        />
-      </motion.button>
+        >
+          <Mic className="w-4 h-4" />
+        </motion.div>
 
-      {/* Floating icons */}
-      <motion.div
-        className="absolute -top-6 -right-6"
-        animate={{
-          y: [-3, 3, -3],
-          rotate: [0, 10, 0],
-        }}
-        transition={{
-          repeat: Infinity,
-          duration: 3,
-          ease: "easeInOut",
-        }}
-      >
-        <Mic className="w-5 h-5 text-purple-400" />
+        <motion.div
+          className="absolute -bottom-6 -left-6 text-pink-400"
+          animate={{
+            y: isHovered ? [5, -5, 5] : 0,
+            rotate: isHovered ? [0, -15, 15, 0] : 0,
+            opacity: isHovered ? 1 : 0.7,
+          }}
+          transition={{
+            duration: 3,
+            repeat: isHovered ? Infinity : 0,
+            ease: "easeInOut",
+            delay: 1.5,
+          }}
+        >
+          <Sparkles className="w-5 h-5 text-pink-400" />
+        </motion.div>
       </motion.div>
-
-      <motion.div
-        className="absolute -bottom-6 -left-6"
-        animate={{
-          y: [3, -3, 3],
-          rotate: [0, -10, 0],
-        }}
-        transition={{
-          repeat: Infinity,
-          duration: 3,
-          ease: "easeInOut",
-          delay: 1.5,
-        }}
-      >
-        <Sparkles className="w-5 h-5 text-pink-400" />
-      </motion.div>
-    </motion.div>
+    </div>
   );
-} 
+}
