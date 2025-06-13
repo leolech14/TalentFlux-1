@@ -113,6 +113,12 @@
     --surface-2: 222.2 84% 10%;
     --surface-3: 222.2 84% 12%;
 
+    /* High contrast safeguards for dark mode */
+    --text-high-contrast: 210 40% 98%; /* Brightest for dark backgrounds */
+    --text-safe-dark: 210 40% 95%; /* Safe light text on dark */
+    --bg-safe-dark: 222.2 84% 4.9%; /* Deep dark backgrounds */
+    --gradient-outline: rgba(168, 85, 247, 0.4); /* Stronger outline for gradient text in dark mode */
+
     /* TalentFlux theme variables for dark mode */
     --tf-accent: 263.4 70% 50.4%;
     --tf-text: 210 40% 98%;
@@ -258,6 +264,60 @@
 
   .bg-gradient-radial-at-br {
     background: radial-gradient(ellipse at bottom right, var(--tw-gradient-stops));
+  }
+
+  /* Text contrast safeguards */
+  .text-safe-contrast {
+    color: hsl(var(--text-high-contrast));
+  }
+
+  .text-gradient-safe {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(280 100% 70%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 0.5px var(--gradient-outline);
+    text-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
+    filter: drop-shadow(0 1px 2px rgba(139, 92, 246, 0.4));
+  }
+
+  .bg-safe-contrast {
+    background-color: hsl(var(--bg-safe-light));
+  }
+
+  .dark .bg-safe-contrast {
+    background-color: hsl(var(--bg-safe-dark));
+  }
+
+  .dark .text-safe-contrast {
+    color: hsl(var(--text-safe-dark));
+  }
+
+  .dark .text-gradient-safe {
+    -webkit-text-stroke: 0.5px var(--gradient-outline);
+    text-shadow: 0 2px 4px rgba(168, 85, 247, 0.4);
+    filter: drop-shadow(0 1px 2px rgba(168, 85, 247, 0.5));
+  }
+
+  /* Button contrast safeguards */
+  .btn-primary-safe {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(280 100% 70%));
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  .btn-outline-safe {
+    background: hsl(var(--background) / 0.9);
+    color: hsl(var(--foreground));
+    border: 2px solid hsl(var(--primary) / 0.4);
+    backdrop-filter: blur(8px);
+  }
+
+  .btn-outline-safe:hover {
+    background: hsl(var(--primary) / 0.1);
+    border-color: hsl(var(--primary) / 0.6);
+    color: hsl(var(--primary));
   }
 }
 

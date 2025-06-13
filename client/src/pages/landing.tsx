@@ -78,19 +78,17 @@ export default function Landing() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-              <span className="text-foreground font-extrabold drop-shadow-sm">Connect </span>
-              <span className="bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent font-black drop-shadow-lg" 
-                    style={{ WebkitTextStroke: '0.5px rgba(139, 92, 246, 0.3)' }}>
+              <span className="text-safe-contrast font-extrabold drop-shadow-sm">Connect </span>
+              <span className="text-gradient-safe font-black">
                 Talent
               </span>
               <br />
-              <span className="text-foreground font-extrabold drop-shadow-sm">with </span>
-              <span className="bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent font-black drop-shadow-lg"
-                    style={{ WebkitTextStroke: '0.5px rgba(139, 92, 246, 0.3)' }}>
+              <span className="text-safe-contrast font-extrabold drop-shadow-sm">with </span>
+              <span className="text-gradient-safe font-black">
                 Opportunity
               </span>
             </h1>
-            <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl text-safe-contrast/80 mb-12 max-w-2xl mx-auto leading-relaxed font-medium">
               <TranslatedText text="The AI-powered platform that brings together talented professionals and innovative companies for perfect career matches." />
             </p>
           </motion.div>
@@ -104,7 +102,7 @@ export default function Landing() {
           >
             <Button 
               size="lg" 
-              className="group bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 px-8 py-4 border border-primary/20"
+              className="group btn-primary-safe hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 px-8 py-4 font-semibold"
               onClick={() => navigate('/login')}
             >
               <User className="w-5 h-5 group-hover:scale-110 transition-transform text-white" />
@@ -115,11 +113,11 @@ export default function Landing() {
             <Button 
               size="lg" 
               variant="outline" 
-              className="group bg-background/80 backdrop-blur-sm border-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 text-foreground hover:text-primary transition-all duration-200 flex items-center space-x-2 px-8 py-4 shadow-md hover:shadow-lg font-semibold"
+              className="group btn-outline-safe hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 px-8 py-4 font-semibold"
               onClick={() => navigate('/login')}
             >
               <Building className="w-5 h-5 group-hover:scale-110 transition-transform text-primary" />
-              <span className="text-foreground group-hover:text-primary font-medium">
+              <span className="font-medium">
                 <TranslatedText text="I'm an Employer" />
               </span>
             </Button>
