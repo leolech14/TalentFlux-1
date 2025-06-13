@@ -4,128 +4,133 @@
 
 @layer base {
   :root {
-    /* Enhanced Light Mode Colors */
-    --background: 0 0% 98%; /* Softer white */
-    --foreground: 222.2 84% 4.9%;
+    /* Enhanced Light Mode Colors - Professional Gray Palette */
+    --background: 0 0% 98%; /* Very light gray */
+    --foreground: 0 0% 15%; /* Dark gray text */
 
     /* Card variations for depth */
-    --card: 0 0% 100%;
-    --card-hover: 0 0% 97%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%; /* Pure white */
+    --card-hover: 0 0% 97%; /* Slight gray on hover */
+    --card-foreground: 0 0% 15%;
 
-    /* Muted colors with better contrast */
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted colors with gray tones */
+    --muted: 0 0% 94%; /* Light gray */
+    --muted-foreground: 0 0% 40%; /* Medium gray */
 
     /* Popover with subtle shadow */
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 0 0% 15%;
 
     /* Primary with purple gradient */
     --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 210 40% 98%;
+    --primary-foreground: 0 0% 98%;
 
-    /* Secondary with better contrast */
-    --secondary: 210 40% 94%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary with gray tones */
+    --secondary: 0 0% 92%; /* Light gray */
+    --secondary-foreground: 0 0% 20%;
 
     /* Accent colors */
-    --accent: 210 40% 92%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 0 0% 90%; /* Light gray accent */
+    --accent-foreground: 0 0% 20%;
 
     /* Status colors */
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
 
     /* Borders and inputs */
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 89%;
+    --border: 0 0% 88%; /* Gray border */
+    --input: 0 0% 90%; /* Light gray input */
     --ring: 262.1 83.3% 57.8%;
 
     --radius: 0.5rem;
 
-    /* Additional shades for depth */
+    /* Additional gray shades for depth */
     --surface-1: 0 0% 96%;
-    --surface-2: 0 0% 94%;
-    --surface-3: 0 0% 92%;
+    --surface-2: 0 0% 93%;
+    --surface-3: 0 0% 90%;
+
+    /* Text variations */
+    --text-primary: 0 0% 10%;
+    --text-secondary: 0 0% 35%;
+    --text-tertiary: 0 0% 55%;
   }
-  
+
   .dark {
     /* Enhanced Dark Mode Colors */
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-    
+
     /* Card variations for depth */
     --card: 222.2 84% 7%;
     --card-hover: 222.2 84% 9%;
     --card-foreground: 210 40% 98%;
-    
+
     /* Better muted colors */
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    
+
     /* Popover with depth */
     --popover: 222.2 84% 6%;
     --popover-foreground: 210 40% 98%;
-    
+
     /* Primary purple */
     --primary: 263.4 70% 50.4%;
     --primary-foreground: 210 40% 98%;
-    
+
     /* Secondary with contrast */
     --secondary: 217.2 32.6% 15%;
     --secondary-foreground: 210 40% 98%;
-    
+
     /* Accent colors */
     --accent: 217.2 32.6% 20%;
     --accent-foreground: 210 40% 98%;
-    
+
     /* Status colors */
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 210 40% 98%;
-    
+
     /* Borders and inputs */
     --border: 217.2 32.6% 20%;
     --input: 217.2 32.6% 18%;
     --ring: 263.4 70% 50.4%;
-    
+
     /* Additional shades for depth */
     --surface-1: 222.2 84% 8%;
     --surface-2: 222.2 84% 10%;
     --surface-3: 222.2 84% 12%;
   }
-  
+
   .alt {
     /* Alternative Theme - Purple Dream */
     --background: 270 50% 8%;
     --foreground: 270 10% 95%;
-    
+
     --card: 270 40% 10%;
     --card-hover: 270 40% 12%;
     --card-foreground: 270 10% 95%;
-    
+
     --muted: 270 30% 20%;
     --muted-foreground: 270 10% 70%;
-    
+
     --popover: 270 40% 9%;
     --popover-foreground: 270 10% 95%;
-    
+
     --primary: 280 100% 70%;
     --primary-foreground: 270 50% 8%;
-    
+
     --secondary: 270 30% 15%;
     --secondary-foreground: 270 10% 95%;
-    
+
     --accent: 280 60% 30%;
     --accent-foreground: 270 10% 95%;
-    
+
     --destructive: 350 80% 60%;
     --destructive-foreground: 270 10% 95%;
-    
+
     --border: 270 30% 25%;
     --input: 270 30% 22%;
     --ring: 280 100% 70%;
-    
+
     /* Purple-tinted surfaces */
     --surface-1: 270 40% 11%;
     --surface-2: 270 40% 13%;
@@ -137,53 +142,53 @@
   * {
     @apply border-border;
   }
-  
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
-  
+
   /* Smooth transitions for theme changes */
   * {
     transition: background-color 0.3s ease, border-color 0.3s ease;
   }
-  
+
   /* Glass morphism utilities */
   .glass {
     @apply bg-white/5 backdrop-blur-xl border border-white/10;
   }
-  
+
   .glass-hover {
     @apply hover:bg-white/10 transition-all duration-300;
   }
-  
+
   /* Surface utilities for depth */
   .surface-1 {
     background-color: hsl(var(--surface-1));
   }
-  
+
   .surface-2 {
     background-color: hsl(var(--surface-2));
   }
-  
+
   .surface-3 {
     background-color: hsl(var(--surface-3));
   }
-  
+
   /* Purple glow effect */
   .glow-purple {
     box-shadow: 0 0 20px rgba(168, 85, 247, 0.4),
                 0 0 40px rgba(168, 85, 247, 0.2),
                 0 0 60px rgba(168, 85, 247, 0.1);
   }
-  
+
   /* Animated gradient background */
   .animated-gradient {
     background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
     background-size: 400% 400%;
     animation: gradient 15s ease infinite;
   }
-  
+
   @keyframes gradient {
     0% {
       background-position: 0% 50%;

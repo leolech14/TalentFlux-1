@@ -355,23 +355,23 @@ export function EnhancedCVAssistant() {
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="w-full max-w-4xl mx-auto p-6"
+      className="w-full max-w-5xl mx-auto p-3"
     >
       <Card className="bg-white/5 backdrop-blur-xl border-white/10 overflow-hidden">
         {/* Header */}
-        <div className="p-6 border-b border-white/10">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-purple-400" />
+        <div className="p-3 border-b border-white/10">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-lg font-bold flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-purple-400" />
               AI CV Assistant
             </h2>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">
+              <span className="text-xs text-muted-foreground">
                 Step {currentStep === "personal-info" ? 1 : currentStep === "voice-recording" ? 2 : currentStep === "photo-capture" ? 3 : 4} of 4
               </span>
             </div>
           </div>
-          <Progress value={progress} className="h-2" />
+          <Progress value={progress} className="h-1.5" />
         </div>
 
         <AnimatePresence mode="wait">
@@ -382,28 +382,28 @@ export function EnhancedCVAssistant() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="p-6"
+              className="p-4"
             >
-              <div className="text-center mb-6">
-                <User className="w-12 h-12 text-purple-400 mx-auto mb-3" />
-                <h3 className="text-xl font-semibold mb-2">Let's start with your basic information</h3>
-                <p className="text-sm text-muted-foreground">We need this to create your professional CV</p>
+              <div className="text-center mb-4">
+                <User className="w-8 h-8 text-purple-400 mx-auto mb-2" />
+                <h3 className="text-base font-semibold mb-1">Let's start with your basic information</h3>
+                <p className="text-xs text-muted-foreground">We need this to create your professional CV</p>
               </div>
 
-              <form onSubmit={handlePersonalInfoSubmit} className="space-y-4 max-w-md mx-auto">
+              <form onSubmit={handlePersonalInfoSubmit} className="space-y-3 max-w-md mx-auto">
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
                 >
-                  <Label htmlFor="fullName">Full Name *</Label>
+                  <Label htmlFor="fullName" className="text-xs">Full Name *</Label>
                   <Input
                     id="fullName"
                     value={personalInfo.fullName}
                     onChange={(e) => setPersonalInfo(prev => ({ ...prev, fullName: e.target.value }))}
                     placeholder="John Doe"
                     required
-                    className="mt-1"
+                    className="mt-1 h-8 text-sm"
                   />
                 </motion.div>
 
@@ -412,7 +412,7 @@ export function EnhancedCVAssistant() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <Label htmlFor="email">Email Address *</Label>
+                  <Label htmlFor="email" className="text-xs">Email Address *</Label>
                   <Input
                     id="email"
                     type="email"
@@ -420,7 +420,7 @@ export function EnhancedCVAssistant() {
                     onChange={(e) => setPersonalInfo(prev => ({ ...prev, email: e.target.value }))}
                     placeholder="john.doe@example.com"
                     required
-                    className="mt-1"
+                    className="mt-1 h-8 text-sm"
                   />
                 </motion.div>
 
@@ -429,7 +429,7 @@ export function EnhancedCVAssistant() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <Label htmlFor="phone">Phone Number *</Label>
+                  <Label htmlFor="phone" className="text-xs">Phone Number *</Label>
                   <Input
                     id="phone"
                     type="tel"
@@ -437,7 +437,7 @@ export function EnhancedCVAssistant() {
                     onChange={(e) => setPersonalInfo(prev => ({ ...prev, phone: e.target.value }))}
                     placeholder="+1 (555) 123-4567"
                     required
-                    className="mt-1"
+                    className="mt-1 h-8 text-sm"
                   />
                 </motion.div>
 
@@ -446,13 +446,13 @@ export function EnhancedCVAssistant() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
                 >
-                  <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                  <Label htmlFor="dateOfBirth" className="text-xs">Date of Birth</Label>
                   <Input
                     id="dateOfBirth"
                     type="date"
                     value={personalInfo.dateOfBirth}
                     onChange={(e) => setPersonalInfo(prev => ({ ...prev, dateOfBirth: e.target.value }))}
-                    className="mt-1"
+                    className="mt-1 h-8 text-sm"
                   />
                 </motion.div>
 
@@ -461,13 +461,13 @@ export function EnhancedCVAssistant() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
                 >
-                  <Label htmlFor="location">Location</Label>
+                  <Label htmlFor="location" className="text-xs">Location</Label>
                   <Input
                     id="location"
                     value={personalInfo.location}
                     onChange={(e) => setPersonalInfo(prev => ({ ...prev, location: e.target.value }))}
                     placeholder="San Francisco, CA"
-                    className="mt-1"
+                    className="mt-1 h-8 text-sm"
                   />
                 </motion.div>
 
@@ -476,7 +476,7 @@ export function EnhancedCVAssistant() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
                 >
-                  <Button type="submit" className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+                  <Button type="submit" className="w-full h-9 text-sm bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
                     Continue to Voice Recording
                   </Button>
                 </motion.div>
@@ -491,43 +491,40 @@ export function EnhancedCVAssistant() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="p-6"
+              className="p-4"
             >
-              <div className="text-center mb-6">
-                <h3 className="text-xl font-semibold mb-2">
+              <div className="text-center mb-4">
+                <h3 className="text-lg font-semibold mb-1">
                   Tell us about yourself
                 </h3>
-                <p className="text-sm text-muted-foreground">
-                  Answer the questions below in a single recording. Take your time and speak naturally.
+                <p className="text-xs text-muted-foreground">
+                  Answer the questions below in a single recording
                 </p>
               </div>
 
-              {/* All Questions Display */}
-              <div className="space-y-4 mb-8 max-w-2xl mx-auto">
-                {guidedQuestions.map((question, index) => (
-                  <motion.div
-                    key={question.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="bg-white/5 rounded-lg p-4 border border-white/10"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                        <span className="text-sm font-semibold text-purple-400">{index + 1}</span>
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-medium mb-1">{question.text}</h4>
-                        <p className="text-sm text-muted-foreground">{question.hint}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+              {/* Recording Button at the top */}
+              <div className="flex justify-center mb-4">
+                <motion.button
+                  className={`p-4 rounded-full ${
+                    isRecording
+                      ? "bg-red-500 hover:bg-red-600"
+                      : "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                  } text-white shadow-2xl transition-all duration-300`}
+                  onClick={isRecording ? stopRecording : startRecording}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {isRecording ? (
+                    <MicOff className="w-6 h-6" />
+                  ) : (
+                    <Mic className="w-6 h-6" />
+                  )}
+                </motion.button>
               </div>
 
               {/* Audio Visualization */}
-              <div className="relative mb-8">
-                <div className="h-32 bg-white/5 rounded-lg overflow-hidden relative">
+              <div className="relative mb-4">
+                <div className="h-20 bg-white/5 rounded-lg overflow-hidden relative">
                   {isRecording && (
                     <motion.div
                       className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20"
@@ -546,26 +543,26 @@ export function EnhancedCVAssistant() {
                           animate={{ scale: [1, 1.2, 1] }}
                           transition={{ repeat: Infinity, duration: 1.5 }}
                         >
-                          <Mic className="w-6 h-6 text-purple-400" />
+                          <Mic className="w-4 h-4 text-purple-400" />
                         </motion.div>
-                        <span className="text-sm text-purple-400">Recording... Feel free to speak naturally</span>
+                        <span className="text-xs text-purple-400">Recording... Speak naturally</span>
                       </div>
                     ) : (
-                      <span className="text-sm text-muted-foreground">
-                        Click the microphone to start recording
+                      <span className="text-xs text-muted-foreground">
+                        Click the microphone above to start
                       </span>
                     )}
                   </div>
 
                   {/* Audio level bars */}
                   {isRecording && (
-                    <div className="absolute bottom-0 left-0 right-0 flex items-end justify-center gap-1 p-4">
+                    <div className="absolute bottom-0 left-0 right-0 flex items-end justify-center gap-0.5 p-2">
                       {[...Array(20)].map((_, i) => (
                         <motion.div
                           key={i}
-                          className="w-1 bg-purple-400 rounded-full"
+                          className="w-0.5 bg-purple-400 rounded-full"
                           animate={{
-                            height: Math.random() * audioLevel * 0.5 + 10,
+                            height: Math.random() * audioLevel * 0.3 + 5,
                           }}
                           transition={{
                             duration: 0.1,
@@ -584,34 +581,37 @@ export function EnhancedCVAssistant() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
-                  className="mb-6 p-4 bg-white/5 rounded-lg border border-white/10 max-h-40 overflow-y-auto"
+                  className="mb-4 p-3 bg-white/5 rounded-lg border border-white/10 max-h-24 overflow-y-auto"
                 >
-                  <p className="text-sm">{currentTranscript}</p>
+                  <p className="text-xs">{currentTranscript}</p>
                 </motion.div>
               )}
 
-              {/* Recording Button */}
-              <div className="flex justify-center">
-                <motion.button
-                  className={`p-6 rounded-full ${
-                    isRecording
-                      ? "bg-red-500 hover:bg-red-600"
-                      : "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-                  } text-white shadow-2xl transition-all duration-300`}
-                  onClick={isRecording ? stopRecording : startRecording}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {isRecording ? (
-                    <MicOff className="w-8 h-8" />
-                  ) : (
-                    <Mic className="w-8 h-8" />
-                  )}
-                </motion.button>
+              {/* All Questions Display - More Compact */}
+              <div className="space-y-2 max-w-2xl mx-auto">
+                {guidedQuestions.map((question, index) => (
+                  <motion.div
+                    key={question.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="bg-white/5 rounded-lg p-3 border border-white/10"
+                  >
+                    <div className="flex items-start gap-2">
+                      <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-xs font-semibold text-purple-400">{index + 1}</span>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-sm mb-0.5">{question.text}</h4>
+                        <p className="text-xs text-muted-foreground">{question.hint}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
 
               {isRecording && (
-                <p className="text-center text-sm text-muted-foreground mt-4">
+                <p className="text-center text-xs text-muted-foreground mt-3">
                   When you're done, click the button to stop recording
                 </p>
               )}
@@ -625,16 +625,16 @@ export function EnhancedCVAssistant() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="p-6"
+              className="p-4"
               onAnimationComplete={() => startCamera()}
             >
-              <div className="text-center mb-6">
-                <Camera className="w-12 h-12 text-purple-400 mx-auto mb-3" />
-                <h3 className="text-xl font-semibold mb-2">Let's capture your professional photo</h3>
-                <p className="text-sm text-muted-foreground">Position your face within the frame</p>
+              <div className="text-center mb-3">
+                <Camera className="w-8 h-8 text-purple-400 mx-auto mb-2" />
+                <h3 className="text-base font-semibold mb-1">Let's capture your professional photo</h3>
+                <p className="text-xs text-muted-foreground">Position your face within the frame</p>
               </div>
 
-              <div className="relative max-w-md mx-auto">
+              <div className="relative max-w-sm mx-auto">
                 {/* Camera View */}
                 <div className="relative rounded-lg overflow-hidden bg-black aspect-[3/4]">
                   <video
@@ -646,14 +646,14 @@ export function EnhancedCVAssistant() {
 
                   {/* Face Frame Overlay */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-48 h-64 border-4 border-purple-400 rounded-full opacity-50" />
+                    <div className="w-36 h-48 border-3 border-purple-400 rounded-full opacity-50" />
                   </div>
 
                   {/* Instructions */}
-                  <div className="absolute top-4 left-0 right-0 text-center">
-                    <div className="inline-flex items-center gap-2 bg-black/50 backdrop-blur px-4 py-2 rounded-full">
-                      <AlertCircle className="w-4 h-4 text-yellow-400" />
-                      <span className="text-sm text-white">Good lighting • No glasses • No hats</span>
+                  <div className="absolute top-2 left-0 right-0 text-center">
+                    <div className="inline-flex items-center gap-1 bg-black/50 backdrop-blur px-3 py-1 rounded-full">
+                      <AlertCircle className="w-3 h-3 text-yellow-400" />
+                      <span className="text-xs text-white">Good lighting • No glasses • No hats</span>
                     </div>
                   </div>
                 </div>
@@ -662,12 +662,12 @@ export function EnhancedCVAssistant() {
 
                 {/* Capture Button */}
                 <motion.button
-                  className="mt-6 w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg font-semibold shadow-xl"
+                  className="mt-3 w-full py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg font-semibold shadow-xl text-sm"
                   onClick={capturePhoto}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <Camera className="w-5 h-5 inline mr-2" />
+                  <Camera className="w-4 h-4 inline mr-2" />
                   Capture Photo
                 </motion.button>
               </div>
@@ -681,26 +681,26 @@ export function EnhancedCVAssistant() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="p-6"
+              className="p-4"
             >
-              <div className="text-center mb-6">
-                <Check className="w-12 h-12 text-green-400 mx-auto mb-3" />
-                <h3 className="text-xl font-semibold mb-2">Your CV is ready!</h3>
-                <p className="text-sm text-muted-foreground">Preview and download your professional CV</p>
+              <div className="text-center mb-3">
+                <Check className="w-8 h-8 text-green-400 mx-auto mb-2" />
+                <h3 className="text-base font-semibold mb-1">Your CV is ready!</h3>
+                <p className="text-xs text-muted-foreground">Preview and download your professional CV</p>
               </div>
 
               {/* PDF Preview */}
-              <div className="bg-white/10 rounded-lg p-4 mb-6">
-                <div className="aspect-[8.5/11] bg-white rounded shadow-xl flex items-center justify-center overflow-hidden">
+              <div className="bg-white/10 rounded-lg p-3 mb-4">
+                <div className="aspect-[8.5/11] bg-white rounded shadow-xl flex items-center justify-center overflow-hidden max-h-[400px]">
                   {isGeneratingPDF ? (
                     <div className="text-gray-400">
                       <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
                       >
-                        <Sparkles className="w-8 h-8" />
+                        <Sparkles className="w-6 h-6" />
                       </motion.div>
-                      <p className="mt-2">Generating PDF...</p>
+                      <p className="mt-2 text-sm">Generating PDF...</p>
                     </div>
                   ) : pdfBlob ? (
                     <iframe
@@ -710,34 +710,34 @@ export function EnhancedCVAssistant() {
                     />
                   ) : (
                     <div className="text-gray-400">
-                      <p>CV Preview</p>
-                      <p className="text-sm mt-2">{personalInfo.fullName}</p>
+                      <p className="text-sm">CV Preview</p>
+                      <p className="text-xs mt-1">{personalInfo.fullName}</p>
                     </div>
                   )}
                 </div>
               </div>
 
               {/* Export Options */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <motion.button
-                  className="py-3 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-lg font-semibold shadow-xl flex items-center justify-center gap-2"
+                  className="py-2.5 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-lg font-semibold shadow-xl flex items-center justify-center gap-2 text-sm"
                   onClick={downloadPDF}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   disabled={!pdfBlob}
                 >
-                  <Download className="w-5 h-5" />
+                  <Download className="w-4 h-4" />
                   Download PDF
                 </motion.button>
 
                 <motion.button
-                  className="py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg font-semibold shadow-xl flex items-center justify-center gap-2"
+                  className="py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg font-semibold shadow-xl flex items-center justify-center gap-2 text-sm"
                   onClick={sendViaEmail}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   disabled={!pdfBlob}
                 >
-                  <Mail className="w-5 h-5" />
+                  <Mail className="w-4 h-4" />
                   Send via Email
                 </motion.button>
               </div>

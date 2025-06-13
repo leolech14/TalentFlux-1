@@ -2,11 +2,13 @@ import { motion } from "framer-motion";
 import { Sparkles, Mic, Wand2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { useTranslation } from "@/hooks/useLanguage";
 
 export function MagicalCVButton() {
   const [isHovered, setIsHovered] = useState(false);
   const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number }>>([]);
   const [, navigate] = useLocation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (isHovered) {
@@ -69,7 +71,7 @@ export function MagicalCVButton() {
 
       {/* Main button */}
       <motion.button
-        className="relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-semibold text-lg shadow-2xl overflow-hidden group"
+        className="relative px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-semibold text-sm shadow-2xl overflow-hidden group"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={handleClick}
@@ -90,17 +92,17 @@ export function MagicalCVButton() {
         />
 
         {/* Button content */}
-        <div className="relative flex items-center gap-3">
+        <div className="relative flex items-center gap-2">
           <motion.div
             animate={{
               rotate: isHovered ? 360 : 0,
             }}
             transition={{ duration: 0.5 }}
           >
-            <Wand2 className="w-6 h-6" />
+            <Wand2 className="w-4 h-4" />
           </motion.div>
           
-          <span className="text-lg font-bold">Create Your CV with AI Magic</span>
+          <span className="text-sm font-bold">{t('createCV')}</span>
           
           <motion.div
             animate={{
@@ -111,7 +113,7 @@ export function MagicalCVButton() {
               duration: 1,
             }}
           >
-            <Sparkles className="w-6 h-6" />
+            <Sparkles className="w-4 h-4" />
           </motion.div>
         </div>
 
@@ -132,9 +134,9 @@ export function MagicalCVButton() {
 
       {/* Floating icons */}
       <motion.div
-        className="absolute -top-8 -right-8"
+        className="absolute -top-6 -right-6"
         animate={{
-          y: [-5, 5, -5],
+          y: [-3, 3, -3],
           rotate: [0, 10, 0],
         }}
         transition={{
@@ -143,13 +145,13 @@ export function MagicalCVButton() {
           ease: "easeInOut",
         }}
       >
-        <Mic className="w-8 h-8 text-purple-400" />
+        <Mic className="w-5 h-5 text-purple-400" />
       </motion.div>
 
       <motion.div
-        className="absolute -bottom-8 -left-8"
+        className="absolute -bottom-6 -left-6"
         animate={{
-          y: [5, -5, 5],
+          y: [3, -3, 3],
           rotate: [0, -10, 0],
         }}
         transition={{
@@ -159,7 +161,7 @@ export function MagicalCVButton() {
           delay: 1.5,
         }}
       >
-        <Sparkles className="w-8 h-8 text-pink-400" />
+        <Sparkles className="w-5 h-5 text-pink-400" />
       </motion.div>
     </motion.div>
   );
