@@ -8,7 +8,9 @@ export function LanguageSearch() {
   const { currentLanguage, changeLanguage } = useLanguageContext();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [dropdownPosition, setDropdownPosition] = useState<'right' | 'left'>('right');
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const currentLang = SUPPORTED_LANGUAGES.find(lang => lang.code === currentLanguage);
@@ -27,9 +29,20 @@ export function LanguageSearch() {
       }
     };
 
+    const handleResize = () => {
+      if (isOpen) {
+        calculateDropdownPosition();
+      }
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isOpen]);
 
   const handleLanguageSelect = (languageCode: string) => {
     changeLanguage(languageCode);
@@ -37,9 +50,29 @@ export function LanguageSearch() {
     setSearchQuery('');
   };
 
+  // Calculate optimal dropdown position based on available space
+  const calculateDropdownPosition = () => {
+    if (!buttonRef.current) return;
+    
+    const buttonRect = buttonRef.current.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const dropdownWidth = 320; // 320px = w-80
+    
+    // Check if dropdown would overflow on the right
+    const spaceOnRight = viewportWidth - buttonRect.right;
+    const spaceOnLeft = buttonRect.left;
+    
+    if (spaceOnRight < dropdownWidth && spaceOnLeft > spaceOnRight) {
+      setDropdownPosition('left');
+    } else {
+      setDropdownPosition('right');
+    }
+  };
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
     if (!isOpen) {
+      calculateDropdownPosition();
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   };
@@ -47,6 +80,7 @@ export function LanguageSearch() {
   return (
     <div className="relative" ref={dropdownRef}>
       <button
+        ref={buttonRef}
         onClick={toggleDropdown}
         className={cn(
           "flex items-center gap-2 px-3 py-2 rounded-lg transition-colors",
@@ -68,10 +102,16 @@ export function LanguageSearch() {
 
       {isOpen && (
         <div className={cn(
-          "absolute top-12 right-0 w-80 z-50",
+          "absolute top-12 z-50",
+          "w-80 max-w-[calc(100vw-1rem)]",
+          "max-h-[70vh] sm:max-h-96",
           "bg-white/10 dark:bg-gray-900/10 backdrop-blur-2xl rounded-2xl shadow-2xl",
           "border border-white/20 dark:border-gray-700/20",
-          "max-h-96 overflow-hidden flex flex-col"
+          "overflow-hidden flex flex-col",
+          // Smart positioning based on available space
+          dropdownPosition === 'right' ? "right-0" : "left-0",
+          // Mobile specific adjustments
+          "max-sm:left-1/2 max-sm:transform max-sm:-translate-x-1/2 max-sm:w-[calc(100vw-2rem)]"
         )}>
           {/* Glass frame effect with gradient */}
           <div className="absolute inset-0 rounded-2xl border border-white/30 dark:border-gray-400/30 pointer-events-none" />
@@ -103,7 +143,7 @@ export function LanguageSearch() {
             </div>
 
             {/* Language List */}
-            <div className="overflow-y-auto flex-1 max-h-72">
+            <div className="overflow-y-auto flex-1 max-h-72 overscroll-contain">
               {filteredLanguages.length > 0 ? (
                 <div className="py-2">
                   {filteredLanguages.map((language) => (
