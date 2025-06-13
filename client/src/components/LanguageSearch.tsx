@@ -141,7 +141,7 @@ export function LanguageSearch() {
           {/* Footer Info */}
           <div className="px-4 py-3 border-t border-white/10 dark:border-gray-700/30 bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm">
             <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              {filteredLanguages.length} of {supportedLanguages.length} languages
+              {filteredLanguages.length} of {SUPPORTED_LANGUAGES.length} languages
             </p>
           </div>
         </div>

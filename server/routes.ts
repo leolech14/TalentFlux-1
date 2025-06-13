@@ -463,7 +463,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Translation endpoints using OpenAI
-  app.post("/api/translate", async (req: Request, res: Response) => {
+  app.post("/api/translate", async (req, res) => {
     try {
       if (!process.env.OPENAI_API_KEY) {
         return res.status(500).json({ error: "OpenAI API key not configured" });
@@ -491,11 +491,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const targetLanguageName = languageNames[targetLanguage] || targetLanguage;
 
-      const openaiClient = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-      });
-
-      const response = await openaiClient.chat.completions.create({
+      const response = await openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
         messages: [
           {
@@ -519,7 +515,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/translate-batch", async (req: Request, res: Response) => {
+  app.post("/api/translate-batch", async (req, res) => {
     try {
       const { texts, targetLanguage } = req.body;
       
@@ -544,11 +540,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const targetLanguageName = languageNames[targetLanguage] || targetLanguage;
       const textsToTranslate = texts.join('\n---SEPARATOR---\n');
 
-      const openaiClient = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-      });
-
-      const response = await openaiClient.chat.completions.create({
+      const response = await openai.chat.completions.create({
         model: "gpt-4o",
         messages: [
           {
