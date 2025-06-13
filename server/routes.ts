@@ -789,7 +789,6 @@ function generateCVHTML(cvData: any): string {
 </body>
 </html>
   `;
-}
 
   return server;
 }
