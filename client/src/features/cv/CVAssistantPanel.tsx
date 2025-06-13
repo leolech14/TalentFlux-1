@@ -8,6 +8,7 @@ import { useToast } from "../../hooks/use-toast";
 import { useAuth } from "../../hooks/useAuth";
 import { emitAIEvent } from "../../ai/emitAIEvent";
 import { recordFeedback } from "../../ai/recordFeedback";
+import { SuccessNotification } from "../../components/SuccessNotification";
 import type { Cv } from "@shared/schema";
 
 interface CVAssistantPanelProps {
@@ -62,6 +63,7 @@ export default function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelPr
   const [isProcessing, setIsProcessing] = useState(false);
   const [generatedCV, setGeneratedCV] = useState<CVData | null>(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [showSuccessNotification, setShowSuccessNotification] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const { toast } = useToast();
@@ -272,11 +274,7 @@ export default function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelPr
         URL.revokeObjectURL(url);
         document.body.removeChild(a);
 
-        toast({
-          title: "CV Downloaded",
-          description: "Your CV has been saved to your downloads folder",
-          duration: 3000,
-        });
+        setShowSuccessNotification(true);
 
         // Emit AI event for CV download
         await emitAIEvent('cv-downloaded', {
@@ -297,14 +295,23 @@ export default function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelPr
   if (!isOpen) return null;
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/70 backdrop-blur-lg z-50 flex items-center justify-center p-4"
-        onClick={(e) => e.target === e.currentTarget && onClose()}
-      >
+    <>
+      <SuccessNotification
+        isVisible={showSuccessNotification}
+        onClose={() => setShowSuccessNotification(false)}
+        title="CV Downloaded!"
+        message="Your CV has been saved to your downloads folder. Preview and download your professional CV"
+        onDownload={downloadCV}
+      />
+      
+      <AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/70 backdrop-blur-lg z-50 flex items-center justify-center p-4"
+          onClick={(e) => e.target === e.currentTarget && onClose()}
+        >
         <motion.div
           initial={{ scale: 0.9, y: 20 }}
           animate={{ scale: 1, y: 0 }}
@@ -441,6 +448,7 @@ export default function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelPr
         </motion.div>
       </motion.div>
     </AnimatePresence>
+    </>
   );
 }
 

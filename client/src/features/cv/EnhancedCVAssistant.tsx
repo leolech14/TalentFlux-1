@@ -672,15 +672,11 @@ export function EnhancedCVAssistant() {
                 </div>
               </div>
 
-              {/* Transcript Display */}
+              {/* Hidden Transcript Display - Keep for processing but don't show to user */}
               {currentTranscript && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  className="mb-4 p-3 bg-white/5 rounded-lg border border-white/10 max-h-24 overflow-y-auto"
-                >
-                  <p className="text-xs">{currentTranscript}</p>
-                </motion.div>
+                <div className="hidden">
+                  <p>{currentTranscript}</p>
+                </div>
               )}
 
               {/* All Questions Display - More Compact */}
