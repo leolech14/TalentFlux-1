@@ -534,18 +534,29 @@ export async function generateCVPDF(cvData: CVData): Promise<Buffer> {
 
 export async function transcribeAudio(audioBuffer: Buffer): Promise<string> {
   try {
-    // Create a temporary file-like object for OpenAI
-    const audioFile = new File([audioBuffer], 'audio.wav', { type: 'audio/wav' });
-    
-    const response = await openai.audio.transcriptions.create({
-      file: audioFile,
-      model: 'whisper-1',
-      language: 'en'
+    // Create FormData for OpenAI API
+    const formData = new FormData();
+    const audioBlob = new Blob([audioBuffer], { type: 'audio/webm' });
+    formData.append('file', audioBlob, 'audio.webm');
+    formData.append('model', 'whisper-1');
+    formData.append('language', 'en');
+
+    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: formData
     });
 
-    return response.text;
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result.text || '';
   } catch (error) {
     console.error('Audio transcription error:', error);
-    throw new Error('Failed to transcribe audio');
+    throw new Error('Failed to transcribe audio. Please ensure OPENAI_API_KEY is configured.');
   }
 }

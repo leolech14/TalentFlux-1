@@ -20,6 +20,130 @@ export async function registerRoutes(app: Express): Promise<Server> {
     },
   });
 
+  // Audio transcription endpoint
+  app.post("/api/transcribe", upload.single('audio'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No audio file provided" });
+      }
+
+      const audioBuffer = req.file.buffer;
+      const transcript = await transcribeAudio(audioBuffer);
+      
+      res.json({ transcript });
+    } catch (error) {
+      console.error("Transcription error:", error);
+      res.status(500).json({ error: "Failed to transcribe audio" });
+    }
+  });
+
+  // CV processing endpoint
+  app.post("/api/cv/process", async (req, res) => {
+    try {
+      const { personalInfo, voiceResponse, photoData } = req.body;
+      
+      if (!personalInfo || !voiceResponse) {
+        return res.status(400).json({ error: "Missing required data" });
+      }
+
+      const processedCV = await processCvFromNaturalLanguage(
+        voiceResponse,
+        1, // candidateId - placeholder for now
+        personalInfo.email,
+        personalInfo.fullName
+      );
+
+      if (!processedCV.success) {
+        return res.status(500).json({ error: processedCV.error });
+      }
+
+      // Structure CV data with photo integration
+      const cvData = {
+        personalInfo: {
+          name: personalInfo.fullName,
+          title: extractJobTitle(voiceResponse) || "Professional",
+          email: personalInfo.email,
+          phone: personalInfo.phone,
+          location: personalInfo.location,
+          dateOfBirth: personalInfo.dateOfBirth,
+          photo: photoData
+        },
+        summary: processedCV.cv?.summary || voiceResponse.substring(0, 300),
+        experience: parseExperienceData(processedCV.cv?.experience || []),
+        education: parseEducationData(processedCV.cv?.education || []),
+        skills: {
+          technical: processedCV.cv?.skills || extractSkills(voiceResponse),
+          soft: extractSoftSkills(voiceResponse),
+          languages: processedCV.cv?.languages || []
+        },
+        certifications: []
+      };
+
+      function extractJobTitle(text: string): string {
+        const titlePatterns = [
+          /(?:i am|i'm) (?:a |an )?([^,.]+?)(?:\s+with|\s+at|\s+for|\.|,|$)/i,
+          /(?:work as|working as) (?:a |an )?([^,.]+?)(?:\s+at|\s+for|\.|,|$)/i,
+          /(?:my role is|my position is) (?:a |an )?([^,.]+?)(?:\s+at|\s+for|\.|,|$)/i
+        ];
+        
+        for (const pattern of titlePatterns) {
+          const match = text.match(pattern);
+          if (match) {
+            return match[1].trim();
+          }
+        }
+        return "Professional";
+      }
+
+      function parseExperienceData(experience: string[]): any[] {
+        if (!experience || experience.length === 0) return [];
+        try {
+          return experience.map(exp => JSON.parse(exp || '{}'));
+        } catch {
+          return [];
+        }
+      }
+
+      function parseEducationData(education: string[]): any[] {
+        if (!education || education.length === 0) return [];
+        try {
+          return education.map(edu => JSON.parse(edu || '{}'));
+        } catch {
+          return [];
+        }
+      }
+
+      function extractSkills(text: string): string[] {
+        const skillPatterns = [
+          /(?:skills include|skilled in|experienced with|proficient in|expertise in)\s+([^.]+)/gi,
+          /(?:technologies|tools|frameworks)\s+(?:include|are)?\s*:?\s*([^.]+)/gi
+        ];
+        
+        const skills: string[] = [];
+        for (const pattern of skillPatterns) {
+          const matches = text.matchAll(pattern);
+          for (const match of matches) {
+            const skillList = match[1].split(/,|and|\s+/).map(s => s.trim()).filter(s => s.length > 0);
+            skills.push(...skillList);
+          }
+        }
+        return skills.slice(0, 10); // Limit to 10 skills
+      }
+
+      function extractSoftSkills(text: string): string[] {
+        const softSkillKeywords = ['leadership', 'communication', 'teamwork', 'problem solving', 'creativity', 'adaptability'];
+        return softSkillKeywords.filter(skill => 
+          text.toLowerCase().includes(skill.toLowerCase())
+        );
+      }
+
+      res.json(cvData);
+    } catch (error) {
+      console.error("CV processing error:", error);
+      res.status(500).json({ error: "Failed to process CV data" });
+    }
+  });
+
   // Authentication routes
   app.post("/api/auth/login", async (req, res) => {
     try {
