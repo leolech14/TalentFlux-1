@@ -8,30 +8,26 @@ interface ThemeStore {
   setTheme: (theme: Theme) => void;
 }
 
-let isApplyingTheme = false;
-
 const applyTheme = (theme: Theme) => {
-  if (isApplyingTheme) return;
-  isApplyingTheme = true;
+  // Ensure we're in a browser environment
+  if (typeof document === 'undefined') return;
 
-  // Remove all theme classes
-  document.documentElement.classList.remove('dark', 'alt');
-  document.documentElement.removeAttribute('data-theme');
+  // Use requestAnimationFrame to ensure DOM updates happen outside of React's render cycle
+  requestAnimationFrame(() => {
+    // Remove all theme classes
+    document.documentElement.classList.remove('dark', 'alt');
+    document.documentElement.removeAttribute('data-theme');
 
-  // Apply the new theme
-  if (theme === 'dark') {
-    document.documentElement.classList.add('dark');
-    document.documentElement.setAttribute('data-theme', 'dark');
-  } else if (theme === 'alt') {
-    document.documentElement.classList.add('alt');
-    document.documentElement.setAttribute('data-theme', 'alt');
-  } else {
-    document.documentElement.setAttribute('data-theme', 'light');
-  }
-
-  // Reset flag after a microtask to ensure DOM updates are complete
-  Promise.resolve().then(() => {
-    isApplyingTheme = false;
+    // Apply the new theme
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else if (theme === 'alt') {
+      document.documentElement.classList.add('alt');
+      document.documentElement.setAttribute('data-theme', 'alt');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
   });
 };
 
@@ -48,15 +44,7 @@ export const useTheme = create<ThemeStore>()(
     }),
     {
       name: 'theme-storage',
-      onRehydrateStorage: () => (state) => {
-        // Apply theme on hydration with a small delay to prevent race conditions
-        if (state?.theme) {
-          // Use requestAnimationFrame to ensure DOM is ready
-          requestAnimationFrame(() => {
-            applyTheme(state.theme);
-          });
-        }
-      },
+      // Don't reapply theme on rehydration since it's already applied in main.tsx
     }
   )
 );
