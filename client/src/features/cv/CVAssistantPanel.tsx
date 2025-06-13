@@ -302,14 +302,14 @@ export default function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelPr
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 bg-black/70 backdrop-blur-lg z-50 flex items-center justify-center p-4"
         onClick={(e) => e.target === e.currentTarget && onClose()}
       >
         <motion.div
           initial={{ scale: 0.9, y: 20 }}
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.9, y: 20 }}
-          className="bg-background border rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden"
+          className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-white/20 dark:border-gray-700/30 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden"
         >
           <div className="flex flex-col h-full">
             {/* Header */}

@@ -67,12 +67,14 @@ export function LanguageSearch() {
 
       {isOpen && (
         <div className={cn(
-          "absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg",
-          "border border-gray-200 dark:border-gray-700 z-50",
-          "max-h-96 overflow-hidden flex flex-col"
+          "fixed inset-x-4 mt-2 sm:absolute sm:right-0 sm:left-auto sm:w-80",
+          "bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-lg shadow-xl",
+          "border border-white/20 dark:border-gray-700/30 z-50",
+          "max-h-96 overflow-hidden flex flex-col",
+          "sm:max-h-96"
         )}>
           {/* Search Input */}
-          <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+          <div className="p-4 border-b border-white/10 dark:border-gray-700/30">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
@@ -82,38 +84,40 @@ export function LanguageSearch() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className={cn(
-                  "w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600",
-                  "bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100",
+                  "w-full pl-10 pr-4 py-3 rounded-lg border border-white/20 dark:border-gray-600/30",
+                  "bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm text-gray-900 dark:text-gray-100",
                   "placeholder-gray-500 dark:placeholder-gray-400",
-                  "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+                  "text-base sm:text-sm"
                 )}
               />
             </div>
           </div>
 
           {/* Language List */}
-          <div className="overflow-y-auto flex-1">
+          <div className="overflow-y-auto flex-1 max-h-72">
             {filteredLanguages.length > 0 ? (
-              <div className="py-1">
+              <div className="py-2">
                 {filteredLanguages.map((language) => (
                   <button
                     key={language.code}
                     onClick={() => handleLanguageSelect(language.code)}
                     className={cn(
-                      "w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700",
-                      "flex items-center justify-between transition-colors",
-                      currentLanguage === language.code && "bg-blue-50 dark:bg-blue-900/20"
+                      "w-full px-4 py-4 text-left hover:bg-white/30 dark:hover:bg-gray-700/30",
+                      "flex items-center justify-between transition-all duration-200",
+                      "backdrop-blur-sm",
+                      currentLanguage === language.code && "bg-blue-50/30 dark:bg-blue-900/20"
                     )}
                   >
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <span className="text-base sm:text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                         {language.nativeName}
                       </span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                      <span className="text-sm sm:text-xs text-gray-500 dark:text-gray-400 truncate">
                         {language.name}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 ml-2 flex-shrink-0">
                       <span className="text-xs text-gray-400 uppercase font-mono">
                         {language.code}
                       </span>
@@ -134,7 +138,7 @@ export function LanguageSearch() {
           </div>
 
           {/* Footer Info */}
-          <div className="px-3 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-750">
+          <div className="px-4 py-3 border-t border-white/10 dark:border-gray-700/30 bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm">
             <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
               {filteredLanguages.length} of {supportedLanguages.length} languages
             </p>
