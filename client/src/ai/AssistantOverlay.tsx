@@ -101,6 +101,7 @@ export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
               initial={{ backdropFilter: "blur(0px)" }}
               animate={{ backdropFilter: "blur(24px)" }}
               transition={{ duration: 0.6 }}
+              onClick={(e) => e.stopPropagation()}
             >
               {/* Inner glow with animation */}
               <motion.div
@@ -180,8 +181,12 @@ export function AssistantOverlay({ isOpen, onClose }: AssistantOverlayProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={onClose}
-                  className="text-white/70 hover:text-white hover:bg-white/10"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onClose();
+                  }}
+                  className="text-white/70 hover:text-white hover:bg-white/10 relative z-10"
                 >
                   <X className="w-5 h-5" />
                 </Button>
