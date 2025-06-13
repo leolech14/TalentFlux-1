@@ -10,9 +10,14 @@ interface LanguageStore {
 
 export const useLanguage = create<LanguageStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       language: "en",
-      setLanguage: (language) => set({ language }),
+      setLanguage: (language) => {
+        const current = get().language;
+        if (current !== language) {
+          set({ language });
+        }
+      },
     }),
     {
       name: "language-preference",

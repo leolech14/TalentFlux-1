@@ -49,9 +49,12 @@ export const useTheme = create<ThemeStore>()(
     {
       name: 'theme-storage',
       onRehydrateStorage: () => (state) => {
-        // Apply theme on hydration
+        // Apply theme on hydration with a small delay to prevent race conditions
         if (state?.theme) {
-          applyTheme(state.theme);
+          // Use requestAnimationFrame to ensure DOM is ready
+          requestAnimationFrame(() => {
+            applyTheme(state.theme);
+          });
         }
       },
     }
