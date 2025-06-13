@@ -5,8 +5,7 @@ import { LanguageSearch } from "./LanguageSearch";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export function AppHeader() {
-  const { language, setLanguage } = useLanguage();
-  const { t } = useTranslation();
+  const { translateText } = useTranslation();
 
   return (
     <header className="px-6 py-4">
@@ -20,37 +19,14 @@ export function AppHeader() {
         
         <div className="flex items-center space-x-4">
           <p className="text-sm text-muted-foreground hidden sm:block">
-            {t('alreadyMember')}{" "}
+            Already a member?{" "}
             <Link href="/login" className="text-tf-accent hover:text-tf-accent/80 hover:underline font-medium transition-colors">
-              {t('loginHere')}
+              Login here
             </Link>
           </p>
           
-          {/* Language Selector */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="gap-2">
-                <Globe className="w-4 h-4" />
-                <span className="uppercase text-xs font-medium">
-                  {language}
-                </span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={() => setLanguage('en')}
-                className={language === 'en' ? 'bg-accent' : ''}
-              >
-                English
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setLanguage('pt')}
-                className={language === 'pt' ? 'bg-accent' : ''}
-              >
-                Português
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Language Search Selector */}
+          <LanguageSearch />
 
           {/* Theme Switch */}
           <ThemeSwitch />
