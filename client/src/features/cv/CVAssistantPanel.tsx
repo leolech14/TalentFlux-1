@@ -9,6 +9,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { emitAIEvent } from "../../ai/emitAIEvent";
 import { recordFeedback } from "../../ai/recordFeedback";
 import { SuccessNotification } from "../../components/SuccessNotification";
+import { TranslatedText } from "../../components/TranslatedText";
 import type { Cv } from "@shared/schema";
 
 interface CVAssistantPanelProps {
@@ -316,8 +317,16 @@ export default function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelPr
           initial={{ scale: 0.9, y: 20 }}
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.9, y: 20 }}
-          className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-white/20 dark:border-gray-700/30 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden"
+          className="relative bg-white/10 dark:bg-gray-900/10 backdrop-blur-2xl rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-white/20 dark:border-gray-700/20"
         >
+          {/* Glass frame effect with gradient */}
+          <div className="absolute inset-0 rounded-2xl border border-white/30 dark:border-gray-400/30 pointer-events-none" />
+          <div className="absolute inset-[1px] rounded-2xl border border-white/10 dark:border-gray-500/10 pointer-events-none" />
+          
+          {/* Inner glass background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/5 to-transparent dark:from-gray-100/20 dark:via-gray-100/5 dark:to-transparent pointer-events-none" />
+          
+          <div className="relative">
           <div className="flex flex-col h-full">
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b">
@@ -444,6 +453,7 @@ export default function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelPr
                 <CVPreview cv={generatedCV} onDownload={downloadCV} />
               )}
             </div>
+          </div>
           </div>
         </motion.div>
       </motion.div>

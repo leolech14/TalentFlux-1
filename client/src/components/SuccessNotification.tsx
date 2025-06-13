@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TranslatedText } from "./TranslatedText";
 
 interface SuccessNotificationProps {
   isVisible: boolean;
@@ -28,9 +29,13 @@ export function SuccessNotification({
           exit={{ opacity: 0, y: -50 }}
           className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md mx-4"
         >
-          <div className="bg-white/85 dark:bg-gray-900/85 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-2xl shadow-2xl overflow-hidden">
-            {/* Glass edge effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/10 pointer-events-none" />
+          <div className="relative bg-white/10 dark:bg-gray-900/10 backdrop-blur-2xl rounded-2xl shadow-2xl overflow-hidden border border-white/20 dark:border-gray-700/20">
+            {/* Glass frame effect with gradient */}
+            <div className="absolute inset-0 rounded-2xl border border-white/30 dark:border-gray-400/30 pointer-events-none" />
+            <div className="absolute inset-[1px] rounded-2xl border border-white/10 dark:border-gray-500/10 pointer-events-none" />
+            
+            {/* Inner glass background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/5 to-transparent dark:from-gray-100/20 dark:via-gray-100/5 dark:to-transparent pointer-events-none" />
             
             <div className="relative p-6">
               <div className="flex items-start justify-between mb-4">
