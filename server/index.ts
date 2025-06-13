@@ -64,8 +64,8 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Use PORT from environment or default to 3001 (to avoid conflict with AirPlay on 5000)
-  const port = process.env.PORT ? parseInt(process.env.PORT) : 3001;
+  // Use PORT from environment or default to 5000 for Replit workflow compatibility
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
 
   server.listen(port, "0.0.0.0", () => {
     log(`serving on port ${port}`);
