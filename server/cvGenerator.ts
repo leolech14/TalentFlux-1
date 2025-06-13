@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import puppeteer from 'puppeteer';
+// import puppeteer from 'puppeteer';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -252,6 +252,10 @@ Return a JSON object with this exact structure:
 }
 
 export async function generateCVPDF(cvData: CVData): Promise<Buffer> {
+  // Puppeteer removed - PDF generation temporarily disabled
+  throw new Error('PDF generation is temporarily disabled. Puppeteer dependency was removed.');
+
+  /* Original Puppeteer code commented out
   let browser;
   try {
     const htmlContent = `
@@ -525,6 +529,7 @@ export async function generateCVPDF(cvData: CVData): Promise<Buffer> {
       await browser.close();
     }
   }
+  */
 }
 
 export async function transcribeAudio(audioBuffer: Buffer): Promise<string> {
