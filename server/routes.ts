@@ -57,6 +57,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ error: processedCV.error });
       }
 
+      // Helper functions for CV processing
+      const extractJobTitle = (text: string): string => {
+        const titlePatterns = [
+          /(?:i am|i'm) (?:a |an )?([^,.]+?)(?:\s+with|\s+at|\s+for|\.|,|$)/i,
+          /(?:work as|working as) (?:a |an )?([^,.]+?)(?:\s+at|\s+for|\.|,|$)/i,
+          /(?:my role is|my position is) (?:a |an )?([^,.]+?)(?:\s+at|\s+for|\.|,|$)/i
+        ];
+        
+        for (const pattern of titlePatterns) {
+          const match = text.match(pattern);
+          if (match) {
+            return match[1].trim();
+          }
+        }
+        return "Professional";
+      };
+
+      const parseExperienceData = (experience: string[]): any[] => {
+        if (!experience || experience.length === 0) return [];
+        try {
+          return experience.map(exp => JSON.parse(exp || '{}'));
+        } catch {
+          return [];
+        }
+      };
+
+      const parseEducationData = (education: string[]): any[] => {
+        if (!education || education.length === 0) return [];
+        try {
+          return education.map(edu => JSON.parse(edu || '{}'));
+        } catch {
+          return [];
+        }
+      };
+
+      const extractSkills = (text: string): string[] => {
+        const skillPatterns = [
+          /(?:skills include|skilled in|experienced with|proficient in|expertise in)\s+([^.]+)/gi,
+          /(?:technologies|tools|frameworks)\s+(?:include|are)?\s*:?\s*([^.]+)/gi
+        ];
+        
+        const skills: string[] = [];
+        for (const pattern of skillPatterns) {
+          const matches = Array.from(text.matchAll(pattern));
+          for (const match of matches) {
+            const skillList = match[1].split(/,|and|\s+/).map((s: string) => s.trim()).filter((s: string) => s.length > 0);
+            skills.push(...skillList);
+          }
+        }
+        return skills.slice(0, 10);
+      };
+
+      const extractSoftSkills = (text: string): string[] => {
+        const softSkillKeywords = ['leadership', 'communication', 'teamwork', 'problem solving', 'creativity', 'adaptability'];
+        return softSkillKeywords.filter(skill => 
+          text.toLowerCase().includes(skill.toLowerCase())
+        );
+      };
+
       // Structure CV data with photo integration
       const cvData = {
         personalInfo: {
@@ -78,64 +137,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
         certifications: []
       };
-
-      function extractJobTitle(text: string): string {
-        const titlePatterns = [
-          /(?:i am|i'm) (?:a |an )?([^,.]+?)(?:\s+with|\s+at|\s+for|\.|,|$)/i,
-          /(?:work as|working as) (?:a |an )?([^,.]+?)(?:\s+at|\s+for|\.|,|$)/i,
-          /(?:my role is|my position is) (?:a |an )?([^,.]+?)(?:\s+at|\s+for|\.|,|$)/i
-        ];
-        
-        for (const pattern of titlePatterns) {
-          const match = text.match(pattern);
-          if (match) {
-            return match[1].trim();
-          }
-        }
-        return "Professional";
-      }
-
-      function parseExperienceData(experience: string[]): any[] {
-        if (!experience || experience.length === 0) return [];
-        try {
-          return experience.map(exp => JSON.parse(exp || '{}'));
-        } catch {
-          return [];
-        }
-      }
-
-      function parseEducationData(education: string[]): any[] {
-        if (!education || education.length === 0) return [];
-        try {
-          return education.map(edu => JSON.parse(edu || '{}'));
-        } catch {
-          return [];
-        }
-      }
-
-      function extractSkills(text: string): string[] {
-        const skillPatterns = [
-          /(?:skills include|skilled in|experienced with|proficient in|expertise in)\s+([^.]+)/gi,
-          /(?:technologies|tools|frameworks)\s+(?:include|are)?\s*:?\s*([^.]+)/gi
-        ];
-        
-        const skills: string[] = [];
-        for (const pattern of skillPatterns) {
-          const matches = text.matchAll(pattern);
-          for (const match of matches) {
-            const skillList = match[1].split(/,|and|\s+/).map(s => s.trim()).filter(s => s.length > 0);
-            skills.push(...skillList);
-          }
-        }
-        return skills.slice(0, 10); // Limit to 10 skills
-      }
-
-      function extractSoftSkills(text: string): string[] {
-        const softSkillKeywords = ['leadership', 'communication', 'teamwork', 'problem solving', 'creativity', 'adaptability'];
-        return softSkillKeywords.filter(skill => 
-          text.toLowerCase().includes(skill.toLowerCase())
-        );
-      }
 
       res.json(cvData);
     } catch (error) {
@@ -700,44 +701,19 @@ function generateCVHTML(cvData: any): string {
       }
 
       const languageNames: { [key: string]: string } = {
-        'pt': 'Portuguese',
-        'es': 'Spanish',
-        'fr': 'French',
-        'de': 'German',
-        'it': 'Italian',
-        'nl': 'Dutch',
-        'pl': 'Polish',
-        'ru': 'Russian',
-        'ar': 'Arabic',
-        'zh': 'Chinese',
-        'ja': 'Japanese',
-        'ko': 'Korean',
-        'hi': 'Hindi',
-        'tr': 'Turkish',
-        'sv': 'Swedish',
-        'da': 'Danish',
-        'no': 'Norwegian',
-        'fi': 'Finnish',
-        'cs': 'Czech',
-        'sk': 'Slovak',
-        'bg': 'Bulgarian',
-        'hr': 'Croatian',
-        'uk': 'Ukrainian',
-        'th': 'Thai',
-        'vi': 'Vietnamese',
-        'ms': 'Malay',
-        'id': 'Indonesian',
-        'he': 'Hebrew',
-        'el': 'Greek',
-        'hu': 'Hungarian',
-        'ro': 'Romanian',
-        'ca': 'Catalan'
+        'pt': 'Portuguese', 'es': 'Spanish', 'fr': 'French', 'de': 'German', 'it': 'Italian',
+        'nl': 'Dutch', 'pl': 'Polish', 'ru': 'Russian', 'ar': 'Arabic', 'zh': 'Chinese',
+        'ja': 'Japanese', 'ko': 'Korean', 'hi': 'Hindi', 'tr': 'Turkish', 'sv': 'Swedish',
+        'da': 'Danish', 'no': 'Norwegian', 'fi': 'Finnish', 'cs': 'Czech', 'sk': 'Slovak',
+        'bg': 'Bulgarian', 'hr': 'Croatian', 'uk': 'Ukrainian', 'th': 'Thai', 'vi': 'Vietnamese',
+        'ms': 'Malay', 'id': 'Indonesian', 'he': 'Hebrew', 'el': 'Greek', 'hu': 'Hungarian',
+        'ro': 'Romanian', 'ca': 'Catalan'
       };
 
       const targetLanguageName = languageNames[targetLanguage] || targetLanguage;
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        model: "gpt-4o",
         messages: [
           {
             role: "system",
@@ -773,45 +749,20 @@ function generateCVHTML(cvData: any): string {
       }
 
       const languageNames: { [key: string]: string } = {
-        'pt': 'Portuguese',
-        'es': 'Spanish',
-        'fr': 'French',
-        'de': 'German',
-        'it': 'Italian',
-        'nl': 'Dutch',
-        'pl': 'Polish',
-        'ru': 'Russian',
-        'ar': 'Arabic',
-        'zh': 'Chinese',
-        'ja': 'Japanese',
-        'ko': 'Korean',
-        'hi': 'Hindi',
-        'tr': 'Turkish',
-        'sv': 'Swedish',
-        'da': 'Danish',
-        'no': 'Norwegian',
-        'fi': 'Finnish',
-        'cs': 'Czech',
-        'sk': 'Slovak',
-        'bg': 'Bulgarian',
-        'hr': 'Croatian',
-        'uk': 'Ukrainian',
-        'th': 'Thai',
-        'vi': 'Vietnamese',
-        'ms': 'Malay',
-        'id': 'Indonesian',
-        'he': 'Hebrew',
-        'el': 'Greek',
-        'hu': 'Hungarian',
-        'ro': 'Romanian',
-        'ca': 'Catalan'
+        'pt': 'Portuguese', 'es': 'Spanish', 'fr': 'French', 'de': 'German', 'it': 'Italian',
+        'nl': 'Dutch', 'pl': 'Polish', 'ru': 'Russian', 'ar': 'Arabic', 'zh': 'Chinese',
+        'ja': 'Japanese', 'ko': 'Korean', 'hi': 'Hindi', 'tr': 'Turkish', 'sv': 'Swedish',
+        'da': 'Danish', 'no': 'Norwegian', 'fi': 'Finnish', 'cs': 'Czech', 'sk': 'Slovak',
+        'bg': 'Bulgarian', 'hr': 'Croatian', 'uk': 'Ukrainian', 'th': 'Thai', 'vi': 'Vietnamese',
+        'ms': 'Malay', 'id': 'Indonesian', 'he': 'Hebrew', 'el': 'Greek', 'hu': 'Hungarian',
+        'ro': 'Romanian', 'ca': 'Catalan'
       };
 
       const targetLanguageName = languageNames[targetLanguage] || targetLanguage;
       const textsToTranslate = texts.join('\n---SEPARATOR---\n');
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        model: "gpt-4o",
         messages: [
           {
             role: "system",
@@ -829,7 +780,110 @@ function generateCVHTML(cvData: any): string {
       const translatedBatch = response.choices[0].message.content?.trim() || textsToTranslate;
       const translations = translatedBatch.split('---SEPARATOR---').map((t: string) => t.trim());
       
-      // Ensure we have the same number of translations as input texts
+      while (translations.length < texts.length) {
+        translations.push(texts[translations.length] || '');
+      }
+
+      res.json({ translations: translations.slice(0, texts.length) });
+    } catch (error) {
+      console.error("Batch translation error:", error);
+      res.status(500).json({ error: "Batch translation failed" });
+    }
+  });
+
+  // Translation endpoints using OpenAI
+  app.post("/api/translate", async (req: Request, res: Response) => {
+    try {
+      const { text, targetLanguage } = req.body;
+      
+      if (!text || !targetLanguage) {
+        return res.status(400).json({ error: "Missing text or target language" });
+      }
+
+      if (targetLanguage === 'en') {
+        return res.json({ translatedText: text });
+      }
+
+      const languageNames: { [key: string]: string } = {
+        'pt': 'Portuguese', 'es': 'Spanish', 'fr': 'French', 'de': 'German', 'it': 'Italian',
+        'nl': 'Dutch', 'pl': 'Polish', 'ru': 'Russian', 'ar': 'Arabic', 'zh': 'Chinese',
+        'ja': 'Japanese', 'ko': 'Korean', 'hi': 'Hindi', 'tr': 'Turkish', 'sv': 'Swedish',
+        'da': 'Danish', 'no': 'Norwegian', 'fi': 'Finnish', 'cs': 'Czech', 'sk': 'Slovak',
+        'bg': 'Bulgarian', 'hr': 'Croatian', 'uk': 'Ukrainian', 'th': 'Thai', 'vi': 'Vietnamese',
+        'ms': 'Malay', 'id': 'Indonesian', 'he': 'Hebrew', 'el': 'Greek', 'hu': 'Hungarian',
+        'ro': 'Romanian', 'ca': 'Catalan'
+      };
+
+      const targetLanguageName = languageNames[targetLanguage] || targetLanguage;
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: `You are a professional translator. Translate the following text to ${targetLanguageName}. Maintain the original meaning, tone, and context. Return only the translated text without any explanations or additional content.`
+          },
+          {
+            role: "user",
+            content: text
+          }
+        ],
+        temperature: 0.1,
+        max_tokens: 1000
+      });
+
+      const translatedText = response.choices[0].message.content?.trim() || text;
+      res.json({ translatedText });
+    } catch (error) {
+      console.error("Translation error:", error);
+      res.status(500).json({ error: "Translation failed" });
+    }
+  });
+
+  app.post("/api/translate-batch", async (req: Request, res: Response) => {
+    try {
+      const { texts, targetLanguage } = req.body;
+      
+      if (!texts || !Array.isArray(texts) || !targetLanguage) {
+        return res.status(400).json({ error: "Missing texts array or target language" });
+      }
+
+      if (targetLanguage === 'en') {
+        return res.json({ translations: texts });
+      }
+
+      const languageNames: { [key: string]: string } = {
+        'pt': 'Portuguese', 'es': 'Spanish', 'fr': 'French', 'de': 'German', 'it': 'Italian',
+        'nl': 'Dutch', 'pl': 'Polish', 'ru': 'Russian', 'ar': 'Arabic', 'zh': 'Chinese',
+        'ja': 'Japanese', 'ko': 'Korean', 'hi': 'Hindi', 'tr': 'Turkish', 'sv': 'Swedish',
+        'da': 'Danish', 'no': 'Norwegian', 'fi': 'Finnish', 'cs': 'Czech', 'sk': 'Slovak',
+        'bg': 'Bulgarian', 'hr': 'Croatian', 'uk': 'Ukrainian', 'th': 'Thai', 'vi': 'Vietnamese',
+        'ms': 'Malay', 'id': 'Indonesian', 'he': 'Hebrew', 'el': 'Greek', 'hu': 'Hungarian',
+        'ro': 'Romanian', 'ca': 'Catalan'
+      };
+
+      const targetLanguageName = languageNames[targetLanguage] || targetLanguage;
+      const textsToTranslate = texts.join('\n---SEPARATOR---\n');
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: `You are a professional translator. Translate each text segment separated by "---SEPARATOR---" to ${targetLanguageName}. Maintain the original meaning, tone, and context. Return the translations in the same order, separated by the same "---SEPARATOR---" delimiter. Do not include any explanations or additional content.`
+          },
+          {
+            role: "user",
+            content: textsToTranslate
+          }
+        ],
+        temperature: 0.1,
+        max_tokens: 2000
+      });
+
+      const translatedBatch = response.choices[0].message.content?.trim() || textsToTranslate;
+      const translations = translatedBatch.split('---SEPARATOR---').map((t: string) => t.trim());
+      
       while (translations.length < texts.length) {
         translations.push(texts[translations.length] || '');
       }
@@ -842,3 +896,4 @@ function generateCVHTML(cvData: any): string {
   });
 
   return server;
+}
