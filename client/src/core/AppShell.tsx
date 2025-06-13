@@ -24,8 +24,8 @@ export function AppShell({ children }: AppShellProps) {
   // Handle layout conditionally based on route
   const isRestrictedRoute = location === "/" || location === "/login" || location.startsWith("/onboarding");
   const allowFAB = !isRestrictedRoute;
-  // Always allow theme toggle on all pages
-  const allowThemeToggle = true;
+  // Theme toggle is now handled in the header component
+  const allowThemeToggle = false;
   const { assistantOpen, setAssistantOpen, sidebarOpen, setSidebarOpen } = useUIState();
 
   // Listen for CV assistant events
