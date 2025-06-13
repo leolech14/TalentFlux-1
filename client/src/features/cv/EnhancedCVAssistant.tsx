@@ -75,6 +75,8 @@ export function EnhancedCVAssistant() {
   const [photoData, setPhotoData] = useState<string | null>(null);
   const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [speechRecognition, setSpeechRecognition] = useState<any>(null);
+  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
 
   const { toast } = useToast();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -132,14 +134,15 @@ export function EnhancedCVAssistant() {
 
       mediaRecorderRef.current.onstop = () => {
         const blob = new Blob(chunks, { type: "audio/webm" });
-        // In production, send to transcription API
-        simulateTranscription();
+        setAudioChunks(chunks);
+        processTranscription();
       };
 
       mediaRecorderRef.current.start();
       setIsRecording(true);
       setCurrentTranscript("");
-      simulateRealtimeTranscription();
+      const recognition = startRealtimeTranscription();
+      setSpeechRecognition(recognition);
     } catch (error) {
       toast({
         title: "Microphone Error",
@@ -154,6 +157,12 @@ export function EnhancedCVAssistant() {
       mediaRecorderRef.current.stop();
       mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
       setIsRecording(false);
+
+      // Stop speech recognition if it's running
+      if (speechRecognition) {
+        speechRecognition.stop();
+        setSpeechRecognition(null);
+      }
 
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
@@ -174,33 +183,94 @@ export function EnhancedCVAssistant() {
     animationFrameRef.current = requestAnimationFrame(visualizeAudio);
   };
 
-  const simulateRealtimeTranscription = () => {
-    // Simulate transcription for demo
-    const sampleText = "I am a senior software engineer with over 8 years of experience in full-stack development. I specialize in React, TypeScript, and Node.js...";
-    const words = sampleText.split(" ");
-    let index = 0;
-
-    const interval = setInterval(() => {
-      if (index < words.length && isRecording) {
-        setCurrentTranscript(prev => prev + (prev ? " " : "") + words[index]);
-        index++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 200);
+  const startRealtimeTranscription = () => {
+    // Check for browser speech recognition support
+    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+    
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+      
+      recognition.onresult = (event: any) => {
+        let interim = '';
+        let final = '';
+        
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            final += transcript + ' ';
+          } else {
+            interim += transcript;
+          }
+        }
+        
+        if (final) {
+          setCurrentTranscript(prev => prev + final);
+        }
+      };
+      
+      recognition.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        if (event.error !== 'no-speech') {
+          toast({
+            title: "Speech Recognition Error",
+            description: "Audio will be processed server-side instead",
+            variant: "destructive"
+          });
+        }
+      };
+      
+      recognition.start();
+      return recognition;
+    } else {
+      // No browser speech recognition - will use server-side processing
+      toast({
+        title: "Using Server Processing",
+        description: "Audio will be transcribed when recording stops",
+      });
+      return null;
+    }
   };
 
-  const simulateTranscription = () => {
-    // Save the current transcript to answers
-    const allAnswers = { ...answers };
+  const processTranscription = async () => {
+    let finalTranscript = currentTranscript;
     
-    // Combine all transcripts into a comprehensive answer
-    const combinedAnswers = Object.values(allAnswers).join(" ") + " " + currentTranscript;
+    // If no transcript from browser speech recognition, try server-side processing
+    if (!finalTranscript.trim() && audioChunks.length > 0) {
+      try {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const formData = new FormData();
+        formData.append('audio', audioBlob, 'recording.webm');
+        
+        const response = await fetch('/api/transcribe', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          finalTranscript = result.transcript;
+        } else {
+          throw new Error('Server transcription failed');
+        }
+      } catch (error) {
+        console.error('Transcription error:', error);
+        toast({
+          title: "Transcription Error",
+          description: "Please speak clearly and try again",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
     
-        // Update answers with the combined response
-    setAnswers({
-      combined: combinedAnswers
-    });
+    // Save the transcript to answers
+    const updatedAnswers = { ...answers };
+    updatedAnswers.voiceResponse = finalTranscript;
+    setAnswers(updatedAnswers);
 
     toast({
       title: "Recording Complete!",
@@ -249,28 +319,54 @@ export function EnhancedCVAssistant() {
   const generatePDF = async () => {
     setIsGeneratingPDF(true);
     try {
-      // In a real app, you would process the answers with AI
-      // For now, we'll use mock data as a base
-      const cvData = generateMockCVData();
-
-      // Override with actual personal info and photo
-      cvData.personalInfo = {
-        name: personalInfo.fullName,
-        title: "Software Engineer", // This would come from AI processing
-        email: personalInfo.email,
-        phone: personalInfo.phone,
-        location: personalInfo.location,
-        dateOfBirth: personalInfo.dateOfBirth,
-        photo: photoData || undefined
-      };
-
-      // Process answers to create a summary (in real app, this would use AI)
-      const allAnswers = Object.values(answers).join(' ');
-      if (allAnswers.length > 100) {
-        cvData.summary = allAnswers.substring(0, 300) + "...";
+      // Process voice responses with AI to extract structured data
+      const voiceResponse = answers.voiceResponse || '';
+      
+      // Send voice response to AI for processing
+      let processedData;
+      try {
+        const response = await fetch('/api/cv/process', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            personalInfo,
+            voiceResponse,
+            photoData
+          })
+        });
+        
+        if (response.ok) {
+          processedData = await response.json();
+        } else {
+          throw new Error('AI processing failed');
+        }
+      } catch (error) {
+        console.error('AI processing error:', error);
+        // Fallback to basic processing
+        processedData = {
+          personalInfo: {
+            name: personalInfo.fullName,
+            title: "Professional", 
+            email: personalInfo.email,
+            phone: personalInfo.phone,
+            location: personalInfo.location,
+            dateOfBirth: personalInfo.dateOfBirth,
+            photo: photoData || undefined
+          },
+          summary: voiceResponse.substring(0, 300) + (voiceResponse.length > 300 ? "..." : ""),
+          experience: [],
+          education: [],
+          skills: {
+            technical: [],
+            soft: [],
+            languages: []
+          }
+        };
       }
 
-      const blob = generateCVPDF(cvData);
+      const blob = generateCVPDF(processedData);
       setPdfBlob(blob);
       setCurrentStep("preview");
     } catch (error) {
