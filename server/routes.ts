@@ -544,7 +544,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const targetLanguageName = languageNames[targetLanguage] || targetLanguage;
       const textsToTranslate = texts.join('\n---SEPARATOR---\n');
 
-      const response = await openai.chat.completions.create({
+      const openaiClient = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
+
+      const response = await openaiClient.chat.completions.create({
         model: "gpt-4o",
         messages: [
           {
