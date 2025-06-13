@@ -30,6 +30,12 @@ export default defineConfig({
   },
   server: {
     host: true,
+    allowedHosts: [
+      "localhost",
+      ".replit.dev",
+      ".repl.co",
+      "36a4c07b-bf04-4bfa-9d08-ccc31aa7a528-00-2mfk7i7pjree9.kirk.replit.dev"
+    ],
     fs: {
       strict: true,
       deny: ["**/.*"],
