@@ -30,7 +30,7 @@ const initializeTheme = () => {
   }
   
   // Apply theme classes immediately
-  document.documentElement.classList.remove('dark', 'alt', 'minimal');
+  document.documentElement.classList.remove('dark', 'alt', 'minimal', 'matrix');
   document.documentElement.removeAttribute('data-theme');
   
   // Force dark mode styling
@@ -45,6 +45,10 @@ const initializeTheme = () => {
   } else if (theme === 'minimal') {
     document.documentElement.classList.add('minimal');
     document.documentElement.setAttribute('data-theme', 'minimal');
+    document.documentElement.style.backgroundColor = 'rgb(0, 0, 0)';
+  } else if (theme === 'matrix') {
+    document.documentElement.classList.add('matrix');
+    document.documentElement.setAttribute('data-theme', 'matrix');
     document.documentElement.style.backgroundColor = 'rgb(0, 0, 0)';
   } else {
     document.documentElement.setAttribute('data-theme', 'light');

@@ -1,13 +1,14 @@
 import React from "react";
 import { useTheme } from "@/hooks/useTheme";
 import * as Popover from "@radix-ui/react-popover";
-import { Sun, Moon, Palette, Square } from "lucide-react";
+import { Sun, Moon, Palette, Square, Terminal } from "lucide-react";
 
 const options = {
   light: { icon: Sun, label: "Light" },
   dark: { icon: Moon, label: "Dark" },
   alt: { icon: Palette, label: "Alt" },
   minimal: { icon: Square, label: "Minimal" },
+  matrix: { icon: Terminal, label: "Matrix" },
 } as const;
 
 type ThemeKey = keyof typeof options;

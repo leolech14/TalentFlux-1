@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type Theme = 'light' | 'dark' | 'alt' | 'minimal';
+type Theme = 'light' | 'dark' | 'alt' | 'minimal' | 'matrix';
 
 interface ThemeStore {
   theme: Theme;
@@ -13,7 +13,7 @@ const applyTheme = (theme: Theme) => {
   if (typeof document === 'undefined') return;
 
   // Remove all theme classes immediately
-  document.documentElement.classList.remove('dark', 'alt', 'minimal');
+  document.documentElement.classList.remove('dark', 'alt', 'minimal', 'matrix');
   document.documentElement.removeAttribute('data-theme');
 
   // Apply the new theme immediately
@@ -26,6 +26,9 @@ const applyTheme = (theme: Theme) => {
   } else if (theme === 'minimal') {
     document.documentElement.classList.add('minimal');
     document.documentElement.setAttribute('data-theme', 'minimal');
+  } else if (theme === 'matrix') {
+    document.documentElement.classList.add('matrix');
+    document.documentElement.setAttribute('data-theme', 'matrix');
   } else {
     document.documentElement.setAttribute('data-theme', 'light');
   }

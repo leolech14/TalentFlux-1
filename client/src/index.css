@@ -201,7 +201,38 @@
     --radius: 0rem;
   }
 
+  .matrix {
+    /* Matrix Theme - Pure Black with High Contrast Colors */
+    --background: 0 0% 0%; /* Pure black */
+    --foreground: 120 100% 50%; /* Bright green */
 
+    --card: 0 0% 0%; /* Pure black */
+    --card-foreground: 120 100% 50%; /* Bright green */
+
+    --popover: 0 0% 0%;
+    --popover-foreground: 120 100% 50%;
+
+    --primary: 120 100% 50%; /* Matrix green */
+    --primary-foreground: 0 0% 0%;
+
+    --secondary: 0 0% 10%; /* Very dark gray */
+    --secondary-foreground: 120 100% 50%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 120 60% 40%; /* Darker green */
+
+    --accent: 180 100% 50%; /* Cyan accent */
+    --accent-foreground: 0 0% 0%;
+
+    --destructive: 0 100% 50%; /* Pure red */
+    --destructive-foreground: 0 0% 0%;
+
+    --border: 120 100% 30%; /* Dark green border */
+    --input: 0 0% 5%; /* Almost black */
+    --ring: 120 100% 50%;
+
+    --radius: 0rem; /* Sharp corners like terminal */
+  }
 
   /* Make all padding and margins smaller */
   * {
@@ -256,6 +287,10 @@
 
   html.minimal {
     background-color: rgb(0, 0, 0) !important;
+  }
+
+  html.matrix {
+    background-color: rgb(0, 0, 0) !important; /* Pure black */
   }
 
   body {
@@ -336,7 +371,77 @@
     background: hsl(var(--muted));
   }
 
+  /* Matrix theme - terminal style with consistent layout */
+  .matrix {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  }
 
+  /* Matrix theme - NO layout changes, only appearance */
+  .matrix * {
+    /* Keep all layouts exactly the same */
+    letter-spacing: normal;
+  }
+
+  /* Matrix cards - same layout, different appearance */
+  .matrix .card {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+  }
+
+  /* Matrix buttons - same size, different colors */
+  .matrix button {
+    font-family: inherit;
+    background: hsl(var(--secondary));
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
+  }
+
+  .matrix button:hover {
+    background: hsl(var(--muted));
+    border-color: hsl(var(--primary));
+  }
+
+  /* Matrix inputs - high contrast */
+  .matrix input,
+  .matrix textarea,
+  .matrix select {
+    background: hsl(var(--input));
+    border: 1px solid hsl(var(--border));
+    color: hsl(var(--foreground));
+  }
+
+  .matrix input:focus,
+  .matrix textarea:focus,
+  .matrix select:focus {
+    outline: none;
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 1px hsl(var(--primary));
+  }
+
+  /* Matrix links */
+  .matrix a {
+    color: hsl(var(--accent));
+  }
+
+  .matrix a:hover {
+    color: hsl(var(--primary));
+    text-decoration: underline;
+  }
+
+  /* High contrast text for readability */
+  .matrix .text-muted-foreground {
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Matrix primary elements */
+  .matrix .bg-primary {
+    background: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+  }
+
+  .matrix .text-primary {
+    color: hsl(var(--primary)) !important;
+  }
 
   /* Glass morphism utilities */
   .glass {
