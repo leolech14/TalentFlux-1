@@ -166,46 +166,46 @@
   }
 
   .minimal {
-    /* Minimalist High Contrast - Pure Black & White */
-    --background: 0 0% 100%; /* Pure white */
-    --foreground: 0 0% 0%; /* Pure black */
+    /* Minimalist High Contrast - Pure Black Theme */
+    --background: 0 0% 0%; /* Pure black */
+    --foreground: 0 0% 100%; /* Pure white */
 
-    --card: 0 0% 100%; /* Pure white cards */
-    --card-hover: 0 0% 98%; /* Subtle gray hover */
-    --card-foreground: 0 0% 0%;
+    --card: 0 0% 3%; /* Very dark gray cards */
+    --card-hover: 0 0% 5%; /* Slightly lighter on hover */
+    --card-foreground: 0 0% 100%;
 
-    --muted: 0 0% 95%; /* Very light gray */
-    --muted-foreground: 0 0% 40%; /* Medium gray */
+    --muted: 0 0% 8%; /* Dark gray */
+    --muted-foreground: 0 0% 70%; /* Light gray */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover: 0 0% 3%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 0 0% 0%; /* Pure black primary */
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 100%; /* Pure white primary */
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 0 0% 95%; /* Light gray secondary */
-    --secondary-foreground: 0 0% 0%;
+    --secondary: 0 0% 10%; /* Dark gray secondary */
+    --secondary-foreground: 0 0% 100%;
 
-    --accent: 0 0% 90%; /* Light gray accent */
-    --accent-foreground: 0 0% 0%;
+    --accent: 0 0% 15%; /* Medium dark gray accent */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 85% 50%;
+    --destructive: 0 85% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 85%; /* Medium gray border */
-    --input: 0 0% 98%; /* Off-white input */
-    --ring: 0 0% 0%;
+    --border: 0 0% 20%; /* Dark gray border */
+    --input: 0 0% 5%; /* Very dark input */
+    --ring: 0 0% 100%;
 
     /* Minimalist surfaces */
-    --surface-1: 0 0% 98%;
-    --surface-2: 0 0% 96%;
-    --surface-3: 0 0% 94%;
+    --surface-1: 0 0% 5%;
+    --surface-2: 0 0% 8%;
+    --surface-3: 0 0% 12%;
 
     /* High contrast safeguards */
-    --text-high-contrast: 0 0% 0%;
-    --text-safe-light: 0 0% 0%;
-    --bg-safe-light: 0 0% 100%;
-    --gradient-outline: rgba(0, 0, 0, 0.1);
+    --text-high-contrast: 0 0% 100%;
+    --text-safe-dark: 0 0% 100%;
+    --bg-safe-dark: 0 0% 0%;
+    --gradient-outline: rgba(255, 255, 255, 0.1);
   }
 }
 
