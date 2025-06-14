@@ -130,7 +130,7 @@ class TranslationService {
         }
       });
 
-      return response.translations;
+      return data.translations;
     } catch (error) {
       console.error('Batch translation error:', error);
       return texts; // Fallback to original texts
