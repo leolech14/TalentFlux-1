@@ -1,5 +1,17 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+// Get the API base URL based on environment
+const getApiBaseUrl = () => {
+  // In production or Replit, use relative URLs (same domain)
+  if (import.meta.env.PROD || import.meta.env.VITE_REPLIT) {
+    return '';
+  }
+  // In local development, use the backend port
+  return import.meta.env.VITE_API_URL || 'http://localhost:5001';
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
@@ -12,7 +24,10 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+  // Construct the full URL
+  const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+  
+  const res = await fetch(fullUrl, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
