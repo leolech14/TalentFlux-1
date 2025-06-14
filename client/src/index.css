@@ -210,39 +210,39 @@
 
   .matrix {
     /* Matrix Theme - Sublime Developer Experience */
-    --background: 0 0% 2%; /* Pure black with subtle depth */
+    --background: 0 0% 0%; /* Pure black */
     --foreground: 120 20% 85%; /* Soft green-tinted white */
 
-    --card: 120 5% 4%; /* Almost black with green hint */
-    --card-hover: 120 5% 6%; /* Subtle hover state */
+    --card: 120 5% 3%; /* Almost black with green hint */
+    --card-hover: 120 5% 5%; /* Subtle hover state */
     --card-foreground: 120 20% 85%;
 
-    --muted: 120 5% 12%; /* Dark muted with green tint */
+    --muted: 120 5% 10%; /* Dark muted with green tint */
     --muted-foreground: 120 15% 55%; /* Subtle green text */
 
-    --popover: 120 5% 4%;
+    --popover: 120 5% 3%;
     --popover-foreground: 120 20% 85%;
 
     --primary: 120 70% 40%; /* Subtle matrix green */
-    --primary-foreground: 0 0% 2%;
+    --primary-foreground: 0 0% 0%;
 
     --secondary: 180 50% 35%; /* Subtle cyan */
-    --secondary-foreground: 0 0% 2%;
+    --secondary-foreground: 0 0% 0%;
 
     --accent: 60 70% 45%; /* Subtle amber */
-    --accent-foreground: 0 0% 2%;
+    --accent-foreground: 0 0% 0%;
 
     --destructive: 0 70% 45%; /* Subtle red */
-    --destructive-foreground: 0 0% 2%;
+    --destructive-foreground: 0 0% 0%;
 
-    --border: 120 20% 10%; /* Very subtle green border */
-    --input: 120 5% 5%; /* Dark input */
+    --border: 120 20% 8%; /* Very subtle green border */
+    --input: 120 5% 3%; /* Dark input */
     --ring: 120 70% 40%; /* Subtle green ring */
 
     /* Matrix surfaces */
-    --surface-1: 120 5% 4%;
-    --surface-2: 120 5% 6%;
-    --surface-3: 120 5% 8%;
+    --surface-1: 120 5% 3%;
+    --surface-2: 120 5% 5%;
+    --surface-3: 120 5% 7%;
 
     /* Subtle matrix effects */
     --matrix-green: 120 70% 40%;
