@@ -69,14 +69,28 @@ class TranslationService {
     }
 
     try {
-      const response = await api.translation.translate(text, targetLanguage);
+      // Direct API call with proper error handling
+      const response = await fetch('/api/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text, targetLanguage }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Translation failed: ${errorData.details || response.statusText}`);
+      }
+
+      const data = await response.json();
 
       if (!this.cache[targetLanguage]) {
         this.cache[targetLanguage] = {};
       }
-      this.cache[targetLanguage][text] = response.translatedText;
+      this.cache[targetLanguage][text] = data.translatedText;
 
-      return response.translatedText;
+      return data.translatedText;
     } catch (error) {
       console.error('Translation error:', error);
       return text; // Fallback to original text
@@ -89,7 +103,21 @@ class TranslationService {
     }
 
     try {
-      const response = await api.translation.translateBatch(texts, targetLanguage);
+      // Direct API call with proper error handling
+      const response = await fetch('/api/translate-batch', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ texts, targetLanguage }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Batch translation failed: ${errorData.details || response.statusText}`);
+      }
+
+      const data = await response.json();
 
       // Cache the results
       if (!this.cache[targetLanguage]) {
@@ -97,12 +125,12 @@ class TranslationService {
       }
       
       texts.forEach((text, index) => {
-        if (response.translations[index]) {
-          this.cache[targetLanguage][text] = response.translations[index];
+        if (data.translations[index]) {
+          this.cache[targetLanguage][text] = data.translations[index];
         }
       });
 
-      return response.translations;
+      return data.translations;
     } catch (error) {
       console.error('Batch translation error:', error);
       return texts; // Fallback to original texts
