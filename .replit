@@ -1,5 +1,5 @@
 modules = ["nodejs-20", "web", "postgresql-16"]
-run = "npm run dev"
+run = "./run-replit.sh"
 hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
@@ -12,11 +12,11 @@ build = ["npm", "run", "build"]
 run = ["npm", "run", "start"]
 
 [[ports]]
-localPort = 3001
+localPort = 5001
 externalPort = 3001
 
 [[ports]]
-localPort = 5000
+localPort = 5173
 externalPort = 80
 
 [workflows]
@@ -37,8 +37,8 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run dev"
-waitForPort = 5000
+args = "npm run dev & npx vite"
+waitForPort = 5173
 
 [[workflows.workflow]]
 name = "Start Application"
@@ -47,7 +47,7 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run dev"
+args = "npm run dev & npx vite"
 
 [[workflows.workflow]]
 name = "Start Application"
@@ -56,4 +56,4 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run dev"
+args = "npm run dev & npx vite"
