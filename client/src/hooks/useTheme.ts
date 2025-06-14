@@ -12,29 +12,26 @@ const applyTheme = (theme: Theme) => {
   // Ensure we're in a browser environment
   if (typeof document === 'undefined') return;
 
-  // Use requestAnimationFrame to ensure DOM updates happen outside of React's render cycle
-  requestAnimationFrame(() => {
-    // Remove all theme classes
-    document.documentElement.classList.remove('dark', 'alt', 'minimal', 'matrix');
-    document.documentElement.removeAttribute('data-theme');
+  // Remove all theme classes immediately
+  document.documentElement.classList.remove('dark', 'alt', 'minimal', 'matrix');
+  document.documentElement.removeAttribute('data-theme');
 
-    // Apply the new theme
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-      document.documentElement.setAttribute('data-theme', 'dark');
-    } else if (theme === 'alt') {
-      document.documentElement.classList.add('alt');
-      document.documentElement.setAttribute('data-theme', 'alt');
-    } else if (theme === 'minimal') {
-      document.documentElement.classList.add('minimal');
-      document.documentElement.setAttribute('data-theme', 'minimal');
-    } else if (theme === 'matrix') {
-      document.documentElement.classList.add('matrix');
-      document.documentElement.setAttribute('data-theme', 'matrix');
-    } else {
-      document.documentElement.setAttribute('data-theme', 'light');
-    }
-  });
+  // Apply the new theme immediately
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+    document.documentElement.setAttribute('data-theme', 'dark');
+  } else if (theme === 'alt') {
+    document.documentElement.classList.add('alt');
+    document.documentElement.setAttribute('data-theme', 'alt');
+  } else if (theme === 'minimal') {
+    document.documentElement.classList.add('minimal');
+    document.documentElement.setAttribute('data-theme', 'minimal');
+  } else if (theme === 'matrix') {
+    document.documentElement.classList.add('matrix');
+    document.documentElement.setAttribute('data-theme', 'matrix');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
 };
 
 export const useTheme = create<ThemeStore>()(
@@ -58,8 +55,6 @@ export const useTheme = create<ThemeStore>()(
 
 // Initialize theme on load
 if (typeof window !== 'undefined') {
-  const savedTheme = localStorage.getItem('theme-preference') as Theme;
-  if (savedTheme) {
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  }
+  const savedTheme = (localStorage.getItem('theme-preference') as Theme) || 'dark';
+  applyTheme(savedTheme);
 }
