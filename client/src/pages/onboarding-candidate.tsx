@@ -57,7 +57,7 @@ export default function OnboardingCandidate() {
           transition={{ duration: 0.6 }}
           className="max-w-2xl mx-auto"
         >
-          <Card className="shadow-xl border-0 bg-card/50 backdrop-blur-sm">
+          <Card className="shadow-xl border-0 bg-card bg-opacity-50 backdrop-blur-sm">
             <CardHeader className="text-center space-y-4">
               <div className="w-16 h-16 bg-gradient-to-r from-primary to-purple-600 rounded-2xl flex items-center justify-center mx-auto">
                 <User className="text-white w-8 h-8" />

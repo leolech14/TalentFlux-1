@@ -28,7 +28,7 @@ export function ThemeSwitch() {
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
-        <button className="flex items-center gap-1 px-3 py-1 rounded-lg border bg-surface/50 backdrop-blur-sm border-border/50 text-foreground hover:bg-surface/80 transition-all duration-200">
+        <button className="flex items-center gap-1 px-3 py-1 rounded-lg border bg-surface bg-opacity-50 backdrop-blur-sm border-border border-opacity-50 text-foreground hover:bg-surface hover:bg-opacity-80 transition-all duration-200">
           <CurrentIcon className="w-4 h-4" />
           <span className="capitalize">{options[currentTheme].label}</span>
         </button>

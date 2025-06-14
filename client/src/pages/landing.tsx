@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Zap, Brain, MessageSquare, BarChart3, Mic, TrendingUp, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader } from "@/components/ui/card";
 import { MagicalCVButton } from "@/features/cv/MagicalCVButton";
 import { AppHeader } from "@/components/AppHeader";
 import { useTranslation } from "@/hooks/useLanguage";
@@ -122,13 +122,15 @@ export default function Landing() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <Card className="p-6 h-full hover:shadow-lg transition-all duration-300 border-border/50 bg-card/50 backdrop-blur-sm">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="p-3 rounded-lg bg-primary/10">
-                      <feature.icon className="w-6 h-6 text-primary" />
+                <Card className="p-6 h-full hover:shadow-lg transition-all duration-300 border-border border-opacity-50 bg-card bg-opacity-50 backdrop-blur-sm">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="p-3 rounded-lg bg-primary/10">
+                        <feature.icon className="w-6 h-6 text-primary" />
+                      </div>
+                      <h3 className="text-xl font-semibold">{feature.title}</h3>
                     </div>
-                    <h3 className="text-xl font-semibold">{feature.title}</h3>
-                  </div>
+                  </CardHeader>
                   <p className="text-muted-foreground leading-relaxed">
                     {feature.description}
                   </p>
@@ -167,7 +169,7 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="px-6 py-12 border-t border-border/50 bg-muted/20">
+      <footer className="px-6 py-12 border-t border-border border-opacity-50 bg-muted bg-opacity-20">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center space-x-2">

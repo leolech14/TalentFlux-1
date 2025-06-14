@@ -89,7 +89,7 @@ export default function CandidateOnboarding() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <Card className="h-full bg-card/80 backdrop-blur-sm border border-border/50 shadow-xl hover:shadow-2xl transition-all duration-300 group cursor-pointer"
+            <Card className="h-full bg-card bg-opacity-80 backdrop-blur-sm border border-border border-opacity-50 shadow-xl hover:shadow-2xl transition-all duration-300 group cursor-pointer"
                   onClick={handleUploadCV}>
               <CardHeader className="text-center pb-6">
                 <div className="w-16 h-16 mx-auto mb-4 bg-blue-500/10 rounded-2xl flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
@@ -130,7 +130,7 @@ export default function CandidateOnboarding() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            <Card className="h-full bg-card/80 backdrop-blur-sm border border-border/50 shadow-xl hover:shadow-2xl transition-all duration-300 group cursor-pointer relative overflow-hidden"
+            <Card className="h-full bg-card bg-opacity-80 backdrop-blur-sm border border-border border-opacity-50 shadow-xl hover:shadow-2xl transition-all duration-300 group cursor-pointer relative overflow-hidden"
                   onClick={handleCreateWithAI}>
               {/* Animated background gradient */}
               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-yellow-500/10 group-hover:from-purple-500/20 group-hover:via-pink-500/20 group-hover:to-yellow-500/20 transition-all duration-300" />

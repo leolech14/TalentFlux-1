@@ -79,8 +79,8 @@ export default function Login() {
         transition={{ duration: 0.6 }}
         className="relative z-10 w-full max-w-md"
       >
-        <Card className="bg-card/80 backdrop-blur-sm border border-border/50 shadow-xl">
-          <CardHeader className="text-center pb-6">
+        <Card className="bg-card bg-opacity-80 backdrop-blur-sm border border-border border-opacity-50 shadow-xl">
+          <CardHeader className="text-center space-y-4">
             <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
               <TranslatedText text="Welcome to TalentFlux" />
             </CardTitle>
