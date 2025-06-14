@@ -291,9 +291,30 @@
     @apply border-border;
   }
 
+  html {
+    background-color: rgb(3, 7, 18) !important; /* Force dark background */
+  }
+
+  html.light {
+    background-color: rgb(255, 255, 255) !important;
+  }
+
+  html.dark {
+    background-color: rgb(3, 7, 18) !important;
+  }
+
+  html.alt {
+    background-color: rgb(2, 6, 9) !important;
+  }
+
+  html.minimal {
+    background-color: rgb(0, 0, 0) !important;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    min-height: 100vh;
   }
 
   /* Smooth transitions for theme changes - only on specific properties */

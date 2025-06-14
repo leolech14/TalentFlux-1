@@ -24,24 +24,35 @@ const initializeTheme = () => {
     }
   }
   
-  // Apply theme classes
+  // Force dark mode as default if no saved preference
+  if (!savedTheme) {
+    theme = 'dark';
+  }
+  
+  // Apply theme classes immediately
   document.documentElement.classList.remove('dark', 'alt', 'minimal', 'matrix');
   document.documentElement.removeAttribute('data-theme');
   
-  if (theme === 'dark') {
+  // Force dark mode styling
+  if (theme === 'dark' || !theme) {
     document.documentElement.classList.add('dark');
     document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.style.backgroundColor = 'rgb(3, 7, 18)';
   } else if (theme === 'alt') {
     document.documentElement.classList.add('alt');
     document.documentElement.setAttribute('data-theme', 'alt');
+    document.documentElement.style.backgroundColor = 'rgb(2, 6, 9)';
   } else if (theme === 'minimal') {
     document.documentElement.classList.add('minimal');
     document.documentElement.setAttribute('data-theme', 'minimal');
+    document.documentElement.style.backgroundColor = 'rgb(0, 0, 0)';
   } else if (theme === 'matrix') {
     document.documentElement.classList.add('matrix');
     document.documentElement.setAttribute('data-theme', 'matrix');
+    document.documentElement.style.backgroundColor = 'rgb(0, 0, 0)';
   } else {
     document.documentElement.setAttribute('data-theme', 'light');
+    document.documentElement.style.backgroundColor = 'rgb(255, 255, 255)';
   }
 };
 
