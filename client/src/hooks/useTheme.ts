@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type Theme = 'light' | 'dark' | 'alt';
+type Theme = 'light' | 'dark' | 'alt' | 'minimal';
 
 interface ThemeStore {
   theme: Theme;
@@ -15,7 +15,7 @@ const applyTheme = (theme: Theme) => {
   // Use requestAnimationFrame to ensure DOM updates happen outside of React's render cycle
   requestAnimationFrame(() => {
     // Remove all theme classes
-    document.documentElement.classList.remove('dark', 'alt');
+    document.documentElement.classList.remove('dark', 'alt', 'minimal');
     document.documentElement.removeAttribute('data-theme');
 
     // Apply the new theme
@@ -25,6 +25,9 @@ const applyTheme = (theme: Theme) => {
     } else if (theme === 'alt') {
       document.documentElement.classList.add('alt');
       document.documentElement.setAttribute('data-theme', 'alt');
+    } else if (theme === 'minimal') {
+      document.documentElement.classList.add('minimal');
+      document.documentElement.setAttribute('data-theme', 'minimal');
     } else {
       document.documentElement.setAttribute('data-theme', 'light');
     }

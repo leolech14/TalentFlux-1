@@ -159,10 +159,53 @@
     --input: 160 30% 12%; /* Dark forest input */
     --ring: 140 100% 50%;
 
-    /* Purple-tinted surfaces */
-    --surface-1: 270 40% 11%;
-    --surface-2: 270 40% 13%;
-    --surface-3: 270 40% 15%;
+    /* Forest-tinted surfaces */
+    --surface-1: 160 30% 11%;
+    --surface-2: 160 25% 13%;
+    --surface-3: 160 20% 15%;
+  }
+
+  .minimal {
+    /* Minimalist High Contrast - Pure Black & White */
+    --background: 0 0% 100%; /* Pure white */
+    --foreground: 0 0% 0%; /* Pure black */
+
+    --card: 0 0% 100%; /* Pure white cards */
+    --card-hover: 0 0% 98%; /* Subtle gray hover */
+    --card-foreground: 0 0% 0%;
+
+    --muted: 0 0% 95%; /* Very light gray */
+    --muted-foreground: 0 0% 40%; /* Medium gray */
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+
+    --primary: 0 0% 0%; /* Pure black primary */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 95%; /* Light gray secondary */
+    --secondary-foreground: 0 0% 0%;
+
+    --accent: 0 0% 90%; /* Light gray accent */
+    --accent-foreground: 0 0% 0%;
+
+    --destructive: 0 85% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 85%; /* Medium gray border */
+    --input: 0 0% 98%; /* Off-white input */
+    --ring: 0 0% 0%;
+
+    /* Minimalist surfaces */
+    --surface-1: 0 0% 98%;
+    --surface-2: 0 0% 96%;
+    --surface-3: 0 0% 94%;
+
+    /* High contrast safeguards */
+    --text-high-contrast: 0 0% 0%;
+    --text-safe-light: 0 0% 0%;
+    --bg-safe-light: 0 0% 100%;
+    --gradient-outline: rgba(0, 0, 0, 0.1);
   }
 }
 
