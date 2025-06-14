@@ -17,6 +17,7 @@ import CandidateOnboarding from "./pages/candidate-onboarding";
 import Dashboard from "./pages/dashboard";
 import CreateCv from "./pages/create-cv";
 import CVAssistantPage from "./pages/cv-assistant";
+import ThemeTest from "./pages/theme-test";
 import NotFound from "@/pages/not-found";
 import { useEffect, useState } from "react";
 import { ErrorBoundary } from "./components/ErrorBoundary";
@@ -33,6 +34,7 @@ function Router() {
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/create-cv" component={CreateCv} />
       <Route path="/cv-assistant" component={CVAssistantPage} />
+      <Route path="/theme-test" component={ThemeTest} />
       <Route component={NotFound} />
     </Switch>
   );

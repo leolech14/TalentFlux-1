@@ -1,36 +1,33 @@
 import React from "react";
 import { useTheme } from "@/hooks/useTheme";
 import * as Popover from "@radix-ui/react-popover";
-import { Sun, Moon, Palette, Square, Terminal } from "lucide-react";
+import { Sun, Moon, Palette, Square } from "lucide-react";
 
 const options = {
   light: { icon: Sun, label: "Light" },
   dark: { icon: Moon, label: "Dark" },
   alt: { icon: Palette, label: "Alt" },
   minimal: { icon: Square, label: "Minimal" },
-  matrix: { icon: Terminal, label: "Matrix" },
 } as const;
 
 type ThemeKey = keyof typeof options;
 
 export function ThemeSwitch() {
-  const theme = useTheme((state) => state.theme);
-  const setTheme = useTheme((state) => state.setTheme);
+  const { theme, setTheme } = useTheme();
+  const currentTheme = theme in options ? theme : 'dark';
+  const Icon = options[currentTheme as ThemeKey].icon;
 
-  // Ensure we have a valid theme
-  const currentTheme: ThemeKey = (theme && theme in options) ? theme as ThemeKey : 'dark';
-  const CurrentIcon = options[currentTheme].icon;
-
-  // Get all themes except the current one
-  const availableThemes = (Object.keys(options) as ThemeKey[])
-    .filter((opt) => opt !== currentTheme);
+  // Get available themes (all except current)
+  const availableThemes = (Object.keys(options) as ThemeKey[]).filter(t => t !== currentTheme);
 
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
-        <button className="flex items-center gap-1 px-2 py-1 text-xs rounded-md border bg-surface bg-opacity-50 backdrop-blur-sm border-border border-opacity-50 text-foreground hover:bg-surface hover:bg-opacity-80 transition-all duration-200">
-          <CurrentIcon className="w-3 h-3" />
-          <span className="capitalize hidden sm:inline">{options[currentTheme].label}</span>
+        <button
+          className="flex h-8 w-8 items-center justify-center rounded-md border border-input bg-background text-sm shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+          aria-label="Toggle theme"
+        >
+          <Icon className="h-4 w-4" />
         </button>
       </Popover.Trigger>
 

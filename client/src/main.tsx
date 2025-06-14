@@ -25,7 +25,7 @@ const initializeTheme = () => {
   }
   
   // Apply theme classes
-  document.documentElement.classList.remove('dark', 'alt', 'minimal', 'matrix');
+  document.documentElement.classList.remove('dark', 'alt', 'minimal');
   document.documentElement.removeAttribute('data-theme');
   
   if (theme === 'dark') {
@@ -37,18 +37,21 @@ const initializeTheme = () => {
   } else if (theme === 'minimal') {
     document.documentElement.classList.add('minimal');
     document.documentElement.setAttribute('data-theme', 'minimal');
-  } else if (theme === 'matrix') {
-    document.documentElement.classList.add('matrix');
-    document.documentElement.setAttribute('data-theme', 'matrix');
   } else {
     document.documentElement.setAttribute('data-theme', 'light');
   }
 };
 
-// Initialize theme before rendering
+// Initialize theme before React renders
 initializeTheme();
 
-createRoot(document.getElementById("root")!).render(
+const container = document.getElementById("root");
+if (!container) {
+  throw new Error("Root element not found");
+}
+
+const root = createRoot(container);
+root.render(
   <FluxProvider>
     <App />
   </FluxProvider>

@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Zap } from "lucide-react";
 import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
-import { LanguageSearch } from "./LanguageSearch";
+import { LanguageToggle } from "./LanguageToggle";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export function AppHeader() {
@@ -26,8 +26,8 @@ export function AppHeader() {
             </Link>
           </p>
           
-          {/* Language Search Selector */}
-          <LanguageSearch />
+          {/* Language Toggle */}
+          <LanguageToggle />
 
           {/* Theme Switch */}
           <ThemeSwitch />

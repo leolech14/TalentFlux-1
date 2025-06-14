@@ -1,123 +1,122 @@
 import type { Config } from "tailwindcss";
+import { fontFamily } from "tailwindcss/defaultTheme";
 import plugin from "tailwindcss/plugin";
 
 export default {
   darkMode: ["class"],
-  content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
+  content: ["./client/src/**/*.{ts,tsx}"],
   theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
     extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        // TalentFlux custom colors
+        "tf-accent": "hsl(var(--tf-accent))",
+        "tf-text": "hsl(var(--tf-text))",
+        "tf-text-dark": "hsl(var(--tf-text-dark))",
+        "tf-stroke": "hsl(var(--border))",
+        "tf-dark": "hsl(var(--background))",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      colors: {
-        // TalentFlux brand palette
-        'tf-primary': '#F5F6F7',
-        'tf-dark': '#0E0F11',
-        'tf-text': '#222428',
-        'tf-text-dark': '#F1F2F4',
-        'tf-accent': {
-          DEFAULT: '#FFD200',
-          50: '#FFF2B3',
-          100: '#FFEB80',
-          200: '#FFE04D',
-          300: '#FFD51A',
-          400: '#FFD200',
-          500: '#E6BD00',
-          600: '#CCA800',
-          700: '#B39300',
-          800: '#997E00',
-          900: '#806900',
-        },
-        'tf-success': '#28C386',
-        'tf-warning': '#FFB547',
-        'tf-error': '#FF5C5C',
-        'tf-stroke': '#D0D1D3',
-        
-        // Shadcn system colors
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-        card: {
-          DEFAULT: "var(--card)",
-          foreground: "var(--card-foreground)",
-        },
-        popover: {
-          DEFAULT: "var(--popover)",
-          foreground: "var(--popover-foreground)",
-        },
-        primary: {
-          DEFAULT: "var(--primary)",
-          foreground: "var(--primary-foreground)",
-        },
-        secondary: {
-          DEFAULT: "var(--secondary)",
-          foreground: "var(--secondary-foreground)",
-        },
-        muted: {
-          DEFAULT: "var(--muted)",
-          foreground: "var(--muted-foreground)",
-        },
-        accent: {
-          DEFAULT: "var(--accent)",
-          foreground: "var(--accent-foreground)",
-        },
-        destructive: {
-          DEFAULT: "var(--destructive)",
-          foreground: "var(--destructive-foreground)",
-        },
-        border: "var(--border)",
-        input: "var(--input)",
-        ring: "var(--ring)",
-        surface: "var(--surface)",
-        chart: {
-          "1": "var(--chart-1)",
-          "2": "var(--chart-2)",
-          "3": "var(--chart-3)",
-          "4": "var(--chart-4)",
-          "5": "var(--chart-5)",
-        },
-        sidebar: {
-          DEFAULT: "var(--sidebar-background)",
-          foreground: "var(--sidebar-foreground)",
-          primary: "var(--sidebar-primary)",
-          "primary-foreground": "var(--sidebar-primary-foreground)",
-          accent: "var(--sidebar-accent)",
-          "accent-foreground": "var(--sidebar-accent-foreground)",
-          border: "var(--sidebar-border)",
-          ring: "var(--sidebar-ring)",
-        },
-      },
-      backgroundImage: {
-        'tf-accent-gradient': 'linear-gradient(90deg, #FFD200 0%, #C38CFF 60%, #FF66C8 100%)',
-        'tf-glass': 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
-      },
-      boxShadow: {
-        'tf-glass': '0 8px 32px rgba(0,0,0,0.04)',
-        'tf-halo': '0 0 12px rgba(255,210,0,0.25)',
-        'tf-elevation': '0 4px 20px rgba(34, 36, 40, 0.08)',
+      fontFamily: {
+        sans: ["Inter", ...fontFamily.sans],
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        shimmer: {
+          "100%": {
+            transform: "translateX(100%)",
           },
-          to: {
-            height: "0",
-          },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        glow: {
+          "0%, 100%": { opacity: "0.5" },
+          "50%": { opacity: "1" },
+        },
+        sparkle: {
+          "0%, 100%": { opacity: "0", transform: "scale(0) rotate(0deg)" },
+          "50%": { opacity: "1", transform: "scale(1) rotate(180deg)" },
+        },
+        "fade-in": {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "fade-out": {
+          "0%": { opacity: "1", transform: "translateY(0)" },
+          "100%": { opacity: "0", transform: "translateY(10px)" },
+        },
+        "slide-in": {
+          "0%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        "slide-out": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(100%)" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        shimmer: "shimmer 2s linear infinite",
+        float: "float 3s ease-in-out infinite",
+        glow: "glow 2s ease-in-out infinite",
+        sparkle: "sparkle 2s ease-in-out infinite",
+        "fade-in": "fade-in 0.3s ease-out",
+        "fade-out": "fade-out 0.3s ease-out",
+        "slide-in": "slide-in 0.3s ease-out",
+        "slide-out": "slide-out 0.3s ease-out",
       },
     },
   },
@@ -142,7 +141,6 @@ export default {
       addVariant('dark', '[data-theme="dark"] &');
       addVariant('alt', '[data-theme="alt"] &');
       addVariant('minimal', '[data-theme="minimal"] &');
-      addVariant('matrix', '[data-theme="matrix"] &');
     }),
   ],
 } satisfies Config;
