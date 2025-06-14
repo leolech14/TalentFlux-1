@@ -100,7 +100,7 @@ export function RepoQueryPanel({ isOpen, onClose }: RepoQueryPanelProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-4xl max-h-[90vh] overflow-hidden bg-background/95 backdrop-blur-sm border border-border">
+      <Card className="w-full max-w-4xl max-h-[90vh] overflow-hidden bg-background backdrop-blur-sm border border-border">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
