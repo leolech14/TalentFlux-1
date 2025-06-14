@@ -36,6 +36,13 @@ export default defineConfig({
       ".repl.co",
       "36a4c07b-bf04-4bfa-9d08-ccc31aa7a528-00-2mfk7i7pjree9.kirk.replit.dev"
     ],
+    proxy: {
+      '/api': {
+        target: process.env.REPL_ID ? 'http://localhost:5000' : 'http://localhost:5001',
+        changeOrigin: true,
+        secure: false
+      }
+    },
     fs: {
       strict: true,
       deny: ["**/.*"],
