@@ -4,43 +4,43 @@
 
 @layer base {
   :root {
-    /* Enhanced Light Mode Colors - Professional Gray Palette */
-    --background: 0 0% 98%; /* Very light gray */
-    --foreground: 0 0% 15%; /* Dark gray text */
+    /* Modern Light Mode - Ocean Breeze Palette */
+    --background: 210 20% 98%; /* Cool off-white */
+    --foreground: 220 15% 12%; /* Deep charcoal */
 
     /* Card variations for depth */
-    --card: 0 0% 100%; /* Pure white */
-    --card-hover: 0 0% 97%; /* Slight gray on hover */
-    --card-foreground: 0 0% 15%;
+    --card: 210 30% 99%; /* Pure cool white */
+    --card-hover: 210 25% 96%; /* Subtle blue-gray hover */
+    --card-foreground: 220 15% 12%;
 
-    /* Muted colors with gray tones */
-    --muted: 0 0% 94%; /* Light gray */
-    --muted-foreground: 0 0% 40%; /* Medium gray */
+    /* Muted colors with blue undertones */
+    --muted: 210 25% 93%; /* Light blue-gray */
+    --muted-foreground: 210 10% 45%; /* Medium blue-gray */
 
-    /* Popover with subtle shadow */
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 15%;
+    /* Popover with cool tones */
+    --popover: 210 30% 99%;
+    --popover-foreground: 220 15% 12%;
 
-    /* Primary with purple gradient */
-    --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 0 0% 98%;
+    /* Primary with vibrant teal gradient */
+    --primary: 180 85% 45%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Secondary with gray tones */
-    --secondary: 0 0% 92%; /* Light gray */
-    --secondary-foreground: 0 0% 20%;
+    /* Secondary with ocean tones */
+    --secondary: 200 20% 90%; /* Light ocean blue */
+    --secondary-foreground: 200 25% 15%;
 
     /* Accent colors */
-    --accent: 0 0% 90%; /* Light gray accent */
-    --accent-foreground: 0 0% 20%;
+    --accent: 195 30% 88%; /* Light teal accent */
+    --accent-foreground: 195 40% 20%;
 
     /* Status colors */
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 85% 58%;
+    --destructive-foreground: 0 0% 100%;
 
     /* Borders and inputs */
-    --border: 0 0% 88%; /* Gray border */
-    --input: 0 0% 90%; /* Light gray input */
-    --ring: 262.1 83.3% 57.8%;
+    --border: 210 20% 85%; /* Cool gray border */
+    --input: 210 25% 88%; /* Light blue-gray input */
+    --ring: 180 85% 45%;
 
     --radius: 0.5rem;
 
@@ -70,43 +70,43 @@
   }
 
   .dark {
-    /* Enhanced Dark Mode Colors */
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Cyberpunk Dark Mode - Electric Night Palette */
+    --background: 280 100% 3%; /* Deep electric purple */
+    --foreground: 180 100% 95%; /* Bright cyan-white */
 
-    /* Card variations for depth */
-    --card: 222.2 84% 7%;
-    --card-hover: 222.2 84% 9%;
-    --card-foreground: 210 40% 98%;
+    /* Card variations with neon undertones */
+    --card: 285 80% 8%; /* Dark purple with glow */
+    --card-hover: 285 70% 12%; /* Lighter purple hover */
+    --card-foreground: 180 100% 95%;
 
-    /* Better muted colors */
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    /* Muted colors with electric edge */
+    --muted: 285 50% 15%; /* Muted electric purple */
+    --muted-foreground: 190 60% 70%; /* Electric blue-cyan */
 
-    /* Popover with depth */
-    --popover: 222.2 84% 6%;
-    --popover-foreground: 210 40% 98%;
+    /* Popover with neon depth */
+    --popover: 285 85% 6%;
+    --popover-foreground: 180 100% 95%;
 
-    /* Primary purple */
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary with electric magenta */
+    --primary: 320 100% 55%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Secondary with contrast */
-    --secondary: 217.2 32.6% 15%;
-    --secondary-foreground: 210 40% 98%;
+    /* Secondary with neon blue */
+    --secondary: 285 40% 18%; /* Dark electric */
+    --secondary-foreground: 190 90% 85%;
 
-    /* Accent colors */
-    --accent: 217.2 32.6% 20%;
-    --accent-foreground: 210 40% 98%;
+    /* Accent with cyber green */
+    --accent: 285 35% 20%; /* Dark cyber accent */
+    --accent-foreground: 120 100% 75%;
 
     /* Status colors */
-    --destructive: 0 62.8% 50%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
 
-    /* Borders and inputs */
-    --border: 217.2 32.6% 20%;
-    --input: 217.2 32.6% 18%;
-    --ring: 263.4 70% 50.4%;
+    /* Borders and inputs with neon */
+    --border: 285 60% 25%; /* Electric purple border */
+    --input: 285 70% 12%; /* Dark neon input */
+    --ring: 320 100% 55%;
 
     /* Additional shades for depth */
     --surface-1: 222.2 84% 8%;
@@ -129,35 +129,35 @@
   }
 
   .alt {
-    /* Alternative Theme - Purple Dream */
-    --background: 270 50% 8%;
-    --foreground: 270 10% 95%;
+    /* Alternative Theme - Sunset Vibes */
+    --background: 25 25% 95%; /* Warm cream */
+    --foreground: 20 40% 8%; /* Deep brown */
 
-    --card: 270 40% 10%;
-    --card-hover: 270 40% 12%;
-    --card-foreground: 270 10% 95%;
+    --card: 30 30% 98%; /* Soft peachy white */
+    --card-hover: 30 25% 94%; /* Warmer hover */
+    --card-foreground: 20 40% 8%;
 
-    --muted: 270 30% 20%;
-    --muted-foreground: 270 10% 70%;
+    --muted: 35 35% 90%; /* Light warm gray */
+    --muted-foreground: 25 25% 35%;
 
-    --popover: 270 40% 9%;
-    --popover-foreground: 270 10% 95%;
+    --popover: 30 30% 98%;
+    --popover-foreground: 20 40% 8%;
 
-    --primary: 280 100% 70%;
-    --primary-foreground: 270 50% 8%;
+    --primary: 15 90% 55%; /* Vibrant orange */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 270 30% 15%;
-    --secondary-foreground: 270 10% 95%;
+    --secondary: 35 40% 88%; /* Warm beige */
+    --secondary-foreground: 25 30% 15%;
 
-    --accent: 280 60% 30%;
-    --accent-foreground: 270 10% 95%;
+    --accent: 340 85% 65%; /* Coral pink */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 350 80% 60%;
-    --destructive-foreground: 270 10% 95%;
+    --destructive: 0 85% 55%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 270 30% 25%;
-    --input: 270 30% 22%;
-    --ring: 280 100% 70%;
+    --border: 35 25% 80%; /* Warm light border */
+    --input: 35 30% 85%; /* Warm input */
+    --ring: 15 90% 55%;
 
     /* Purple-tinted surfaces */
     --surface-1: 270 40% 11%;
