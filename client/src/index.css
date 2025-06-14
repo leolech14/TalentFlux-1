@@ -217,32 +217,33 @@
   .matrix {
     /* Matrix theme - Dark developer theme */
     --background: 0 0% 0%; /* Pure black */
-    --foreground: 120 100% 90%; /* Bright green text */
+    --foreground: 0 0% 95%; /* High contrast white text */
 
-    --card: 120 10% 5%; /* Very dark with green tint */
-    --card-foreground: 120 100% 85%;
+    --card: 0 0% 3%; /* Very dark gray cards */
+    --card-hover: 0 0% 6%; /* Subtle hover */
+    --card-foreground: 0 0% 95%;
 
-    --popover: 120 10% 3%;
-    --popover-foreground: 120 100% 85%;
+    --popover: 0 0% 2%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 120 100% 50%; /* Bright green */
+    --primary: 120 30% 75%; /* Pale green accents */
     --primary-foreground: 0 0% 0%;
 
-    --secondary: 120 20% 15%;
-    --secondary-foreground: 120 100% 85%;
+    --secondary: 0 0% 8%; /* Dark gray */
+    --secondary-foreground: 0 0% 90%;
 
-    --muted: 120 10% 20%;
-    --muted-foreground: 120 40% 70%;
+    --muted: 0 0% 5%;
+    --muted-foreground: 0 0% 70%;
 
-    --accent: 120 100% 40%;
+    --accent: 200 20% 70%; /* Pale blue accents */
     --accent-foreground: 0 0% 0%;
 
-    --destructive: 0 84% 40%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 0% 85%; /* High contrast white */
+    --destructive-foreground: 0 0% 0%;
 
-    --border: 120 20% 15%;
-    --input: 120 20% 15%;
-    --ring: 120 100% 50%;
+    --border: 0 0% 20%; /* Gray borders */
+    --input: 0 0% 4%;
+    --ring: 0 0% 30%;
 
     --radius: 0.2rem;
 
