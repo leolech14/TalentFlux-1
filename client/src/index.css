@@ -764,7 +764,8 @@
 
 /* AI panel specific styles */
 .ai-panel {
-  @apply bg-background/95 backdrop-blur-xl border border-border/50 shadow-2xl;
+  @apply backdrop-blur-xl border border-border/50 shadow-2xl;
+  background-color: hsl(var(--background) / 0.95);
 }
 
 /* Glass surface for cards */
