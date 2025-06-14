@@ -77,15 +77,15 @@ export default function Landing() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-              <span className="text-foreground font-extrabold" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1)' }}>Connect </span>
-              <span className="bg-gradient-to-r from-purple-400 via-blue-500 to-purple-600 minimal:from-white minimal:via-gray-200 minimal:to-white bg-clip-text text-transparent font-black" 
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight minimal:font-normal">
+              <span className="text-foreground font-extrabold minimal:font-normal minimal:text-white" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1)' }}>Connect </span>
+              <span className="bg-gradient-to-r from-purple-400 via-blue-500 to-purple-600 bg-clip-text text-transparent font-black minimal:bg-none minimal:text-white minimal:font-normal" 
                     style={{ filter: 'brightness(1.6) saturate(1.8)' }}>
                 Talent
               </span>
               <br />
-              <span className="text-foreground font-extrabold" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)' }}>with </span>
-              <span className="bg-gradient-to-r from-purple-400 via-blue-500 to-purple-600 minimal:from-white minimal:via-gray-200 minimal:to-white bg-clip-text text-transparent font-black"
+              <span className="text-foreground font-extrabold minimal:font-normal minimal:text-white" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)' }}>with </span>
+              <span className="bg-gradient-to-r from-purple-400 via-blue-500 to-purple-600 bg-clip-text text-transparent font-black minimal:bg-none minimal:text-white minimal:font-normal"
                     style={{ filter: 'brightness(1.6) saturate(1.8)' }}>
                 Opportunity
               </span>

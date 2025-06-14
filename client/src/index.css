@@ -166,46 +166,45 @@
   }
 
   .minimal {
-    /* Minimalist High Contrast - Pure Black Theme */
-    --background: 0 0% 0%; /* Pure black */
-    --foreground: 0 0% 100%; /* Pure white */
+    /* Terminal-Style Minimalist - Pure Black & White */
+    --background: 0 0% 0%; /* Pure black background */
+    --foreground: 0 0% 100%; /* Pure white text */
 
-    --card: 0 0% 3%; /* Very dark gray cards */
-    --card-hover: 0 0% 5%; /* Slightly lighter on hover */
+    --card: 0 0% 0%; /* Pure black cards */
+    --card-hover: 0 0% 2%; /* Minimal hover effect */
     --card-foreground: 0 0% 100%;
 
-    --muted: 0 0% 8%; /* Dark gray */
-    --muted-foreground: 0 0% 70%; /* Light gray */
+    --muted: 0 0% 0%; /* Black muted areas */
+    --muted-foreground: 0 0% 70%; /* Light gray for secondary text */
 
-    --popover: 0 0% 3%;
+    --popover: 0 0% 0%;
     --popover-foreground: 0 0% 100%;
 
     --primary: 0 0% 100%; /* Pure white primary */
     --primary-foreground: 0 0% 0%;
 
-    --secondary: 0 0% 10%; /* Dark gray secondary */
+    --secondary: 0 0% 0%; /* Black secondary */
     --secondary-foreground: 0 0% 100%;
 
-    --accent: 0 0% 15%; /* Medium dark gray accent */
+    --accent: 0 0% 0%; /* Black accent */
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 85% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 0% 100%; /* White for destructive actions */
+    --destructive-foreground: 0 0% 0%;
 
-    --border: 0 0% 20%; /* Dark gray border */
-    --input: 0 0% 5%; /* Very dark input */
-    --ring: 0 0% 100%;
+    --border: 0 0% 100%; /* White thin borders */
+    --input: 0 0% 0%; /* Black inputs */
+    --ring: 0 0% 100%; /* White focus rings */
 
-    /* Minimalist surfaces */
-    --surface-1: 0 0% 5%;
-    --surface-2: 0 0% 8%;
-    --surface-3: 0 0% 12%;
+    /* Terminal surfaces - all black */
+    --surface-1: 0 0% 0%;
+    --surface-2: 0 0% 0%;
+    --surface-3: 0 0% 0%;
 
-    /* High contrast safeguards */
-    --text-high-contrast: 0 0% 100%;
-    --text-safe-dark: 0 0% 100%;
-    --bg-safe-dark: 0 0% 0%;
-    --gradient-outline: rgba(255, 255, 255, 0.1);
+    /* Terminal styling variables */
+    --terminal-green: 120 100% 50%;
+    --terminal-border: 1px solid #ffffff;
+    --terminal-font: 'Courier New', 'Monaco', monospace;
   }
 }
 
@@ -222,6 +221,124 @@
   /* Smooth transitions for theme changes */
   * {
     transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  /* Terminal-style overrides for minimal theme */
+  .minimal * {
+    font-family: 'Courier New', 'Monaco', 'Consolas', monospace !important;
+  }
+
+  .minimal .card,
+  .minimal [class*="card"],
+  .minimal button,
+  .minimal input,
+  .minimal textarea,
+  .minimal select,
+  .minimal [role="dialog"],
+  .minimal [role="menu"],
+  .minimal [data-radix-popper-content-wrapper] {
+    border: 1px solid rgb(255, 255, 255) !important;
+    border-radius: 0 !important;
+    background: rgb(0, 0, 0) !important;
+    box-shadow: none !important;
+  }
+
+  .minimal button:hover,
+  .minimal .card:hover,
+  .minimal [class*="card"]:hover {
+    background: rgb(5, 5, 5) !important;
+    border: 1px solid rgb(255, 255, 255) !important;
+  }
+
+  .minimal .gradient-orb,
+  .minimal [class*="gradient"],
+  .minimal [class*="glow"],
+  .minimal [class*="blur"],
+  .minimal [class*="bg-gradient"],
+  .minimal .absolute.inset-0.pointer-events-none {
+    display: none !important;
+  }
+
+  .minimal h1,
+  .minimal h2,
+  .minimal h3,
+  .minimal h4,
+  .minimal h5,
+  .minimal h6 {
+    font-family: 'Courier New', 'Monaco', 'Consolas', monospace !important;
+    font-weight: normal !important;
+  }
+
+  .minimal .bg-gradient-to-r {
+    background: rgb(255, 255, 255) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+  }
+
+  /* Remove all rounded corners in minimal theme */
+  .minimal * {
+    border-radius: 0 !important;
+  }
+
+  /* Terminal-style navigation and header */
+  .minimal nav,
+  .minimal header,
+  .minimal [role="banner"] {
+    border-bottom: 1px solid rgb(255, 255, 255) !important;
+    background: rgb(0, 0, 0) !important;
+    box-shadow: none !important;
+  }
+
+  /* Terminal-style form elements */
+  .minimal input[type="text"],
+  .minimal input[type="email"],
+  .minimal input[type="password"],
+  .minimal textarea {
+    border: 1px solid rgb(255, 255, 255) !important;
+    background: rgb(0, 0, 0) !important;
+    color: rgb(255, 255, 255) !important;
+    font-family: 'Courier New', 'Monaco', 'Consolas', monospace !important;
+  }
+
+  .minimal input[type="text"]:focus,
+  .minimal input[type="email"]:focus,
+  .minimal input[type="password"]:focus,
+  .minimal textarea:focus {
+    outline: 1px solid rgb(255, 255, 255) !important;
+    box-shadow: none !important;
+  }
+
+  /* Terminal-style links */
+  .minimal a {
+    color: rgb(255, 255, 255) !important;
+    text-decoration: underline !important;
+  }
+
+  .minimal a:hover {
+    background: rgb(255, 255, 255) !important;
+    color: rgb(0, 0, 0) !important;
+  }
+
+  /* Hide all shadows and glows */
+  .minimal *,
+  .minimal *::before,
+  .minimal *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+  }
+
+  /* Terminal cursor effect */
+  .minimal .cursor::after {
+    content: "_";
+    animation: blink 1s infinite;
+    color: rgb(255, 255, 255);
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
   }
 
   /* Glass morphism utilities */
