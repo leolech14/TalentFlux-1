@@ -510,8 +510,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const translatedText = response.choices[0].message.content?.trim() || text;
       res.json({ translatedText });
     } catch (error) {
-      console.error("Translation error:", error);
-      res.status(500).json({ error: "Translation failed" });
+      console.error("Translation error:", {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+        code: error.code
+      });
+      res.status(500).json({ error: "Translation failed", details: error.message });
     }
   });
 

@@ -1,4 +1,4 @@
-import { useTranslatedText } from './LanguageContext';
+import { useTranslatedText } from '@/hooks/useTranslation';
 
 interface TranslatedTextProps {
   text: string;
