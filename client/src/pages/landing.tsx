@@ -79,13 +79,13 @@ export default function Landing() {
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
               <span className="text-foreground font-extrabold" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1)' }}>Connect </span>
-              <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent font-black" 
+              <span className="bg-gradient-to-r from-purple-400 via-blue-500 to-purple-600 bg-clip-text text-transparent font-black" 
                     style={{ filter: 'brightness(1.6) saturate(1.8)' }}>
                 Talent
               </span>
               <br />
               <span className="text-foreground font-extrabold" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)' }}>with </span>
-              <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent font-black"
+              <span className="bg-gradient-to-r from-purple-400 via-blue-500 to-purple-600 bg-clip-text text-transparent font-black"
                     style={{ filter: 'brightness(1.6) saturate(1.8)' }}>
                 Opportunity
               </span>
