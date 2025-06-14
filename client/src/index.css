@@ -42,7 +42,7 @@
     --input: 220 13% 91%; /* Light input */
     --ring: 221 83% 53%;
 
-  --radius: 0.5rem;
+    --radius: 0.5rem;
 
     /* Additional shades for depth */
     --surface-1: 0 0% 98%;
@@ -67,6 +67,12 @@
     --tf-accent-gradient: linear-gradient(135deg, hsl(221 83% 53%), hsl(262 83% 58%));
     --tf-halo: 0 0 20px rgba(59, 130, 246, 0.3), 0 0 40px rgba(59, 130, 246, 0.1);
     --tf-dark: 220 13% 18%;
+
+    /* Global UI size reduction - making everything smaller and slimmer */
+    --spacing-scale: 0.85;
+    
+    /* Smaller text sizes */
+    font-size: 14px; /* Base font size reduced from 16px */
   }
 
   .dark {
@@ -209,52 +215,75 @@
   }
 
   .matrix {
-    /* Matrix Theme - Sublime Developer Experience */
+    /* Matrix theme - Dark developer theme */
     --background: 0 0% 0%; /* Pure black */
-    --foreground: 120 20% 85%; /* Soft green-tinted white */
+    --foreground: 120 100% 90%; /* Bright green text */
 
-    --card: 120 5% 3%; /* Almost black with green hint */
-    --card-hover: 120 5% 5%; /* Subtle hover state */
-    --card-foreground: 120 20% 85%;
+    --card: 120 10% 5%; /* Very dark with green tint */
+    --card-foreground: 120 100% 85%;
 
-    --muted: 120 5% 10%; /* Dark muted with green tint */
-    --muted-foreground: 120 15% 55%; /* Subtle green text */
+    --popover: 120 10% 3%;
+    --popover-foreground: 120 100% 85%;
 
-    --popover: 120 5% 3%;
-    --popover-foreground: 120 20% 85%;
-
-    --primary: 120 70% 40%; /* Subtle matrix green */
+    --primary: 120 100% 50%; /* Bright green */
     --primary-foreground: 0 0% 0%;
 
-    --secondary: 180 50% 35%; /* Subtle cyan */
-    --secondary-foreground: 0 0% 0%;
+    --secondary: 120 20% 15%;
+    --secondary-foreground: 120 100% 85%;
 
-    --accent: 60 70% 45%; /* Subtle amber */
+    --muted: 120 10% 20%;
+    --muted-foreground: 120 40% 70%;
+
+    --accent: 120 100% 40%;
     --accent-foreground: 0 0% 0%;
 
-    --destructive: 0 70% 45%; /* Subtle red */
-    --destructive-foreground: 0 0% 0%;
+    --destructive: 0 84% 40%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 120 20% 8%; /* Very subtle green border */
-    --input: 120 5% 3%; /* Dark input */
-    --ring: 120 70% 40%; /* Subtle green ring */
+    --border: 120 20% 15%;
+    --input: 120 20% 15%;
+    --ring: 120 100% 50%;
 
-    /* Matrix surfaces */
-    --surface-1: 120 5% 3%;
-    --surface-2: 120 5% 5%;
-    --surface-3: 120 5% 7%;
+    --radius: 0.2rem;
 
-    /* Subtle matrix effects */
-    --matrix-green: 120 70% 40%;
-    --matrix-glow: 0 0 2px hsla(120, 70%, 40%, 0.3), 0 0 8px hsla(120, 70%, 40%, 0.1);
-    --matrix-text-shadow: 0 0 10px hsla(120, 70%, 40%, 0.2);
-    --matrix-font: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Monaco', monospace;
-
-    /* Sublime effects */
-    --matrix-pulse: 120 70% 40%;
+    /* Matrix-specific colors */
+    --matrix-green: 120 100% 50%;
     --matrix-highlight: 120 100% 60%;
-    --matrix-subtle-glow: 0 0 30px hsla(120, 70%, 40%, 0.05);
+    --matrix-pulse: 120 100% 40%;
+    --matrix-font: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    --matrix-glow: 0 0 10px hsla(120, 100%, 50%, 0.3);
+    --matrix-subtle-glow: 0 0 5px hsla(120, 100%, 50%, 0.1);
+    --matrix-text-shadow: 0 0 5px hsla(120, 100%, 50%, 0.5);
   }
+
+  /* Make all padding and margins smaller */
+  * {
+    --tw-space-x-reverse: 0;
+    --tw-space-y-reverse: 0;
+  }
+
+  /* Smaller buttons globally */
+  button {
+    @apply py-1.5 px-3 text-sm;
+  }
+
+  /* Smaller inputs globally */
+  input, textarea, select {
+    @apply py-1.5 px-3 text-sm;
+  }
+
+  /* Smaller cards */
+  .card {
+    @apply p-4;
+  }
+
+  /* Smaller headings */
+  h1 { @apply text-2xl; }
+  h2 { @apply text-xl; }
+  h3 { @apply text-lg; }
+  h4 { @apply text-base; }
+  h5 { @apply text-sm; }
+  h6 { @apply text-xs; }
 }
 
 @layer base {
@@ -340,13 +369,13 @@
   }
 
   /* Matrix theme special effects */
-  .matrix {
+  [data-theme="matrix"] {
     font-family: var(--matrix-font);
     position: relative;
   }
 
   /* Subtle scan lines effect */
-  .matrix::before {
+  [data-theme="matrix"]::before {
     content: '';
     position: fixed;
     top: 0;
@@ -367,7 +396,7 @@
   }
 
   /* Subtle moving scan line */
-  .matrix::after {
+  [data-theme="matrix"]::after {
     content: '';
     position: fixed;
     top: 0;
@@ -385,54 +414,54 @@
     100% { transform: translateY(100vh); }
   }
 
-  .matrix * {
+  [data-theme="matrix"] * {
     position: relative;
     z-index: 2;
   }
 
   /* Subtle card effects */
-  .matrix .card {
+  [data-theme="matrix"] .card {
     background: hsl(var(--card));
     border: 1px solid hsl(var(--border));
     box-shadow: var(--matrix-subtle-glow);
     transition: all 0.3s ease;
   }
 
-  .matrix .card:hover {
+  [data-theme="matrix"] .card:hover {
     border-color: hsl(var(--matrix-green) / 0.3);
     box-shadow: var(--matrix-glow);
   }
 
   /* Subtle text effects */
-  .matrix h1,
-  .matrix h2,
-  .matrix h3,
-  .matrix h4,
-  .matrix h5,
-  .matrix h6 {
+  [data-theme="matrix"] h1,
+  [data-theme="matrix"] h2,
+  [data-theme="matrix"] h3,
+  [data-theme="matrix"] h4,
+  [data-theme="matrix"] h5,
+  [data-theme="matrix"] h6 {
     color: hsl(var(--foreground));
     position: relative;
   }
 
   /* Subtle glow on hover for headings */
-  .matrix h1:hover,
-  .matrix h2:hover,
-  .matrix h3:hover {
+  [data-theme="matrix"] h1:hover,
+  [data-theme="matrix"] h2:hover,
+  [data-theme="matrix"] h3:hover {
     text-shadow: var(--matrix-text-shadow);
     color: hsl(var(--matrix-highlight));
     transition: all 0.3s ease;
   }
 
   /* Code blocks with subtle styling */
-  .matrix code,
-  .matrix pre {
+  [data-theme="matrix"] code,
+  [data-theme="matrix"] pre {
     background: rgba(0, 255, 0, 0.05);
     border: 1px solid rgba(0, 255, 0, 0.1);
     color: hsl(var(--matrix-green));
   }
 
   /* Buttons with subtle effects */
-  .matrix button {
+  [data-theme="matrix"] button {
     text-transform: none;
     letter-spacing: 0.02em;
     font-weight: 500;
@@ -442,7 +471,7 @@
   }
 
   /* Subtle button pulse on hover */
-  .matrix button::before {
+  [data-theme="matrix"] button::before {
     content: '';
     position: absolute;
     top: 50%;
@@ -455,29 +484,22 @@
     transition: width 0.6s, height 0.6s;
   }
 
-  .matrix button:hover::before {
+  [data-theme="matrix"] button:hover::before {
     width: 300px;
     height: 300px;
   }
 
   /* Input focus effects */
-  .matrix input:focus,
-  .matrix textarea:focus {
+  [data-theme="matrix"] input:focus,
+  [data-theme="matrix"] textarea:focus {
     outline: none;
     border-color: hsl(var(--matrix-green) / 0.5);
     box-shadow: 0 0 0 2px hsl(var(--matrix-green) / 0.1);
   }
 
   /* Subtle cursor customization */
-  .matrix * {
-    cursor: auto;
-  }
-
-  .matrix button,
-  .matrix a,
-  .matrix input,
-  .matrix textarea,
-  .matrix [role="button"] {
+  [data-theme="matrix"] button,
+  [data-theme="matrix"] a {
     cursor: pointer;
   }
 

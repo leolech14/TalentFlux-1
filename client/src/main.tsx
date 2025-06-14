@@ -25,7 +25,7 @@ const initializeTheme = () => {
   }
   
   // Apply theme classes
-  document.documentElement.classList.remove('dark', 'alt');
+  document.documentElement.classList.remove('dark', 'alt', 'minimal', 'matrix');
   document.documentElement.removeAttribute('data-theme');
   
   if (theme === 'dark') {
@@ -34,6 +34,12 @@ const initializeTheme = () => {
   } else if (theme === 'alt') {
     document.documentElement.classList.add('alt');
     document.documentElement.setAttribute('data-theme', 'alt');
+  } else if (theme === 'minimal') {
+    document.documentElement.classList.add('minimal');
+    document.documentElement.setAttribute('data-theme', 'minimal');
+  } else if (theme === 'matrix') {
+    document.documentElement.classList.add('matrix');
+    document.documentElement.setAttribute('data-theme', 'matrix');
   } else {
     document.documentElement.setAttribute('data-theme', 'light');
   }

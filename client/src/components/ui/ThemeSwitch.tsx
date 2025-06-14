@@ -28,9 +28,9 @@ export function ThemeSwitch() {
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
-        <button className="flex items-center gap-1 px-3 py-1 rounded-lg border bg-surface bg-opacity-50 backdrop-blur-sm border-border border-opacity-50 text-foreground hover:bg-surface hover:bg-opacity-80 transition-all duration-200">
-          <CurrentIcon className="w-4 h-4" />
-          <span className="capitalize">{options[currentTheme].label}</span>
+        <button className="flex items-center gap-1 px-2 py-1 text-xs rounded-md border bg-surface bg-opacity-50 backdrop-blur-sm border-border border-opacity-50 text-foreground hover:bg-surface hover:bg-opacity-80 transition-all duration-200">
+          <CurrentIcon className="w-3 h-3" />
+          <span className="capitalize hidden sm:inline">{options[currentTheme].label}</span>
         </button>
       </Popover.Trigger>
 
@@ -38,7 +38,8 @@ export function ThemeSwitch() {
         <Popover.Content
           align="end"
           sideOffset={4}
-          className="rounded-lg border bg-popover p-2 shadow-md space-y-1 z-50 min-w-[120px]"
+          className="rounded-md border bg-popover p-1 shadow-md space-y-0.5 z-50 min-w-[100px] max-w-[150px]"
+          collisionPadding={10}
         >
           {availableThemes.length > 0 ? (
             availableThemes.map((opt) => {
@@ -46,16 +47,16 @@ export function ThemeSwitch() {
               return (
                 <button
                   key={opt}
-                  className="flex w-full items-center gap-2 rounded-md px-2 py-1 hover:bg-accent text-popover-foreground hover:text-accent-foreground transition-colors"
+                  className="flex w-full items-center gap-1.5 rounded-sm px-2 py-1 text-xs hover:bg-accent text-popover-foreground hover:text-accent-foreground transition-colors"
                   onClick={() => setTheme(opt)}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-3 h-3" />
                   <span className="capitalize">{options[opt].label}</span>
                 </button>
               );
             })
           ) : (
-            <div className="px-2 py-1 text-sm text-muted-foreground">
+            <div className="px-2 py-1 text-xs text-muted-foreground">
               No other themes available
             </div>
           )}
