@@ -426,7 +426,7 @@ export default function CVAssistantPanel({ isOpen, onClose }: CVAssistantPanelPr
                               className="bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700"
                             >
                               {isProcessing ? (
-                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+                                <div className="w-4 h-4 border border-white/30 border-t-white rounded-full animate-spin mr-2" />
                               ) : (
                                 <Send className="w-4 h-4 mr-2" />
                               )}

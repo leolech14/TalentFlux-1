@@ -100,11 +100,11 @@ export default function Onboarding() {
                     onChange={(e) => setSelectedUserType(e.target.value as "candidate")}
                     className="sr-only"
                   />
-                  <div className={`p-6 border-2 rounded-xl transition-all ${
+                  <div className={`p-6 border rounded-xl transition-all ${
                     selectedUserType === "candidate"
-                      ? "border-primary bg-primary/5 dark:bg-primary/10"
-                      : "border-border hover:border-primary/30"
-                  }`}>
+                      ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20"
+                      : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                  } cursor-pointer`}>
                     <div className="flex items-center space-x-4">
                       <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
                         selectedUserType === "candidate"
@@ -134,11 +134,11 @@ export default function Onboarding() {
                     onChange={(e) => setSelectedUserType(e.target.value as "employer")}
                     className="sr-only"
                   />
-                  <div className={`p-6 border-2 rounded-xl transition-all ${
+                  <div className={`p-6 border rounded-xl transition-all ${
                     selectedUserType === "employer"
-                      ? "border-primary bg-primary/5 dark:bg-primary/10"
-                      : "border-border hover:border-primary/30"
-                  }`}>
+                      ? "border-purple-500 bg-purple-50 dark:bg-purple-950/20"
+                      : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                  } cursor-pointer`}>
                     <div className="flex items-center space-x-4">
                       <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
                         selectedUserType === "employer"

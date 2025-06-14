@@ -92,7 +92,7 @@ export function CVWidget() {
   }
 
   return (
-    <Card className="h-full border-dashed border-2 border-flux-primary/20 bg-gradient-to-br from-flux-primary/5 to-purple-500/5">
+    <Card className="h-full border-dashed border border-flux-primary/20 bg-gradient-to-br from-flux-primary/5 to-purple-500/5">
       <CardContent className="flex flex-col items-center justify-center h-full p-6 text-center space-y-4">
         <motion.div
           animate={{ 

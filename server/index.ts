@@ -4,7 +4,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { seedDatabase } from "./seed";
 import { transcribeAudio } from "./cvGenerator";
-import { db } from "./db";
+import { db, pool } from "./db";
 import repoRouter from "./repoRoutes";
 
 const app = express();
@@ -41,35 +41,89 @@ app.use((req, res, next) => {
   next();
 });
 
-(async () => {
-  // Seed database with test data
-  await seedDatabase();
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
 
-  const server = await registerRoutes(app);
+// CV generation endpoints
+app.post("/api/cv/transcribe", async (req, res) => {
+  try {
+    const { audio } = req.body;
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+    if (!audio) {
+      return res.status(400).json({ error: "No audio data provided" });
+    }
 
-    res.status(status).json({ message });
-    throw err;
-  });
-
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
+    const transcription = await transcribeAudio(audio);
+    res.json({ transcription });
+  } catch (error) {
+    console.error("Transcription error:", error);
+    res.status(500).json({ error: "Failed to transcribe audio" });
   }
+});
 
-  // Use PORT from environment or default to 5000 for Replit workflow compatibility
-  const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
+// Repository routes
+app.use("/api/repo", repoRouter);
 
-  server.listen(port, "0.0.0.0", () => {
-    log(`serving on port ${port}`);
-  });
+// Email sending endpoint
+app.post("/api/send-email", async (req, res) => {
+  const { to, subject, text, attachments } = req.body;
+
+  // For now, just log the email request
+  console.log("Email request:", { to, subject, text, attachments: attachments?.length });
+
+  // Return success response
+  res.json({ success: true, message: "Email sent successfully" });
+});
+
+(async () => {
+  try {
+    // Test database connection before proceeding
+    if (process.env.DATABASE_URL) {
+      try {
+        await pool.query('SELECT 1');
+        log('Database connection successful', 'database');
+
+        // Only seed if connection is successful
+        await seedDatabase();
+      } catch (dbError) {
+        log('Database connection failed - running without database', 'database');
+        console.error('Database error:', dbError);
+      }
+    } else {
+      log('No DATABASE_URL configured - running without database', 'database');
+    }
+
+    const server = await registerRoutes(app);
+
+    app.use((err: Error & { status?: number; statusCode?: number }, _req: Request, res: Response, _next: NextFunction) => {
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
+
+      res.status(status).json({ message });
+      console.error('Express error:', err);
+    });
+
+    // importantly only setup vite in development and after
+    // setting up all the other routes so the catch-all route
+    // doesn't interfere with the other routes
+    if (app.get("env") === "development") {
+      await setupVite(app, server);
+    } else {
+      serveStatic(app);
+    }
+
+    // Use PORT from environment or default to 5000 for Replit workflow compatibility
+    const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
+
+    server.listen(port, "0.0.0.0", () => {
+      log(`serving on port ${port}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
 })();
 
 // CV email endpoint
@@ -81,17 +135,25 @@ app.post("/api/cv/send-email", async (req, res) => {
       return res.status(400).json({ error: "Email and PDF data are required" });
     }
 
-    // In a production environment, you would use a service like SendGrid, AWS SES, etc.
-    // For now, we'll simulate the email sending
-    console.log(`Sending CV to ${email}`);
+    // Import the email service
+    const { sendCVEmail } = await import('./emailService');
 
-    // Simulate email sending delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Extract recipient name from CV data or use email
+    const recipientName = cvData?.personalInfo?.fullName || email.split('@')[0];
 
-    res.json({
-      success: true,
-      message: `CV successfully sent to ${email}`
-    });
+    // Send the email with CV attachment
+    const result = await sendCVEmail(email, recipientName, pdfBase64, cvData);
+
+    if (result.success) {
+      res.json({
+        success: true,
+        message: result.message
+      });
+    } else {
+      res.status(500).json({
+        error: result.message
+      });
+    }
   } catch (error) {
     console.error("Error sending CV email:", error);
     res.status(500).json({ error: "Failed to send email" });

@@ -119,8 +119,8 @@ export default function OnboardingCandidate() {
                   <div className="space-y-2">
                     <Label>CV/Resume (Optional)</Label>
                     <div
-                      className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                        dragOver ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
+                      className={`border border-dashed rounded-lg p-8 text-center transition-colors ${
+                        dragOver ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20' : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
                       }`}
                       onDragOver={(e) => {
                         e.preventDefault();

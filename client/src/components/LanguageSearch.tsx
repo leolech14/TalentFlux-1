@@ -84,10 +84,10 @@ export function LanguageSearch() {
         onClick={toggleDropdown}
         className={cn(
           "flex items-center gap-2 px-3 py-2 rounded-lg transition-colors",
-          "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700",
+          "bg-white dark:bg-gray-800 border-[0.5px] border-gray-200 dark:border-gray-700",
           "hover:bg-gray-50 dark:hover:bg-gray-700",
-          "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1",
-          isOpen && "ring-2 ring-blue-500 ring-offset-1"
+          "focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1",
+          isOpen && "ring-1 ring-blue-500 ring-offset-1"
         )}
         aria-label="Select language"
       >
@@ -132,10 +132,10 @@ export function LanguageSearch() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className={cn(
-                    "w-full pl-10 pr-4 py-3 rounded-lg border border-white/20 dark:border-gray-600/30",
+                    "w-full pl-10 pr-4 py-3 rounded-lg border-[0.5px] border-white/20 dark:border-gray-600/30",
                     "bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm text-gray-900 dark:text-gray-100",
                     "placeholder-gray-500 dark:placeholder-gray-400",
-                    "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+                    "focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent",
                     "text-sm"
                   )}
                 />
@@ -165,7 +165,7 @@ export function LanguageSearch() {
                         </span>
                       </div>
                       <div className="flex items-center gap-2 ml-2 flex-shrink-0">
-                        <span className="text-xs text-gray-400 uppercase font-mono">
+                        <span className="text-xs text-gray-400 uppercase font-medium">
                           {language.code}
                         </span>
                         {currentLanguage === language.code && (

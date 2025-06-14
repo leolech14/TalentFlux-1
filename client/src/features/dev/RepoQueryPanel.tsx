@@ -165,7 +165,7 @@ export function RepoQueryPanel({ isOpen, onClose }: RepoQueryPanelProps) {
                 className="flex items-center gap-2"
               >
                 {isLoading ? (
-                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border border-current border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <Brain className="w-4 h-4" />
                 )}
@@ -220,7 +220,7 @@ export function RepoQueryPanel({ isOpen, onClose }: RepoQueryPanelProps) {
                   </CardHeader>
                   <CardContent className="pt-0">
                     <div className="bg-background rounded-md p-3 max-h-[300px] overflow-y-auto">
-                      <pre className="whitespace-pre-wrap text-sm font-mono">
+                      <pre className="whitespace-pre-wrap text-sm">
                         {result.response}
                       </pre>
                     </div>

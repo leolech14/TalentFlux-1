@@ -125,6 +125,23 @@ export default {
     require("@tailwindcss/typography"),
     function({ addVariant }) {
       addVariant('alt', '[data-theme="alt"] &');
-    }
+    },
+    plugin(function ({ addBase, addVariant }) {
+      addBase({
+        ':root': {
+          '--radius': '0.5rem',
+        },
+        '.dark': {
+          'color-scheme': 'dark',
+        },
+      });
+      
+      // Add theme variants
+      addVariant('light', '[data-theme="light"] &');
+      addVariant('dark', '[data-theme="dark"] &');
+      addVariant('alt', '[data-theme="alt"] &');
+      addVariant('minimal', '[data-theme="minimal"] &');
+      addVariant('matrix', '[data-theme="matrix"] &');
+    }),
   ],
 } satisfies Config;

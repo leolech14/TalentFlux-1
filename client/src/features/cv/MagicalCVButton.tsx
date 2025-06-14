@@ -122,7 +122,7 @@ export function MagicalCVButton() {
 
         {/* Pulse rings */}
         <motion.div
-          className="absolute inset-0 rounded-full border-2 border-white/30"
+                        className="absolute inset-0 rounded-full border border-white/30"
           animate={{
             scale: isHovered ? [1, 1.4] : 1,
             opacity: isHovered ? [0.5, 0] : 0.5,
@@ -135,7 +135,7 @@ export function MagicalCVButton() {
         />
 
         <motion.div
-          className="absolute inset-0 rounded-full border-2 border-white/20"
+                        className="absolute inset-0 rounded-full border border-white/20"
           animate={{
             scale: isHovered ? [1, 1.8] : 1,
             opacity: isHovered ? [0.3, 0] : 0.3,

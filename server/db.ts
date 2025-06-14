@@ -3,7 +3,10 @@ import { drizzle } from 'drizzle-orm/neon-serverless';
 import ws from "ws";
 import * as schema from "@shared/schema";
 
-neonConfig.webSocketConstructor = ws;
+// Only configure WebSocket if we have a DATABASE_URL
+if (process.env.DATABASE_URL) {
+  neonConfig.webSocketConstructor = ws;
+}
 
 // In development, provide a helpful error message
 if (!process.env.DATABASE_URL) {
@@ -21,15 +24,23 @@ if (!process.env.DATABASE_URL) {
 ║                                                                 ║
 ║  For local development, you can also use a local PostgreSQL:   ║
 ║  DATABASE_URL=postgresql://user:pass@localhost:5432/dbname     ║
+║                                                                 ║
+║  Or run: npm run setup                                          ║
 ╚════════════════════════════════════════════════════════════════╝
     `);
-    process.exit(1);
+    // Don't exit in development, allow running without DB
+  } else {
+    throw new Error(
+      "DATABASE_URL must be set. Did you forget to provision a database?"
+    );
   }
-
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?"
-  );
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle({ client: pool, schema });
+// Create a dummy pool if no DATABASE_URL (for development without DB)
+export const pool = process.env.DATABASE_URL
+  ? new Pool({ connectionString: process.env.DATABASE_URL })
+  : null as any;
+
+export const db = process.env.DATABASE_URL
+  ? drizzle({ client: pool, schema })
+  : null as any;

@@ -1,115 +1,93 @@
-import { motion, useMotionValue, useTransform, useAnimation, PanInfo } from "framer-motion";
-import { Star } from "lucide-react";
-import { useDock } from "../hooks/useDock";
-import { useTheme } from "../hooks/useTheme";
-import { useUIState } from "../hooks/useUIState";
-import { registerSingleton, unregisterSingleton } from "../lib/SingletonRegistry";
-import { useEffect, useRef, useState } from "react";
+import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
+import { Sparkles } from "lucide-react";
+import { useTheme } from "@/hooks/useTheme";
+import { useUIState } from "@/hooks/useUIState";
 
 interface MagicStarButtonProps {
   onClick: () => void;
-  isOpen: boolean;
+  isOpen?: boolean;
 }
 
 export function MagicStarButton({ onClick, isOpen }: MagicStarButtonProps) {
-  const { position, updatePosition } = useDock();
+  const buttonRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
   const { assistantOpen, sidebarOpen } = useUIState();
-  const controls = useAnimation();
-  const buttonRef = useRef<HTMLDivElement>(null);
-  const [velocity, setVelocity] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Motion values for smooth dragging
   const x = useMotionValue(0);
-  const y = useMotionValue(position.y);
-  
-  // Physics constants
-  const FRICTION = 0.92;
-  const BOUNCE_DAMPING = 0.6;
-  const BUTTON_SIZE = 56; // 14 * 4 (w-14 in pixels)
+  const y = useMotionValue((() => {
+    const saved = localStorage.getItem("magicStarY");
+    return saved ? parseInt(saved) : 0;
+  })());
 
-  useEffect(() => {
-    registerSingleton("magic-star");
-    return () => unregisterSingleton("magic-star");
-  }, []);
+  // Smooth spring animations
+  const scale = useSpring(1, { stiffness: 300, damping: 30 });
+  const rotateX = useTransform(y, [-100, 100], [15, -15]);
 
-  // Apply physics simulation
-  useEffect(() => {
-    let animationFrame: number;
+  // Clamp function to keep FAB within bounds
+  const clamp = (value: number, min: number, max: number) =>
+    Math.min(Math.max(value, min), max);
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+    const headerHeight = 80;
+    const footerSafe = 100;
+    const windowHeight = window.innerHeight;
     
-    const animate = () => {
-      if (Math.abs(velocity.x) > 0.1 || Math.abs(velocity.y) > 0.1) {
-        // Apply friction
-        setVelocity(v => ({
-          x: v.x * FRICTION,
-          y: v.y * FRICTION
-        }));
-        
-        // Update position based on velocity
-        const currentX = x.get();
-        const currentY = y.get();
-        
-        // Check boundaries and bounce
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        const maxX = viewportWidth / 2 - BUTTON_SIZE - 24; // 24px margin
-        const minX = -viewportWidth / 2 + BUTTON_SIZE / 2 + 24;
-        const maxY = viewportHeight / 2 - BUTTON_SIZE - 80; // Account for header
-        const minY = -viewportHeight / 2 + BUTTON_SIZE / 2 + 120; // Account for footer
-        
-        let newX = currentX + velocity.x;
-        let newY = currentY + velocity.y;
-        let newVelX = velocity.x;
-        let newVelY = velocity.y;
-        
-        // Bounce off edges
-        if (newX > maxX || newX < minX) {
-          newVelX = -velocity.x * BOUNCE_DAMPING;
-          newX = newX > maxX ? maxX : minX;
-        }
-        if (newY > maxY || newY < minY) {
-          newVelY = -velocity.y * BOUNCE_DAMPING;
-          newY = newY > maxY ? maxY : minY;
-        }
-        
-        x.set(newX);
-        y.set(newY);
-        setVelocity({ x: newVelX, y: newVelY });
-        
-        animationFrame = requestAnimationFrame(animate);
-      }
-    };
-    
-    animationFrame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrame);
-  }, [velocity, x, y]);
-
-  const handleDragEnd = (event: any, info: PanInfo) => {
-    // Set velocity based on drag velocity
-    setVelocity({
-      x: info.velocity.x * 0.5,
-      y: info.velocity.y * 0.5
-    });
+    // Clamp Y position within safe bounds
+    const currentY = y.get();
+    const clampedY = clamp(currentY, -windowHeight/2 + headerHeight, windowHeight/2 - footerSafe);
+    y.set(clampedY);
     
     // Save position
-    updatePosition({ y: y.get() });
+    localStorage.setItem("magicStarY", clampedY.toString());
+    
+    // Reset X position (only vertical dragging)
+    x.set(0);
   };
-
-  // Transform for glass morphism effect
-  const rotateX = useTransform(y, [-200, 200], [-15, 15]);
-  const scale = useTransform(x, [-100, 100], [0.95, 1.05]);
 
   // Hide FAB when any overlay/sidebar is open
   if (isOpen || assistantOpen || sidebarOpen) return null;
 
-  // TalentFlux dynamic styling based on theme
-  const fabStyles = theme === 'light'
-    ? "bg-gradient-to-br from-purple-500 via-pink-500 to-yellow-500"
-    : theme === 'alt'
-    ? "bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500"
-    : "bg-gradient-to-br from-purple-700 via-pink-600 to-yellow-600";
+  // Clean theme-based styling
+  const getThemeStyles = () => {
+    switch (theme) {
+      case 'light':
+        return {
+          background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
+          glow: "0 0 20px rgba(59, 130, 246, 0.3), 0 0 40px rgba(59, 130, 246, 0.1)",
+          border: "rgba(255, 255, 255, 0.2)"
+        };
+      case 'dark':
+        return {
+          background: "linear-gradient(135deg, #6366f1, #a855f7)",
+          glow: "0 0 20px rgba(99, 102, 241, 0.4), 0 0 40px rgba(99, 102, 241, 0.2)",
+          border: "rgba(255, 255, 255, 0.1)"
+        };
+      case 'alt':
+        return {
+          background: "linear-gradient(135deg, #f59e0b, #ef4444)",
+          glow: "0 0 20px rgba(245, 158, 11, 0.4), 0 0 40px rgba(245, 158, 11, 0.2)",
+          border: "rgba(255, 255, 255, 0.15)"
+        };
+      case 'minimal':
+        return {
+          background: "linear-gradient(135deg, #374151, #6b7280)",
+          glow: "0 0 15px rgba(55, 65, 81, 0.3)",
+          border: "rgba(255, 255, 255, 0.1)"
+        };
+      default:
+        return {
+          background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
+          glow: "0 0 20px rgba(59, 130, 246, 0.3)",
+          border: "rgba(255, 255, 255, 0.2)"
+        };
+    }
+  };
 
-  const glowColor = theme === 'alt' 
-    ? "rgba(199, 125, 255, 0.4)" 
-    : "rgba(255, 210, 0, 0.25)";
+  const themeStyles = getThemeStyles();
 
   return (
     <motion.div
@@ -124,86 +102,105 @@ export function MagicStarButton({ onClick, isOpen }: MagicStarButtonProps) {
         scale,
         perspective: 1000
       }}
-      drag
-      dragElastic={0.2}
+      drag="y"
+      dragElastic={0.1}
       dragMomentum={false}
+      onDragStart={() => setIsDragging(true)}
       onDragEnd={handleDragEnd}
-      whileHover={{ scale: 1.1 }}
+      whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       layoutId="magic-star"
       data-singleton="magic-star"
       data-testid="magic-star-fab"
     >
+      {/* Main FAB Button */}
       <motion.button
         onClick={onClick}
-        className={`relative w-14 h-14 ${fabStyles} rounded-full shadow-2xl backdrop-blur-md overflow-hidden group`}
-        animate={{ 
-          boxShadow: [
-            `0 0 20px ${glowColor}, 0 10px 40px rgba(0,0,0,0.3)`,
-            `0 0 30px ${glowColor}, 0 15px 50px rgba(0,0,0,0.4)`,
-            `0 0 20px ${glowColor}, 0 10px 40px rgba(0,0,0,0.3)`
-          ]
+        className="relative w-14 h-14 rounded-full overflow-hidden backdrop-blur-sm"
+        style={{
+          background: themeStyles.background,
+          boxShadow: themeStyles.glow,
+          border: `1px solid ${themeStyles.border}`
         }}
-        transition={{ 
-          boxShadow: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+        animate={{
+          boxShadow: isDragging 
+            ? `${themeStyles.glow}, 0 8px 32px rgba(0, 0, 0, 0.2)`
+            : themeStyles.glow
         }}
+        transition={{ duration: 0.3 }}
       >
-        {/* Glass effect overlay */}
-        <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-full" />
-        
-        {/* Inner glow */}
-        <motion.div 
-          className="absolute inset-0 rounded-full"
-          style={{
-            background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 50%)`
-          }}
-        />
-        
-        {/* Star icon with animation */}
+        {/* Subtle inner glow */}
         <motion.div
-          className="relative z-10 w-full h-full flex items-center justify-center"
-          animate={{ rotate: [0, 5, -5, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <Star className="w-6 h-6 text-white fill-white drop-shadow-lg" />
-        </motion.div>
-        
-        {/* Orbit ring with physics response */}
-        <motion.div 
-          className="absolute inset-0 rounded-full border-2 border-white/30"
-          animate={{ 
-            rotate: 360,
-            scale: [1, 1.1, 1]
+          className="absolute inset-0 rounded-full"
+          animate={{
+            background: [
+              "radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 50%)",
+              "radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.15) 0%, transparent 50%)",
+              "radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.2) 0%, transparent 50%)",
+              "radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 50%)",
+              "radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 50%)"
+            ]
           }}
-          transition={{ 
-            rotate: { duration: 20, repeat: Infinity, ease: "linear" },
-            scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut"
           }}
         />
-        
-        {/* Particle effects */}
-        {[...Array(3)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-white rounded-full"
-            style={{
-              top: "50%",
-              left: "50%",
-            }}
-            animate={{
-              x: [0, (i - 1) * 20, 0],
-              y: [0, -20, 0],
-              opacity: [0, 1, 0],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              delay: i * 0.3,
-              ease: "easeOut"
-            }}
-          />
-        ))}
+
+        {/* Icon */}
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center"
+          animate={{
+            rotate: [0, 360]
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        >
+          <Sparkles className="w-6 h-6 text-white drop-shadow-sm" />
+        </motion.div>
+
+        {/* Subtle pulse effect */}
+        <motion.div
+          className="absolute inset-0 rounded-full border border-white/20"
+          animate={{
+            scale: [1, 1.1, 1],
+            opacity: [0.5, 0.2, 0.5]
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
       </motion.button>
+
+      {/* Floating particles - minimal and elegant */}
+      {[...Array(3)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-1 rounded-full bg-white/40"
+          style={{
+            left: `${20 + i * 15}%`,
+            top: `${20 + i * 20}%`,
+          }}
+          animate={{
+            y: [-10, -20, -10],
+            x: [-5, 5, -5],
+            opacity: [0.4, 0.8, 0.4],
+            scale: [0.8, 1.2, 0.8]
+          }}
+          transition={{
+            duration: 4 + i,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: i * 0.5
+          }}
+        />
+      ))}
     </motion.div>
   );
 }

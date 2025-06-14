@@ -47,7 +47,7 @@ class TranslationService {
 
   setLanguage(languageCode: string) {
     this.currentLanguage = languageCode;
-    localStorage.setItem('selectedLanguage', languageCode);
+    localStorage.setItem('language-preference', languageCode);
   }
 
   getCurrentLanguage() {
@@ -55,7 +55,7 @@ class TranslationService {
   }
 
   getLanguageFromStorage() {
-    return localStorage.getItem('selectedLanguage') || 'en';
+    return localStorage.getItem('language-preference') || 'en';
   }
 
   async translateText(text: string, targetLanguage: string): Promise<string> {

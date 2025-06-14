@@ -6,3 +6,5 @@ vite.config.ts.*
 *.tar.gz
 *.swp.env
 .env
+.cursor/
+.env.backup

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type Theme = 'light' | 'dark' | 'alt' | 'minimal';
+type Theme = 'light' | 'dark' | 'alt' | 'minimal' | 'matrix';
 
 interface ThemeStore {
   theme: Theme;
@@ -37,10 +37,11 @@ const applyTheme = (theme: Theme) => {
 export const useTheme = create<ThemeStore>()(
   persist(
     (set, get) => ({
-      theme: 'dark' as Theme, // Default to dark mode
+      theme: (localStorage.getItem('theme-preference') as Theme) || 'dark',
       setTheme: (theme: Theme) => {
         const currentTheme = get().theme;
         if (currentTheme === theme) return; // Prevent unnecessary updates
+        localStorage.setItem('theme-preference', theme);
         set({ theme });
         applyTheme(theme);
       },
@@ -51,3 +52,11 @@ export const useTheme = create<ThemeStore>()(
     }
   )
 );
+
+// Initialize theme on load
+if (typeof window !== 'undefined') {
+  const savedTheme = localStorage.getItem('theme-preference') as Theme;
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }
+}

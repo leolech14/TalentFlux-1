@@ -95,7 +95,7 @@ export function CodeAssistant() {
                   : "bg-white/10 text-white border border-white/20"
               }`}
             >
-              <pre className="text-sm whitespace-pre-wrap font-mono">{message.content}</pre>
+              <pre className="text-sm whitespace-pre-wrap">{message.content}</pre>
             </div>
           </motion.div>
         ))}
@@ -124,7 +124,7 @@ export function CodeAssistant() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about components, architecture, or code..."
-            className="flex-1 min-h-[60px] max-h-[120px] resize-none bg-white/10 border-white/20 text-white placeholder:text-white/50 font-mono text-sm"
+            className="flex-1 min-h-[60px] max-h-[120px] resize-none bg-white/10 border-white/20 text-white placeholder:text-white/50 text-sm"
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();

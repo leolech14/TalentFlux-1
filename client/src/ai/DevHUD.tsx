@@ -32,7 +32,7 @@ export function DevHUD() {
   if (!import.meta.env.DEV) return null;
 
   return (
-    <div className="fixed bottom-2 left-2 z-[9999] font-mono text-xs">
+    <div className="fixed bottom-2 left-2 z-[9999] text-xs">
       <AnimatePresence>
         {isVisible && (
           <motion.div

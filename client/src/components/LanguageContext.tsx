@@ -30,6 +30,20 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
     }));
   };
 
+  // Listen for language changes from other parts of the app (like useLanguage hook)
+  useEffect(() => {
+    const handleLanguageChange = (event: CustomEvent) => {
+      const newLanguage = event.detail.language;
+      if (newLanguage !== currentLanguage) {
+        setCurrentLanguage(newLanguage);
+        translationService.setLanguage(newLanguage);
+      }
+    };
+
+    window.addEventListener('languageChanged', handleLanguageChange as EventListener);
+    return () => window.removeEventListener('languageChanged', handleLanguageChange as EventListener);
+  }, [currentLanguage]);
+
   const translateText = async (text: string): Promise<string> => {
     if (currentLanguage === 'en' || !text.trim()) {
       return text;

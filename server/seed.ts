@@ -3,6 +3,12 @@ import { users } from "@shared/schema";
 
 export async function seedDatabase() {
   try {
+    // Check if database is available
+    if (!db) {
+      console.log("Database not configured - skipping seed");
+      return;
+    }
+
     // Check if users already exist
     const existingUsers = await db.select().from(users).limit(1);
     if (existingUsers.length > 0) {
