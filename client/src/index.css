@@ -312,6 +312,10 @@
     background-color: rgb(0, 0, 0) !important;
   }
 
+  html.matrix {
+    background-color: rgb(0, 0, 0) !important;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -835,4 +839,97 @@
 .firewall-marker::after {
   content: '🔥';
   @apply absolute -top-2 -right-2 text-xs;
+}
+
+/* Matrix theme-specific high contrast styling */
+.matrix * {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+}
+
+.matrix .card,
+.matrix [class*="card"],
+.matrix button,
+.matrix input,
+.matrix textarea,
+.matrix select,
+.matrix [role="dialog"],
+.matrix [role="menu"],
+.matrix [data-radix-popper-content-wrapper] {
+  border: 1px solid hsl(0, 0%, 20%) !important;
+  border-radius: 0 !important;
+  background: hsl(0, 0%, 3%) !important;
+  box-shadow: none !important;
+}
+
+.matrix button:hover,
+.matrix .card:hover,
+.matrix [class*="card"]:hover {
+  background: hsl(0, 0%, 6%) !important;
+  border: 1px solid hsl(0, 0%, 25%) !important;
+}
+
+.matrix h1,
+.matrix h2,
+.matrix h3,
+.matrix h4,
+.matrix h5,
+.matrix h6 {
+  color: hsl(0, 0%, 95%) !important;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+  font-weight: normal !important;
+}
+
+.matrix p,
+.matrix span,
+.matrix div,
+.matrix label,
+.matrix a {
+  color: hsl(0, 0%, 95%) !important;
+}
+
+.matrix .text-muted-foreground {
+  color: hsl(0, 0%, 70%) !important;
+}
+
+/* Matrix accent colors - only for minimal details */
+.matrix .bg-primary {
+  background: hsl(120, 30%, 75%) !important;
+  color: hsl(0, 0%, 0%) !important;
+}
+
+.matrix .text-primary {
+  color: hsl(120, 30%, 75%) !important;
+}
+
+.matrix .bg-accent {
+  background: hsl(200, 20%, 70%) !important;
+  color: hsl(0, 0%, 0%) !important;
+}
+
+/* Hide all decorative elements in Matrix theme */
+.matrix .gradient-orb,
+.matrix [class*="gradient"],
+.matrix [class*="glow"],
+.matrix [class*="blur"],
+.matrix [class*="bg-gradient"],
+.matrix .absolute.inset-0.pointer-events-none {
+  display: none !important;
+}
+
+/* Remove all shadows and effects */
+.matrix *,
+.matrix *::before,
+.matrix *::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+/* Matrix nav styling */
+.matrix nav,
+.matrix header,
+.matrix [role="banner"] {
+  border-bottom: 1px solid hsl(0, 0%, 20%) !important;
+  background: hsl(0, 0%, 0%) !important;
+  box-shadow: none !important;
 }
