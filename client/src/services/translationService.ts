@@ -63,11 +63,6 @@ class TranslationService {
       return text;
     }
 
-    // Temporarily disable translation if no API key
-    // TODO: Add proper API key configuration
-    console.warn('Translation API disabled - no API key configured');
-    return text;
-
     const cacheKey = `${targetLanguage}-${text}`;
     if (this.cache[targetLanguage]?.[text]) {
       return this.cache[targetLanguage][text];
@@ -92,11 +87,6 @@ class TranslationService {
     if (targetLanguage === 'en') {
       return texts;
     }
-
-    // Temporarily disable translation if no API key
-    // TODO: Add proper API key configuration
-    console.warn('Translation API disabled - no API key configured');
-    return texts;
 
     try {
       const response = await api.translation.translateBatch(texts, targetLanguage);
