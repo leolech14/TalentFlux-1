@@ -509,9 +509,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const translatedText = response.choices[0].message.content?.trim() || text;
       res.json({ translatedText });
-    } catch (error) {
-      console.error("Translation error:", error);
-      res.status(500).json({ error: "Translation failed" });
+    } catch (error: any) {
+      console.error("Translation error:", {
+        message: error?.message || 'Unknown error',
+        status: error?.status,
+        response: error?.response?.data,
+        stack: error?.stack
+      });
+      res.status(500).json({ 
+        error: "Translation failed", 
+        details: error?.message || 'Unknown translation error'
+      });
     }
   });
 

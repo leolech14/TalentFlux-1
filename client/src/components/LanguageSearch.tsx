@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { Search, Globe, Check } from 'lucide-react';
-import { useLanguageContext } from './LanguageContext';
+import { useTranslation } from '@/hooks/useTranslation';
 import { SUPPORTED_LANGUAGES } from '@/services/translationService';
 import { cn } from '@/lib/utils';
 
 export function LanguageSearch() {
-  const { currentLanguage, changeLanguage } = useLanguageContext();
+  const { currentLanguage, changeLanguage } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownPosition, setDropdownPosition] = useState<'right' | 'left'>('right');
